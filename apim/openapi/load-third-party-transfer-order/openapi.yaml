@@ -1,0 +1,553 @@
+openapi: 3.0.2
+info:
+  title: Api Channel - Business Banking Load Third Party Transfer Order V1
+  description: API Business for Load Third Party Transfer Order
+  version: 1.0.1
+servers:
+  - description: Server in devops in business banking layer
+    url: http://localhost:8080/channel/business-banking/v1/load-third-party-transfer-orders
+tags:
+  - name: "Account"
+    description: "Account Controller"
+  - name: "Third Party Transfer Order"
+    description: "Third Party Transfer Order Controller"
+  - name: "Beneficiary"
+    description: "Beneficiary Controller"
+  - name: "Product Account"
+    description: "Product Account Controller"
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /product-accounts:
+    get:
+      tags:
+        - Product Account
+      summary: Retrieve an account List
+      description: >+
+        ### Details:
+        
+        Retrieve an account List for third party transfer order services, the data in contract shows some fields, but in cache save the next data about the account 
+        account-uuid -> detail {companyContractProductUuid =12345678-eb18-432b-a9ac-0aa5e80ebe9a, account_id (productUuid/de la cuenta),
+        type,  alias + nro account + product_uuid(uuid servicio/padre), currency_type)}
+
+      operationId: getProductAccountByFilter
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      responses:
+        200:
+          description: Accounts retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UxGetProductAccountByFilterResponse"
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /accounts:
+    get:
+      tags:
+        - Account
+      summary: Retrieves a third account.
+      description: >+
+        ### Details:
+
+        Retrives an account information by account Id from third person.
+
+      operationId: getAccountByFilter
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+        - $ref: '#/components/parameters/accountNumber'
+      responses:
+        200:
+          description: Accounts retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UxGetAccountByFilterResponse"
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /beneficiaries:
+    get:
+      tags:
+        - Beneficiary
+      summary: Retrieve a beneficiary List
+      description: >+
+        ### Details:
+        
+        Retrieve a beneficiary List for third party transfer order services
+
+      operationId: getBeneficiaryByFilter
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+        - $ref: '#/components/parameters/full-name'
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UxGetBeneficiaryByFilterResponse'
+
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
+  /third-party-transfer-orders:
+    post:
+      tags:
+        - Third Party Transfer Order
+      summary: Create a Third Party transfer Order
+      description: >+
+        ### Details:
+
+        Create a Third Party transfer Order and its items. Some data is in cache 
+        referenced by field uuid in jwt
+
+      operationId: postThirdPartyTransferOrder
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      requestBody:
+        description: Request to post the third party transfer order
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UxPostThirdPartyTransferOrderRequest'
+      responses:
+        200:
+          description: OK
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  parameters:
+    authorization:
+      name: authorization
+      in: header
+      description: token jwt send Front
+      required: true
+      schema:
+        type: string
+        example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+    full-name:
+      name: fullName
+      in: query
+      description: search full name
+      required: true
+      schema:
+        type: string
+        example: "Nombre Apellido"
+    trayOrderId:
+      name: trayOrderId
+      in: query
+      description: tray Order Id
+      required: true
+      schema:
+        type: integer
+        example: 123
+    moreData:
+      name: moreData
+      in: query
+      required: false
+      schema:
+        type: string
+      description: indicates additional resources to retrieve
+      example: "thirdPartyTransferOrderItem"
+    accountNumber:
+      name: accountNumber
+      in: query
+      description: Account identification | account Number
+      required: true
+      schema:
+        type: string
+        example: 2100080794
+  schemas:
+    UxGetBeneficiaryByFilterResponse:
+      type: object
+      properties:
+        beneficiaryId:
+          type: string
+          example: "10101-abc-198198"
+          description: "Beneficiary id to search in cache."
+
+        fullName:
+          type: string
+          example: "Jhon Doe"
+          description: "Full name the beneficiary."
+          nullable: false
+          x-mapping: "beneficiary.full_name"
+        account:
+          $ref: "#/components/schemas/BeneficiaryAccount"
+    UxPostThirdPartyTransferOrderRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - approvalDeadline
+      properties:
+        sourceProduct:
+          $ref: "#/components/schemas/SourceProductRequest"
+        uploadType:
+          $ref: "#/components/schemas/UploadType"
+        approvalDeadline:
+          type: string
+          description: approval date
+          example: "2022-03-18 22:41:49.317"
+        thirdPartyTransferOrderItem:
+          $ref : "#/components/schemas/ThirdPartyTransferOrderItem"
+
+    UxGetAccountByFilterResponse:
+      type: object
+      title: UxGetAccountByFilterResponse
+      properties:
+        accountId:
+          type: string
+          description: account identification in cache
+          example: 8722092-abc2092
+        accountNumber:
+          type: string
+          description: account identification | acccount number
+          example: 2100080794
+        type:
+          $ref: "#/components/schemas/Type"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        customer:
+          $ref: "#/components/schemas/CustomerResponse"
+    UxGetProductAccountByFilterResponse:
+      type: object
+      properties:
+        customerProductId:
+          type: string
+          description: company contract id for service account| company_contract_product_uuid in database.
+          example: 2100080794
+        productId:
+          type: string
+          description: productId from productConfig | product_uuid in database
+          example: 2100080794
+        account:
+          $ref: "#/components/schemas/Account"
+    Account:
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: account identification in cache
+          example: 8722092-abc2092
+        accountNumber:
+          type: string
+          description: account identification | acccount number
+          example: 2100080794
+        type:
+          $ref: "#/components/schemas/Type"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        balanceInformation:
+          $ref: "#/components/schemas/Balance"
+        status:
+          $ref: "#/components/schemas/AccountStatus"
+        alias:
+          type: string
+          example: 'Cuenta Machala'
+    BeneficiaryAccount:
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: account id to search in cache
+          example: "1981901-abc-2928"
+        accountNumber:
+          type: string
+          description: account identification | acccount number
+          example: 2100080794
+        type:
+          $ref: "#/components/schemas/Type"
+
+    AccountStatus:
+      type: object
+      properties:
+        code:
+          type: string
+          description: status code
+          example: ACTIVE
+    CustomerResponse:
+      type: object
+      properties:
+        customerId:
+          type: string
+          example: "19819819-abc-29829"
+          description: beneficiary id to search in cache
+        fullName:
+          type: string
+          example: "Jesus Alberto"
+          description: beneficiary fullName.
+          nullable: false
+
+    UploadType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Manual
+          example: Manual
+    ThirdPartyTransferOrderItem:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: float
+          example: 100.0
+          nullable: false
+        currency:
+          $ref: "#/components/schemas/Currency"
+        beneficiary:
+          $ref: "#/components/schemas/Beneficiary"
+        destinationProduct:
+          $ref: "#/components/schemas/DestinationProductRequest"
+        identificationValue:
+          type: string
+          example: "098567"
+          description: beneficiary identification Value.
+          nullable: false
+          x-mapping: "items_transfer_order.bill_id"
+        description:
+          type: string
+          example: "This is a description"
+          description: order description
+        identificationType:
+          $ref: "#/components/schemas/IdentificationType"
+    IdentificationType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code or number bill
+          example: Bill
+          x-mapping: "items_transfer_order.bill_description"
+
+    SourceProductRequest:
+      type: object
+      properties:
+        productId:
+          type: string
+          example: "232343333-abc-98181"
+          description: account id reference stored in cache
+    Balance:
+      type: object
+      properties:
+        availableBalance:
+          type: number
+          format: double
+          description: Balance disponible de la cuenta.
+          example: 500.00
+        countableBalance:
+          type: number
+          format: double
+          description: Balance contable de la cuenta.
+          example: 500.00
+
+    DestinationProductRequest:
+      type: object
+      properties:
+        productId:
+          type: string
+          example: "18719112-abcd-1811810"
+          description: account number to search in cache
+    Type:
+      type: object
+      properties:
+        code:
+          type: string
+          description: account type code
+          example: CTE
+        description:
+          type: string
+          description: account type description
+          example: CTE.CTA.REG
+
+    Beneficiary:
+      type: object
+      properties:
+        beneficiaryId:
+          type: string
+          example: "2982982-utcr-298722"
+          description: Beneficiary id to search in cache
+          nullable: false
+        saveInformation:
+          type: boolean
+          example: "True/false"
+          description: Data Beneficiary .
+          nullable: false
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code for currency
+          example: "USD"
+
+    Error:
+      type: object
+      properties:
+        title:
+          maximum: 50
+          type: string
+          description: Mensaje de error técnico.
+        detail:
+          maximum: 50
+          type: string
+          description: Mensaje a presentar al cliente.
+        instance:
+          maximum: 50
+          type: string
+          description: Código de catálogo de errores.
+        type:
+          maximum: 100
+          type: string
+          description: Dirección de la fuente solicitada por el proxy
+        resource:
+          maximum: 100
+          type: string
+          description: Recurso del servicio en el que se produjo el error.
+        component:
+          maximum: 100
+          type: string
+          description: Componente del servicio en el que sucedió el error.
+        backend:
+          maximum: 100
+          type: string
+          description: Código de error interno.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key

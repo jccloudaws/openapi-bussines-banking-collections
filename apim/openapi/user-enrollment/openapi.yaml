@@ -1,0 +1,1002 @@
+---
+openapi: 3.0.0
+info:
+  title: Api Channel Business Banking User Enrollment V1
+  description: |
+    Channel API for User enrollment <br>
+    >
+    <b>• Business Area</b> `Sales and Service`
+    <br>
+    <b>• Business Domain</b> `Cross Channel`
+    <br>
+    <b>• Service Domain:</b> `Party Authentication`
+  contact:
+    name: Rossmel Mendoza
+    email: rmendoza-ext@pichincha.pe
+  version: 1.0.1
+servers:
+  - url: http://localhost:8080/channel/business-banking/v1/user-enrollment
+    description: Server in devops in busines banking layer
+security:
+  - ApiKeyAuth: []
+
+tags:
+  - name: "User"
+    description: "User Controller"
+  - name: "Token"
+    description: "Token Controller"
+  - name: "Term"
+    description: "Term Controller"
+  - name: "One Time Password"
+    description: "One Time Password Controller"
+paths:
+  /tokens/verify:
+    post:
+      tags:
+        - Token
+      summary: Verify jwt.
+      description: >+
+        ### Details:
+
+         Verify jwt is correct. Verifies that the user exists.
+      operationId: PostTokenVerify
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: '#/components/schemas/PostTokenVerifyRequest'
+      responses:
+        200:
+          description: The user was verified successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostTokenVerifyResponse'
+        409:
+          description: The user document and your email are not valid.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /one-time-passwords/authenticate:
+    post:
+      tags:
+        - One Time Password
+      summary: Authenticate otp received.
+      description: >+
+        ### Details:
+
+        Authenticate otp received and returns retries quantity.
+      operationId: PostOneTimePasswordAuthenticate
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: '#/components/schemas/PostOneTimePasswordAuthenticateRequest'
+      responses:
+        200:
+          description: One time password response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostOneTimePasswordAuthenticateResponse'
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /terms/retrieve:
+    post:
+      tags:
+        - Term
+      summary: Retrieves terms and conditions.
+      description: >+
+        ### Details:
+
+        Retrieves terms and conditions for user confirmation.
+      operationId: PostTermRetrieve
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: '#/components/schemas/PostTermRetrieveRequest'
+      responses:
+        200:
+          description: Terms Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostTermRetrieveResponse'
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /tokens/download:
+    post:
+      tags:
+        - Token
+      summary: Download token.
+      description: >+
+        ### Details:
+
+        Download token and sends sms to user for download.
+      operationId: PostTokenDownload
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: '#/components/schemas/PostTokenDownloadRequest'
+      responses:
+        200:
+          description: Envía mensaje de descarga
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /users:
+    post:
+      tags:
+        - User
+      summary: Create the user in B2C and update the status in the database.
+      description: >+
+        ### Details:
+
+        Create the user in B2C, check if the company exists and update the user's status to active in the database.
+      operationId: PostUser
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: '#/components/schemas/PostUserRequest'
+      responses:
+        200:
+          description: Actualiza usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostUserResponse'
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /users/validate:
+    post:
+      tags:
+        - User
+      summary: Validates that userName is available.
+      description: >+
+        ### Details:
+
+        Validates that userName is available for using.
+      operationId: PostUserVerify
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: '#/components/schemas/PostUserValidateRequest'
+      responses:
+        200:
+          description: The username is available.
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    PostTokenVerifyRequest:
+      title: PostTokenVerifyRequest
+      type: object
+      properties:
+        customerUserId:
+          type: string
+          description: Customer User Uuid
+          example: "64456-jmgttr-444grr-434fee"
+        lang:
+          type: string
+          description: selected language
+          maxLength: 2
+          example: "en | es"
+        ip:
+          type: string
+          description: user ip
+          example: "192.168.0.1"
+
+    PostTokenVerifyResponse:
+      title: PostTokenVerifyResponse
+      type: object
+      properties:
+        emailMask:
+          type: string
+          description: Masked user email
+          example: gxxxx@xxxxx.com
+
+
+    PostOneTimePasswordAuthenticateRequest:
+      title: PostOneTimePasswordAuthenticateRequest
+      type: object
+      properties:
+        customerUserId:
+          type: string
+          description: Customer User Uuid
+          example: "64456-jmgttr-444grr-434fee"
+        lang:
+          type: string
+          description: selected language
+          maxLength: 2
+          example: "en | es"
+        ip:
+          type: string
+          description: user ip
+          example: "192.168.0.1"
+        otp:
+          type: string
+          description: otp code.
+          example: "394681"
+
+    PostOneTimePasswordAuthenticateResponse:
+      title: PostOneTimePasswordAuthenticateResponse
+      type: object
+      properties:
+        otpAuthenticationId:
+          type: string
+          description: id to verify that otp validation was successful
+          example: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+        retries:
+          type: string
+          description: Number of validation attempts.
+          example: "1"
+
+    PostUserValidateRequest:
+      type: object
+      properties:
+        otpAuthenticationId:
+          type: string
+          description: id to verify that the otp validation was successful
+          example: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+
+        customerUserId:
+          type: string
+          description: Customer User Uuid
+          example: "64456-jmgttr-444grr-434fee"
+        ip:
+          type: string
+          description: user ip
+          example: "192.168.0.1"
+        username:
+          type: string
+          description: Username of user.
+          example: "Gabriel123"
+          maxLength: 16
+        lang:
+          type: string
+          description: lenguaje seleccionado
+          maxLength: 2
+          example: "en | es"
+    PostUserRequest:
+      type: object
+      properties:
+        customerUserId:
+          type: string
+          description: Customer User Uuid
+          example: "64456-jmgttr-444grr-434fee"
+        ip:
+          type: string
+          description: user ip
+          example: "192.168.0.1"
+        otpAuthenticationId:
+          type: string
+          description: id to verify that otp validation was successful
+          example: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+        termId:
+          type: string
+          description: id to represent the identifier of the terms uuid
+          example: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+        password:
+          type: string
+          description:  user related
+          maxLength: 16
+          example: "Admin001@"
+        lang:
+          type: string
+          description: selected language
+          maxLength: 2
+          example: "en | es"
+
+    PostUserResponse:
+      type: object
+      properties:
+        phoneNumberMask:
+          type: string
+          description: masked phone
+          example: 09xxxxxx651
+
+    PostTermRetrieveRequest:
+      type: object
+      properties:
+        customerUserId:
+          type: string
+          description: Customer User Uuid
+          example: "64456-jmgttr-444grr-434fee"
+        ip:
+          type: string
+          description: user ip
+          example: "192.168.0.1"
+        otpAuthenticationId:
+          type: string
+          description: id to verify that otp validation was successful
+          example: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+        lang:
+          type: string
+          description: selected language
+          maxLength: 2
+          example: "en | es"
+
+    PostTermRetrieveResponse:
+      type: object
+      properties:
+        termId:
+          type: string
+          description: id to represent the identifier of the terms uuid
+          example: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+        text:
+          type: string
+          description: Text in html format to render to display the terms and conditions
+          example: Dasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbw
+        url:
+          type: string
+          description: url download terms
+          example: "https://localhost/terms.pdf"
+
+    PostTokenDownloadRequest:
+      title: PostTokenDownloadRequest
+      type: object
+      required:
+        - token
+        - lang
+      properties:
+        customerUserId:
+          type: string
+          description: Customer User Uuid
+          example: "64456-jmgttr-444grr-434fee"
+        lang:
+          type: string
+          description: selected language
+          maxLength: 2
+          example: "en | es"
+        ip:
+          type: string
+          description: user ip
+          example: "192.168.0.1"
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        errorCode:
+          type: string
+          pattern: ^[a-zA-Z]+$\d+$
+          maxLength: 6
+        developerMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        userMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        moreInfo:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        version:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: "1.0.0"
+        status:
+          maxLength: 15
+          type: integer
+          example: 409
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key

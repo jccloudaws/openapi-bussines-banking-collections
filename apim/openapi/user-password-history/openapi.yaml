@@ -1,0 +1,692 @@
+openapi: 3.0.0
+info:
+  title: Api Channel Business Banking User Password History
+  description: |
+    Channel API for User Password History
+    <br>
+    <b>• Service Domain:</b> `Party Authentication`
+    <br>
+  version: 1.1.0
+  contact:
+    name: BSBK - Enrique Márquez
+    email: emarquezv-ext@pichincha.com
+servers:
+  - description: Password policy validation server in the business banking layer
+    url: http://localhost:8080/channel/business-banking/v1/user-password-histories
+tags:
+  - name: "User Password History"
+    description: "User Password History controller"
+  - name: "Current Password"
+    description: "Current Password controller"
+paths:
+  /current-passwords/validate:
+    post:
+      tags:
+        - Current Password
+      summary: Current password validate
+      description: >-
+        ## Detail
+         Validate the user´s current password before the password update.
+          ### Internal Actions
+          - Review number of attempts
+          - Save number attempt
+      operationId: postCurrentPasswordValidate
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostCurrentPasswordValidateRequest"
+      responses:
+        200:
+          description: Validate User Password
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostCurrentPasswordValidateResponse"
+
+        400:
+          description: Problemas con la solicitud del cliente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: El cliente no tiene permisos suficientes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        403:
+          description: El cliente no tiene acceso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        404:
+          description: Recurso no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        429:
+          description: Demasiadas solicitudes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        500:
+          description: Error en el servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+        504:
+          description: Se superó el tiempo de espera de la solicitud. Si sucede repetidamente, considere reducir la complejidad de la solicitud.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /search:
+    post:
+      tags:
+        - User Password History
+      summary: search if users has password history registered in database
+      description: >+
+        ### Details:
+           search if users has password history registered in database
+      operationId: PostUserPasswordHistorySearch
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUserPasswordHistorySearchRequest"
+      responses:
+        200:
+          description: search if users has password history registered in database
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostUserPasswordHistorySearchResponse"
+        400:
+          description: The password does NOT comply with the password change policies
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/PolicyPasswordError"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /validate:
+    post:
+      tags:
+        - User Password History
+      summary: Validates password history
+      description: >+
+        ### Details:
+          Validates that the new password is not the same tha the last N passwords
+      operationId: PostUserPasswordHistoryValidate
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUserPasswordHistoryValidateRequest"
+      responses:
+        200:
+          description: The password complies with the password change policies
+        400:
+          description: The password does NOT comply with the password change policies
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/PolicyPasswordError"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /register:
+    post:
+      tags:
+        - User Password History
+      summary: Save the new password in the user history password
+      description: >+
+        ### Details:
+          Saves the hash of the user's new password in the password history for use in the validation process for a future new password
+      operationId: PostUserPasswordHistoryRegister
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUserPasswordHistoryRegisterRequest"
+      responses:
+        200:
+          description: Password hash saved successfully
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    PostCurrentPasswordValidateResponse:
+      description: PostCurrentPasswordValidateResponse
+      type: object
+      properties:
+        tokenAuthenticationId:
+          title: tokenAuthenticationId
+          type: string
+          example: "25850f86-24d7-4db6-8fd1-29e865112b02"
+          nullable: false
+    PostUserPasswordHistoryValidateRequest:
+      type: object
+      description: PostUserPasswordHistoryValidateRequest
+      properties:
+        userName:
+          title: userName
+          type: string
+          example: "juan.perez"
+        hash:
+          title: hash
+          type: string
+          example: "abc123"
+        lang:
+          title: lang
+          type: string
+          example: "es"
+        userIdentity:
+          title: userIdentity
+          type: string
+          example: "1234-5678-90AB-CDEF"
+        tokenAuthenticationId:
+          title: tokenAuthenticationId
+          type: string
+          example: "1234-5678-90AB-CDEF"
+    PostUserPasswordHistoryRegisterRequest:
+      type: object
+      description: PostUserPasswordHistoryRegisterRequest
+      properties:
+        userName:
+          title: userName
+          type: string
+          example: "juan.perez"
+        hash:
+          title: hash
+          type: string
+          example: "abc123"
+        lang:
+          title: lang
+          type: string
+          example: "es"
+        userIdentity:
+          title: userIdentity
+          type: string
+          example: "1234-5678-90AB-CDEF"
+        tokenAuthenticationId:
+          title: tokenAuthenticationId
+          type: string
+          example: "1234-5678-90AB-CDEF"
+        isNotifyRequired:
+          title: isNotifyRequired
+          type: string
+          example: "YES/NO"
+    PostUserPasswordHistorySearchRequest:
+      type: object
+      description: PostUserPasswordHistorySearchRequest
+      properties:
+        userIdentity:
+          title: userIdentity
+          type: string
+          example: "1234-5678-90AB-CDEF"
+        userName:
+          title: userName
+          type: string
+          example: "juan.perez"
+    PostCurrentPasswordValidateRequest:
+      description: Body request for save attempt failed
+      required:
+        - objectId
+        - ip
+      properties:
+        ip:
+          description: ip request
+          type: string
+          example: "200.10.89.34"
+        lang:
+          description: languaje for response in error case
+          type: string
+          example: "es"
+        userName:
+          description: user name in b2c
+          type: string
+          example: "jhondoe123"
+        userIdentity:
+          description: Object id
+          type: string
+          example: "b0acae3c-8694-40bd-a0e2-f4e6fe4ac5c6"
+    PostUserPasswordHistorySearchResponse:
+      type: object
+      properties:
+        haveHistoryPassword:
+          type: string
+          description: Evaluation result obtained.
+          example: YES/NO
+
+
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        errorCode:
+          type: string
+          pattern: ^[a-zA-Z]+$\d+$
+          maxLength: 6
+        developerMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        userMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        moreInfo:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        version:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: "1.0.0"
+        status:
+          maxLength: 15
+          type: integer
+          example: 409
+
+    PolicyPasswordError:
+      type: object
+      additionalProperties: false
+      properties:
+        version:
+          type: string
+          pattern: ^[a-zA-Z]+$\d+$
+          maxLength: 5
+        status:
+          type: number
+          maxLength: 3
+        errorCode:
+          type: string
+          pattern: ^[a-zA-Z]+$\d+$
+          maxLength: 6
+        developerMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        userMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        requestId:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 36
+        moreInfo:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256

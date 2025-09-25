@@ -1,0 +1,281 @@
+openapi: 3.0.0
+info:
+  title: Api Channel - Bussines Banking Token Authentication
+  description: |
+    Channel API for user managemenet
+    <b>• Business Area:</b> `Channel Specific`
+    <br>
+    <b>• Business Domain:</b> `Cross Channel`
+    <br>
+    <b>• Service Domain:</b> `Party Authentication`
+    <br>
+  version: 1.0.0
+  contact:
+    name: BSBK - Jecri Rey Do Santos Ocmin
+    email: jdosantos-ext@pichincha.com
+servers:
+  - description: Server in devops in busines banking layer
+    url: http://localhost:8080/channel/business-banking/v1/token-authentications
+tags:
+  - name: "Token Authentication"
+    description: "Token Authentication Controller"
+
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /:
+    post:
+      tags:
+        - Token Authentication
+      summary: Allows to validate the token and generated Uuid Token
+      description: "### Details: \n Validate the client's Opt with the core bank, if it is ok, a tokenAuthenticationId will be generated"
+      operationId: PostTokenAuthentication
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostTokenAuthenticationRequest'
+      responses:
+        200:
+          description: |
+            <b>`OK`</b>
+            <br>token generated from the validation of the totp</br>
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostTokenAuthenticationResponse"
+
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                title: Missing mandatory fields.
+                detail: The input fields are not correct
+                errors:
+                  - message: Bad Request
+                    businessMessage: The xyz field is mandatory
+                instance: "022"
+                type: /v1/name/pathSuffix
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                title: Authorization Error
+                detail: Client credentials are invalid
+                instance: "033"
+                type: /v1/name/pathSuffix
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                title: Forbidden access to the resource {URI}
+                detail: You do not have permissions for this API, please contact support to request it.
+                instance: "033"
+                type: /v1/name/pathSuffix
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                title: Not Found
+                detail: Path not found
+                instance: "404"
+                type: /v1/name/pathSuffix
+        429:
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                title: Too many requests to the resource {URI}
+                detail: Too many requests to the resource, please wait a minute and try again.
+                instance: "429"
+                type: /v1/name/pathSuffix
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                title: Internal Server
+                detail: Internal Server Error
+                instance: "0188"
+                type: /v1/name/pathSuffix
+                resource: UMPClientes0020/ConsultaInformacionCliente01
+                component: TX067050
+                backend: "00045"
+
+        504:
+          description: Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                title: Gateway Timeout. Request timeout exceeded. If it happens repeatedly, consider reducing the request complexity.
+                detail: Gateway connection problems.
+                instance: "504"
+                type: /v1/name/pathSuffix
+
+components:
+  schemas:
+    PostTokenAuthenticationRequest:
+      required:
+        - totpCode
+      type: object
+      properties:
+        totpCode:
+          type: string
+          description: 'code totp send user'
+    PostTokenAuthenticationResponse:
+      required:
+        - token
+      type: object
+      properties:
+        tokenAuthenticationId:
+          title: tokenAuthenticationId
+          type: string
+          description: token generated when totp validation is correct
+          example: "25850f86-24d7-4db6-8fd1-29e865112b02"
+          nullable: false
+
+    Error:
+      type: object
+      properties:
+        title:
+          maximum: 50
+          type: string
+          description: Technical error message.
+        detail:
+          maximum: 50
+          type: string
+          description: Message to present to the client.
+        instance:
+          maximum: 50
+          type: string
+          description: Error Catalog Code.
+        type:
+          maximum: 100
+          type: string
+          description: Address of the source requested by the proxy
+        resource:
+          maximum: 100
+          type: string
+          description: Resource of the service in which the error occurred.
+        component:
+          maximum: 100
+          type: string
+          description: Service component in which the error occurred.
+        backend:
+          maximum: 100
+          type: string
+          description: Internal error code.
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+

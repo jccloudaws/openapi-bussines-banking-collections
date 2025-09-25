@@ -1,0 +1,217 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Api Chanel Bussines Banking User Recovery
+  description: Experience microservice to send mail when recovering user
+servers:
+  - url: bancaempresasdesarrollo.pichincha.com/channel/business-banking/v1
+    description: Develop
+tags:
+  - name: Notifications
+    description: Notification controller
+
+paths:
+  /user-recovery/notifications:
+    post:
+      tags:
+        - Notifications
+      summary: Send a notification when user recovers his/her username.
+      operationId: postNotification
+      parameters:
+        - name: X-Apigee-Credentials
+          in: header
+          required: true
+          description: Base64 authentication values for Apigee. (apike:secret)
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+        - name: X-Guid
+          in: header
+          description: Active session for current user transaction.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: b292bed18ac34a26bdc021ace9033b19
+        - name: X-Device
+          in: header
+          description: Device's hash o id.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: X-Device-Ip
+          in: header
+          description: IP-address from request.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: X-Session
+          in: header
+          description: Active session for current user transaction.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: X-Agency
+          in: header
+          description: Agency code for user.
+          required: false
+          style: simple
+          schema:
+            maxLength: 9
+            type: string
+            example: "21"
+        - name: X-Geolocation
+          in: header
+          description: Geolocalization from request.
+          required: false
+          style: simple
+          schema:
+            maxLength: 20
+            type: string
+            example: -0.120670,-78.483371
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostNotificationRequest"
+      responses:
+        200:
+          description: OK
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    PostNotificationRequest:
+      type: object
+      required:
+        - requester
+        - aditionalNotifications
+        - transaction
+        - messages
+      properties:
+        requester:
+          $ref: "#/components/schemas/Requester"
+        additionalNotifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdditionalNotification"
+        transaction:
+          $ref: "#/components/schemas/Transaction"
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Message"
+    Transaction:
+      type: object
+      required:
+        - type
+      properties:
+        errorCode:
+          type: string
+          description: Código de error.
+          example: "0"
+        type:
+          type: string
+          description: Tipo de la transacción.
+          example: 305003701
+    AdditionalNotification:
+      type: object
+      properties:
+        email:
+          type: string
+          example: lmulloa@pichincha.com
+        cellphone:
+          $ref: "#/components/schemas/Cellphone"
+    Message:
+      type: object
+      properties:
+        key:
+          type: string
+          example: name
+        value:
+          type: string
+          example: Luis
+    Cellphone:
+      type: object
+      properties:
+        internationalPrefix:
+          type: string
+          example: "593"
+        number:
+          type: string
+          example: "982099110"
+    Requester:
+      type: object
+      required:
+        - documentNumber
+        - documentType
+      properties:
+        documentNumber:
+          type: string
+          example: 1703113793
+        documentType:
+          type: string
+          example: "0001"
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        errorCode:
+          type: string
+          pattern: ^[a-zA-Z]+$\d+$
+          maxLength: 6
+        developerMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        userMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        moreInfo:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256

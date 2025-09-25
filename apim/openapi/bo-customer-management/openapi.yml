@@ -1,0 +1,1865 @@
+openapi: 3.0.0
+info:
+  title: API Channel - Back Office - Customer Management V1
+  description: |
+    Channel API For Customer Management. <br>
+    <br>
+    <b>• Business Area</b> `Sales and service`
+    <br>
+    <b>• Business Domain</b> `Customer Management`
+    <br>
+    <b>• Service Domain</b> `Customer Products and Services`
+  contact:
+    name: Jimmy Chango
+    email: jchango-ext@pichincha.pe
+  version: 1.6.0
+servers:
+  - description: Development
+    url: http://localhost:8080/channel/back-office/v1/customer-management
+tags:
+  - name: "Customer Management"
+    description: "Customer Management Controller"
+  - name: "Account"
+    description: "Account Controller"
+  - name: "Banking Product Package"
+    description: "Banking Product Package Controller"
+  - name: "Banking Product Operation Paramater"
+    description: "Banking Product Operation Paramater Controller"
+  - name: "Company Operation Parameter"
+    description: "Company Operation Parameter Controller"
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /customers:
+    get:
+      tags:
+        - Customer Management
+      summary: Retrieves a customer detail information
+      description: >+
+        ### Details:
+          Retrieves a customer information by  filters
+
+        ### Valid use of parameters:
+
+        | Expected result | Path Parameter | Query Parameter |
+
+        |--------------------|--------------- |-----------------|
+
+        |Retrieve a customer by documentType and documentNumber | - | documentType, documentNumber |
+
+        ### The combination described above are the only possible combinations of parameters, other combinations will return error.
+      operationId: getCustomerByFilter
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - in: query
+          name: documentType
+          required: true
+          schema:
+            type: string
+          description: "Document type for company"
+          example: "003"
+        - in: query
+          name: documentNumber
+          required: true
+          schema:
+            type: string
+          description: "Document number for company"
+          example: "0000000000"
+        - in: query
+          name: customerUuid
+          required: true
+          schema:
+            type: string
+          description: "UUid find company in redis cache"
+          example: "b2f01259-a60b-45e8-b5e3-215924834d1"
+      responses:
+        200:
+          description: The User Information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCustomerByFilter'
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /verify:
+    post:
+      tags:
+        - Customer Management
+      summary: Verify if customer exists.
+      description: |
+        ### Details:
+        Verify if customer exists by documentType and documentNumber and return information of customer.
+      operationId: PostCustomerManagementVerify
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCustomerVerifyRequest'
+        required: true
+      responses:
+        "200":
+          description: The company exists.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/PostCustomerVerifyResponse'
+        "401":
+          description: You're not authorized to perform this operation
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "502":
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /:
+    post:
+      tags:
+        - Customer Management
+      summary: Create customer
+      operationId: PostCustomer
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      description: >+
+        ### Details:
+        
+        Create new customer with data management.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCustomerRequest'
+      responses:
+        200:
+          description: The customer was create successfully.
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /banking-product-packages:
+    get:
+      tags:
+        - Banking Product Package
+      summary: Banking product package list.
+      description: "### Details:\n   Retrieves a banking product packages list with services selected and not selected. \n\n### Valid use of parameters:\n| Expected result | Path Parameter | Query Parameter |\n|--------------------|--------------- |-----------------|\n|Retrieve banking product packages list by customerAffiliationId in cache| - | customerAffiliationId |\n\n\n"
+      operationId: GetBankingProductPackageByFilter
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: true
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: customerUuid
+          in: query
+          description: Pseudo identifier to retrieve information from cache.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: |-
+            <b>`Successful search.`</b>
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetBankingProductPackageByFilterResponse'
+              examples:
+                GetUserProfilesResponseExample:
+                  $ref: '#/components/examples/GetBankingProductPackageByFilterResponseExample'
+        "400":
+          description: |-
+            <b>`Bad Request`</b><br><br>
+            The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        "401":
+          description: |-
+            <b>`Unauthorized`</b><br><br>
+            The request requires user authentication.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: |-
+            <b>`Forbidden`</b><br><br>
+            The server understood the request, but is refusing to fulfill it. Authorization will not help and the request SHOULD NOT be repeated.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: |-
+            <b>`Not Found`</b><br><br>
+            The server has not found anything matching the Request-URI.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "409":
+          description: |-
+            <b>`Conflict`</b><br><br>
+            The request could not be completed due to a conflict with the current state of the resource.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "429":
+          description: |-
+            <b>`Too Many Requests`</b><br><br>
+            Indicates that the user has sent too many requests in a given amount of time ("rate limiting").
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: |-
+            <b>`Internal Server Error`</b><br><br>
+            The server encountered an unexpected condition which prevented it from fulfilling the request.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "504":
+          description: |-
+            <b>`Gateway Timeout`</b><br><br>
+            The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /banking-product-packages/:
+    post:
+      tags:
+        - Banking Product Package
+      summary: Save Banking product package list.
+      description: >+
+        ### Details:
+        
+        Save Banking product package list of customer.
+      operationId: PostBankingProductPackage
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: customerUuid
+          in: query
+          description: Pseudo identifier to retrieve information from cache.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostBankingProductPackageRequest'
+      responses:
+        200:
+          description: Banking Product Parameters List was successfully save.
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /accounts:
+    get:
+      tags:
+        - Account
+      summary: Customer account list.
+      description: "### Details:\n   Retrieves customer account list. \n\n### Valid use of parameters:\n| Expected result | Path Parameter | Query Parameter |\n|--------------------|--------------- |-----------------|\n|Retrieve account list by customerAffiliationId in cache | - | customerAffiliationId |\n\n\n"
+
+      operationId: GetCustomerManagementAccountByFilter
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: customerUuid
+          in: query
+          description: Pseudo identifier to retrieve information from cache.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: The Account Information was successfully returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCustomerManagementAccountByFilterResponse'
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /banking-product-operations-parameters:
+    get:
+      tags:
+        - Banking Product Operation Paramater
+      summary: Parameter retrieve by filter
+      description:  >+
+        ### Details:
+          Retrieves parameter configuration for contracted product
+
+        ### Valid use of parameters:
+
+        | Expected result | Path Parameter | Query Parameter |
+
+        |--------------------|--------------- |-----------------|
+
+        |Retrieve parameter configuration by customerUuid and productId  | - | customerUuid - productId |
+
+        ### The combination described above are the only possible combinations of parameters, other combinations will return error.
+      operationId: GetParamaterRetrieve
+      parameters:
+        - name: authorization
+          in: header
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: id of request
+          example: 1
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: customerUuid
+          in: query
+          description: Customer affiliated to business Banking
+          required: true
+          schema:
+            maxLength: 100
+            type: string
+            example: qwerccf-a60b-45e8-b5e3-215924834e5
+        - name: productId
+          in: query
+          description: Product id
+          required: false
+          schema:
+            maxLength: 100
+            type: string
+            example: qwerccf-a60b-45e8-b5e3-215924834e5
+      responses:
+        "200":
+          description: |-
+            <b>`Successful`</b>
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetParamaterRetrieveResponse'
+              examples:
+                GetParamaterRetrieveResponseExample:
+                  $ref: '#/components/examples/GetParamaterRetrieveResponseExample'
+        "400":
+          description: |-
+            <b>`Bad Request`</b><br><br>
+            The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        "401":
+          description: |-
+            <b>`Unauthorized`</b><br><br>
+            The request requires user authentication.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: |-
+            <b>`Forbidden`</b><br><br>
+            The server understood the request, but is refusing to fulfill it. Authorization will not help and the request SHOULD NOT be repeated.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: |-
+            <b>`Not Found`</b><br><br>
+            The server has not found anything matching the Request-URI.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "409":
+          description: |-
+            <b>`Conflict`</b><br><br>
+            The request could not be completed due to a conflict with the current state of the resource.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "429":
+          description: |-
+            <b>`Too Many Requests`</b><br><br>
+            Indicates that the user has sent too many requests in a given amount of time ("rate limiting").
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: |-
+            <b>`Internal Server Error`</b><br><br>
+            The server encountered an unexpected condition which prevented it from fulfilling the request.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "504":
+          description: |-
+            <b>`Gateway Timeout`</b><br><br>
+            The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /company-operations-parameters:
+    get:
+      tags:
+        - Company Operation Parameter
+      summary: Returns a list of company parameters
+      description: "### Details:\n Retrieves the configuration of the company operation parameter.  \n\n### Valid use of parameters:\n| Expected result | Path Parameter | Query Parameter |\n|--------------------|--------------- |-----------------|\n|Retrieve company operations parameters by customerUuid  | - |  customerUuid  \n|Retrieve a configuration by sending the parameterName | - |  parameterName \n\n### The combination described above are the only possible combinations of parameters, other combinations will return error.\n\n"
+      operationId: GetCompanyParameterByFilter
+      parameters:
+        - name: authorization
+          in: header
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-servicing-order
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-04-29 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: id of request
+          example: 1
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+          example: ES
+        - name: customerUuid
+          in: query
+          description: Customer affiliated to business Banking
+          required: true
+          schema:
+            maxLength: 100
+            type: string
+            example: qwerccf-a60b-45e8-b5e3-215924834e5
+        - name: parameterName
+          in: query
+          description: parameter Name
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+          example: 079290a2-d576-4d7e-90ca-67620e6c55df
+      responses:
+        "200":
+          description: |-
+            <b>`Successful search.`</b>
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/GetCompanyParameterByFilterResponse'
+              examples:
+                GetCompanyParameterByFilterResponseExample:
+                  $ref: '#/components/examples/GetCompanyParameterByFilterResponseExample'
+        "400":
+          description: |-
+            <b>`Bad Request`</b><br><br>
+            The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        "401":
+          description: |-
+            <b>`Unauthorized`</b><br><br>
+            The request requires user authentication.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: |-
+            <b>`Forbidden`</b><br><br>
+            The server understood the request, but is refusing to fulfill it. Authorization will not help and the request SHOULD NOT be repeated.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: |-
+            <b>`Not Found`</b><br><br>
+            The server has not found anything matching the Request-URI.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "409":
+          description: |-
+            <b>`Conflict`</b><br><br>
+            The request could not be completed due to a conflict with the current state of the resource.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "429":
+          description: |-
+            <b>`Too Many Requests`</b><br><br>
+            Indicates that the user has sent too many requests in a given amount of time ("rate limiting").
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: |-
+            <b>`Internal Server Error`</b><br><br>
+            The server encountered an unexpected condition which prevented it from fulfilling the request.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "504":
+          description: |-
+            <b>`Gateway Timeout`</b><br><br>
+            The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    GetCustomerByFilter:
+      title: GetCustomerByFilter
+      type: object
+      required:
+        - documentType
+        - documentNumber
+      properties:
+        customerUuid:
+          type: string
+          description: customer affiliation id
+          example: "b2f01259-a60b-45e8-b5e3-215924834d1"
+        customerAffiliationId:
+          type: string
+          description: customer affiliation id
+          example: "b2f01259-a60b-45e8-b5e3-215924834d1"
+        documentNumber:
+          type: string
+          description: document number of customer
+          example: "1700000000"
+        documentType:
+          type: string
+          description: type of document
+          example: "0001"
+        cif:
+          type: string
+          description: cif of customer
+          example: 'cus_wAeVG2V7YOG2N2'
+        fullName:
+          type: string
+          description: full names of customer
+          example: 'SERVAPSA S.A.'
+        description:
+          type: string
+          description: description above the customer
+          example: 'Empresa de servicio tecnico.'
+        status:
+          $ref: "#/components/schemas/GetCustomerProductStatus"
+    GetCustomerProductStatus:
+      title: GetCustomerProductStatus
+      type: object
+      properties:
+        code:
+          type: string
+          example: "ENABLED"
+          description: "Profile status code"
+    PostCustomerVerifyRequest:
+      type: object
+      properties:
+        documentNumber:
+          type: string
+          description: Customer identification document number.
+          example: "1700000000"
+        documentType:
+          type: string
+          description: Type of customer identification document.
+          example: "0001"
+      description: PostCustomerVerifyRequest
+    PostCustomerVerifyResponse:
+      type: object
+      properties:
+        customerUuid:
+          type: string
+          description: customer affiliation id
+          example: "b2f01259-a60b-45e8-b5e3-215924834d1"
+        customerAffiliationId:
+          type: string
+          example: b2f01259-a60b-45e8-b5e3-215924834d1
+          x-mapping: company_contract.company_contract_uuid
+        documentNumber:
+          type: string
+          description: Customer identification document number.
+          example: "1700000000"
+        documentType:
+          type: string
+          description: Type of customer identification document.
+          example: "0001"
+        fullName:
+          type: string
+          example: SERVAPSA S.A.
+          x-mapping: company.name
+        cif:
+          type: string
+          description: Type de cif
+          example : "CBI"
+        status:
+          $ref: '#/components/schemas/CustomerVerifyStatus'
+      description: PostCustomerVerifyResponse
+    CustomerVerifyStatus:
+      title: CustomerVerifyStatus
+      type: object
+      properties:
+        code:
+          type: string
+          description: Profile´s status code
+          example: ENABLED
+          x-mapping: status
+    PostCustomerRequest:
+      type: object
+      properties:
+        customerId:
+          type: string
+          example: "1700000000"
+          maxLength: 45
+          x-mapping: "company.document_number"
+    GetCustomerManagementAccountByFilterResponse:
+      title: GetCustomerManagementAccountResponse
+      type: array
+      items:
+        $ref: '#/components/schemas/Account'
+    Account:
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: account identification Mask | acccount number
+          example: "963b7033-a47b-41d7-84e5-0df6aae68f10"
+        description:
+          type: string
+          description: account identification | acccount number
+          example: "5464354584"
+        type:
+          $ref: '#/components/schemas/Type'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        status:
+          $ref: '#/components/schemas/Status'
+    Type:
+      type: object
+      properties:
+        code:
+          type: string
+          description: account type code
+          example: CTE
+        description:
+          type: string
+          description: account Type description
+          example: CTA.CTE PERSONAL
+    Status:
+      type: object
+      properties:
+        code:
+          type: string
+          description: status code
+          example: A
+        description:
+          type: string
+          description: status description
+          example: ACTIVO
+    Option:
+      type: object
+      properties:
+        value:
+          type: string
+          description: Options Id.
+          example: "11"
+          maxLength: 3
+        label:
+          type: string
+          description: Options name.
+          example: "Datos"
+          maxLength: 100
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: currency code
+          example: USD
+          maxLength: 50
+        description:
+          type: string
+          description: currency description
+          example: Dolares Americanos
+          maxLength: 50
+    GetBankingProductPackageByFilterResponse:
+      type: object
+      properties:
+        packageId:
+          type: string
+          description: identifier of the package where the services to be contracted are located.
+          example: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+          maxLength: 100
+        name:
+          type: string
+          description: name package
+          example: "Paquete avanzado"
+          maxLength: 50
+        isEditable :
+          type : boolean
+          description : Whether the package is editable or not
+          example: true
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetProduct'
+    GetProduct:
+      title: GetProduct
+      type: object
+      properties:
+        productId:
+          type: string
+          description: Product Id.
+          nullable: false
+          example: "A0AA046A-9884-46A4-9262-BD284F785DDB"
+          maxLength: 100
+        description:
+          type: string
+          description: Product description
+          nullable: false
+          example: "Transferencias a Cuentas Propias"
+          maxLength: 50
+        isSelected :
+          type : boolean
+          description : indicates whether the customer had the contracted product.
+          example: false
+        isSelectedUser :
+          type : boolean
+          description : indicates whether the customer wants the product.
+          example: false
+        isConfigurable:
+          type : boolean
+          description : Whether the product is configurable or not
+          example: false
+        price:
+          type: number
+          description: price of product.
+          format: double
+          example: 500
+          maxLength: 100
+        currency:
+          $ref: '#/components/schemas/Currency'
+        approvalLevels:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetApprovalLevelsSave'
+    GetParamaterRetrieveResponse:
+      title: GetParamaterByFilterResponse
+      type: object
+      properties:
+        parameterId:
+          type: string
+          description: company parameter id.
+          example: A0AA046A-9884-46A4-9262-BD284F785DDB
+          maxLength: 100
+        name:
+          type: string
+          description: name company parameter.
+          example: Tasa spread
+          maxLength: 100
+        label:
+          type: string
+          description: label company parameter.
+          example: Monto Máximo
+          maxLength: 100
+        symbol:
+          type: string
+          description: symbol company parameter.
+          example: $
+          maxLength: 100
+        placeholder:
+          type: string
+          description: placeholder company parameter.
+          example: Ingresa un monto
+          maxLength: 100
+        regex:
+          type: string
+          description: regex company parameter.
+          example: regex
+          maxLength: 200
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/Option'
+        value:
+          type: string
+          description: value company parameter.
+          example: "50"
+          maxLength: 50
+        typeValue:
+          type: string
+          description: type value company parameter.
+          example: "Porcentaje"
+          maxLength: 50
+    PostBankingProductPackageRequest:
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: account identification Mask | acccount number
+          example: "963b7033-a47b-41d7-84e5-0df6aae68f10"
+        numberApprovers:
+          type: integer
+          description: number Approvers
+          example: "1"
+        instructingUser:
+          type: string
+          description: instructing user history.
+          example: "jramos"
+        limitsAmount:
+          type: array
+          items:
+            $ref: "#/components/schemas/LimitAmount"
+        packageProduct:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetPackage'
+    LimitAmount:
+      title: Level
+      type: object
+      properties:
+        minAmount:
+          type: string
+          description: minimum amount
+          example: "0"
+          maxLength: 100
+        maxAmount:
+          type: string
+          description: maximum amount
+          example: "8000000"
+          maxLength: 100
+        currency:
+          $ref: "#/components/schemas/Currency"
+    GetPackage:
+      type: object
+      properties:
+        packageId:
+          type: string
+          description: The uuid of the package
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetProducts'
+    GetProducts:
+      title: GetProduct
+      type: object
+      properties:
+        productId:
+          type: string
+          description: Product Id child.
+          nullable: false
+          example: A0AA046A-9884-46A4-9262-BD284F785DDB
+          x-mapping: company_contract_product.product_uuid
+        isSelected :
+          type : boolean
+          description : Whether the product is selected or not
+        isSelectedUser :
+          type : boolean
+          description : Whether the product is selected or not for the customer
+          example: false
+        parameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetParameters'
+    GetParameters:
+      title: GetParameters
+      type: object
+      properties:
+        parameterId:
+          type: string
+          description: parameter id.
+          nullable: false
+          example: A0AA046A-9884-46A4-9262-BD284F785DDB
+        name:
+          type: string
+          description: Parameter name
+          example: "TSPREAD"
+        value:
+          type: string
+          description: value
+          example: 120
+    GetApprovalLevelsSave:
+      title: GetProduct
+      type: object
+      properties:
+        limitsAmount:
+          type: array
+          items:
+            $ref: "#/components/schemas/LimitAmount"
+    GetCompanyParameterByFilterResponse:
+      type: object
+      properties:
+        companyParameters:
+          type: array
+          title: companyParameters
+          items:
+            $ref: '#/components/schemas/CompanyParameterData'
+        approvalLevels:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApprovalLevels'
+    CompanyParameterData:
+      title: CompanyParameterData
+      type: object
+      properties:
+        companyParameterId:
+          type: string
+          description: company parameter id.
+          nullable: false
+          example: A0AA046A-9884-46A4-9262-BD284F785DDB
+          maxLength: 100
+        name:
+          type: string
+          example: Cuenta Cargo
+          description: name company parameter
+          maxLength: 100
+        value:
+          type: string
+          example: "01020142546"
+          description: value company parameter
+          maxLength: 50
+        typeValue:
+          type: string
+          example: "Porcenjate"
+          description: Type of value company parameter.
+          maxLength: 50
+        status:
+          $ref: '#/components/schemas/Status'
+    ApprovalLevels:
+      title: ApprovalLevels
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/CategorySave"
+        limitsAmount:
+          type: array
+          items:
+            $ref: "#/components/schemas/LevelsLimitAmount"
+    LevelsLimitAmount:
+      title: LevelsLimitAmount
+      type: object
+      properties:
+        minAmount:
+          type: string
+          example: "0"
+          maxLength: 100
+        maxAmount:
+          type: string
+          example: "8000000"
+          maxLength: 100
+        currency:
+          $ref: "#/components/schemas/Currency"
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/CategoryId"
+    CategoryId:
+      title: CategoryId
+      type: object
+      properties:
+        categoryId:
+          type: string
+          example: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+          maxLength: 100
+    ErrorBadRequest:
+      type: object
+      properties:
+        title:
+          maxLength: 50
+          type: string
+          description: Technical error message.
+          example: Missing mandatory fields.
+        detail:
+          maxLength: 50
+          type: string
+          description: Message to display to the client.
+          example: The input fields are not correct
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorList'
+        instance:
+          maxLength: 50
+          type: string
+          description: Error catalog code.
+          example: "022"
+        type:
+          maxLength: 100
+          type: string
+          description: Address where the error occurs.
+          example: /v1/name/pathSuffix
+    CategorySave:
+      title: Category
+      type: object
+      properties:
+        categoryId:
+          type: string
+          description: category Id.
+          example: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+          maxLength: 100
+        code:
+          type: string
+          example: "001"
+          description: category code.
+          maxLength: 50
+        name:
+          type: string
+          example: "Categoria A"
+          description: category name.
+          maxLength: 50
+    ErrorList:
+      properties:
+        message:
+          type: string
+          description: Message.
+          maxLength: 50
+          example: Bad Request
+        businessMessage:
+          type: string
+          description: Business error message.
+          maxLength: 50
+          example: The xyz field is mandatory
+    Error:
+      type: object
+      properties:
+        errorCode:
+          maxLength: 6
+          pattern: "^[a-zA-Z]+$\\d+$"
+          type: string
+          description: Error code.
+        developerMessage:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          description: Developer message.
+        userMessage:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          description: User message.
+        moreInfo:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          description: More info.
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+  examples:
+    GetBankingProductPackageByFilterResponseExample:
+      value:
+        - packageId: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+          name: "Paquete avanzado"
+          isEditable: true
+          products:
+            - productId: "A0AA046A-9884-46A4-9262-BD284F785DDB"
+              description: "Cuentas"
+              isSelected: true
+              isSelectedUser: false
+              isConfigurable: true
+              price: 500
+              currency:
+                code: "USD"
+                description: "Dolares Americanos"
+              approvalLevels:
+                - limitsAmount:
+                    - minAmount: "0"
+                      maxAmount: "8000000"
+                      currency:
+                        code: "USD"
+                        description: "Dolares Americanos"
+    GetCompanyParameterByFilterResponseExample:
+      value:
+        companyParameters:
+          - companyParameterId: "A0AA046A-9884-46A4-9262-BD284F785DDB"
+            name: "Cuenta Cargo"
+            value: "01020142546"
+            typeValue: "Porcenjate"
+            status:
+              code: "ENABLED"
+        approvalLevels:
+          - categories:
+              - categoryId: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+                code: "001"
+                name: "Categoria A"
+            limitsAmount:
+              - minAmount: "0"
+                maxAmount: "8000000"
+                currency:
+                  code: "USD"
+                  description: "Dolares Americanos"
+                categories:
+                  - categoryId: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+    GetParamaterRetrieveResponseExample:
+      value:
+        -
+          parameterId: "A0AA046A-9884-46A4-9262-BD284F785DD8"
+          name: "Tasa spread"
+          label: "Monto Máximo"
+          symbol: "$"
+          placeholder: "Ingresa un monto"
+          regex: "regex"
+          options:
+            - value: "11"
+              label: "Datos 1"
+            - value: "12"
+              label: "Datos 2"
+          value: "20"
+          typeValue: "Porcentaje"

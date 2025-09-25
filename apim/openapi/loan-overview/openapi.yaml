@@ -1,0 +1,903 @@
+openapi: 3.0.0
+info:
+  title: API Channel Business Banking Loan V1
+  description: |
+    API Chanel For Manage Loan <br>
+    > <b>Dominio de Servicio BIAN</b> `Loan.`<br>
+  version: 2.0.0
+  contact:
+    name: Enrique Marquez
+    email: emarquezv-ext@pichincha.pe
+servers:
+  - url: http://localhost:8080/channel/business-banking/v1/loan-overview
+    description: Development
+security:
+  - ApiKeyAuth: []
+tags:
+  - name: Loan
+    description: Loan Controller
+  - name: Loan Consolidation
+    description: Loan Consolidation Controller
+  - name: Credit Line
+    description: Credit Line Controller
+  - name: Credit Line Consolidation
+    description: Credit Line Consolidation Controller
+  - name: Invoice
+    description: Invoice Controller
+paths:
+  /loans:
+    get:
+      tags:
+        - Loan
+      summary: Retrieve list and detail of customer loans.
+      description: "### Details:\n Retrieve list of customer loans grouped by sub-product by filter\n### Valid use of parameters:\n| Expected result | Path Parameter | Query Parameter |\n|--------------------|--------------- |-----------------|\n|Retrieve sort order| - |  sortBy  |\n|Retrieve Sorting Order Criterion| - |  sortDirection  |\n|Retrieve sub-product code| - |  subProduct  |\n### The combination described above are the only possible combinations of parameters, other combinations will return error.          \n"
+      operationId: GetLoanByFilter
+      parameters:
+        - name: authorization
+          in: header
+          description: token jwt
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: sortBy
+          in: query
+          description: Sort label
+          required: false
+          schema:
+            type: string
+        - name: sortDirection
+          in: query
+          description: Sorting direction
+          required: false
+          schema:
+            type: string
+        - name: subProduct
+          in: query
+          description: Sub-product code
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetLoanByFilterResponse'
+          description: List of loans
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Bad request (UCP001)"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Internal error (UCP002, UCP003)"
+      x-accepts: application/json
+      x-tags:
+        - tag: default
+  /loans/consolidation:
+    get:
+      tags:
+        - Loan Consolidation
+      summary: Obtains information on customer loans grouped by sub-product.
+      description: |
+        ### Details:
+
+        Returns information on customer loans grouped by sub-products and ordered by opening and expiration dates by organizationId .
+
+      operationId: GetLoanConsolidate
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: false
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      responses:
+        '200':
+          description: List of lines of credit by sub-product
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetLoanConsolidateResponse'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Bad request (UCP001)"
+        '403':
+          description: El usuario no tiene autorización para realizar esta operación.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Internal error (UCP002, UCP003)"
+      deprecated: false
+  /loans/credit-lines:
+    get:
+      tags:
+        - Credit Line
+      summary: Retrieve information on customer credit lines
+      description:  |
+        ### Details:
+
+        Return the total lines available (GLB), and the total line used in dollars.
+      operationId: GetCreditLine
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: false
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetCreditLineResponse'
+          description: List of credit lines available
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Bad request (UCP001)"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Internal error (UCP002, UCP003)"
+      x-accepts: application/json
+      x-tags:
+        - tag: default
+  /loans/credit-lines/consolidation:
+    get:
+      tags:
+        -  Credit Line Consolidation
+      summary: Obtains consolidated information on the client's credit lines
+      description:   |
+        ### Details:
+        Retrieves consolidated information on the customer's credit lines, total debt, amount used, and amount available.
+      operationId: GetCreditLineConsolidate
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: false
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCreditLineConsolidateResponse'
+          description: List of consolidated lines of credit
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Bad request (UCP001)"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Internal error (UCP002, UCP003)"
+      x-accepts: application/json
+      x-tags:
+        - tag: default
+  /loans/invoices:
+    get:
+      tags:
+        - Invoice
+      summary: invoices list by account number
+      description: |
+        ### Details:
+
+        Returns the invoices list by account number.
+
+        | Expected Result  | Path Parameter | Query Parameter                 |
+        | ---------------- | ------------   | -----------------------------------|
+        | Retrieves a list of invoices by account number| - | accountNumber  |
+      operationId: GetInvoiceByFilter
+      parameters:
+        - name: authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: JWT Authorization Token
+          example: Dasd123123asdad1231jbw
+        - name: app-name
+          in: header
+          description: Application Name
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: app-code
+          in: header
+          description: App Code
+          required: false
+          schema:
+            type: string
+        - name: accountNumber
+          in: query
+          description: Account code
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of invoces
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetInvoiceByFilterResponse'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Bad request (UCP001)"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Internal error (UCP002, UCP003)"
+      x-accepts: application/json
+      x-tags:
+        - tag: default
+components:
+  schemas:
+    GetLoanByFilterResponse:
+      type: object
+      properties:
+        loanId:
+          type: integer
+          example: 539894273
+          description: Loan Number
+        subProduct:
+          type: string
+          example: Prestamos
+          description: Descripción del subproducto
+        disbursementDate:
+          type: string
+          example: 13/05/2021
+          description: Opening date
+        feeExpirationDate:
+          type: string
+          example: 13/05/2021
+          description: next due date.
+        loanAmount:
+          type: number
+          example: 10500
+          description: Starting amount
+        annualEffectiveInterestRate:
+          type: number
+          example: 18.16
+          description: T.E.A.
+        amountPlusInterest:
+          type: number
+          example: 17360.08
+          description: Contract amount added ITF and Liability Insurance
+        feesQuantity:
+          type: integer
+          example: 60
+          description: Term
+        paymentTypeCode:
+          type: string
+          example: SCH
+          description: Credit type code
+        paymentTypeDescription:
+          type: string
+          example: Cuotas
+          description: Type of credit Description
+        expirationDate:
+          type: string
+          example: '2012-08-03T00:00:00.000-05:00'
+          description: Fecha de vencimiento del préstamo
+        quantityFeesPaid:
+          type: integer
+          example: 31
+          description: Total de cuotas pagadas.
+        feeAmount:
+          type: number
+          example: 490.34
+          description: Importe de la cuota.
+        currency:
+          description: Moneda de línea
+          $ref: '#/components/schemas/Currency'
+        contractAmount:
+          type: number
+          description: Monto a pagar
+          example: 17354.08
+        subProductCode:
+          type: string
+          example: PTMO
+          description: Código del subproducto
+      title: LoanResponse
+    AmountCurrency:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          type: number
+          example: 3000
+          description: Total debt by currency
+      title: AmountCurrency
+    GetLoanConsolidateResponse:
+      type: object
+      properties:
+        description:
+          type: string
+          example: FINANCIAMIENTO IMP
+          description: Descripción del subproducto
+        totalDebt:
+          type: array
+          title: totalDebt
+          items:
+            $ref: '#/components/schemas/AmountCurrency'
+      title: ConsolidateSubProduct
+    CreditLineCategory:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'N'
+          description: Código de la categor&iacute;a de línea
+        description:
+          type: string
+          example: Especifica
+          description: Descripción de la categor&iacute;a de línea
+      title: CreditLineCategory
+    GetCreditLineConsolidateResponse:
+      type: object
+      properties:
+        outstandingDebt:
+          type: number
+          example: 1000
+          description: Deuda total
+        initialAmount:
+          type: number
+          example: 1000
+          description: Monto inicial
+        amountUsed:
+          type: number
+          example: 500
+          description: Monto usado
+        availableAmount:
+          type: number
+          example: 5000
+          description: Monto disponible
+      title: CreditLineConsolidateResponse
+    GetCreditLineResponse:
+      type: object
+      properties:
+        creditLineType:
+          type: string
+          example: PTMO
+          description: Tipo de línea
+        creditLineDescription:
+          type: string
+          example: PRESTAMOS
+          description: Descripción de línea
+        amount:
+          type: number
+          example: 1000
+          description: Importe de línea aprobado
+        used:
+          type: number
+          example: 1000
+          description: Importe de línea usado
+        availableAmount:
+          type: number
+          example: 1000
+          description: Importe de línea disponible
+        currency:
+          description: Moneda de línea
+          $ref: '#/components/schemas/Currency'
+        category:
+          description: Categoría de línea
+          $ref: '#/components/schemas/CreditLineCategory'
+        expirationDate:
+          type: string
+          example: '2019-01-01'
+          description: Fecha de expiración de la línea
+        status:
+          description: Estado de la línea
+          $ref: '#/components/schemas/CreditLineStatus'
+        termDays:
+          type: number
+          example: 213
+          description: Días de plazo
+      title: CreditLineResponse
+    CreditLineStatus:
+      type: object
+      properties:
+        code:
+          type: string
+          example: A
+          description: Código del estado de la línea
+        description:
+          type: string
+          example: ACTIVO
+          description: Descripción del estado de línea
+      title: CreditLineStatus
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          example: PEN
+          description: Código de la moneda
+      title: Currency
+    GetInvoiceByFilterResponse:
+      $ref: '#/components/schemas/InvoiceList'
+    InvoiceList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Invoice'
+    Invoice:
+      type: object
+      properties:
+        billNumber:
+          type: string
+          description: Invoce Number.
+          example: ""
+        currency:
+          $ref: '#/components/schemas/Currency'
+        baseAmount:
+          type: number
+          description: Base amount.
+          example: "2,500"
+        currentBalance:
+          type: number
+          description: Balance actual.
+          example: "5,000"
+        customerFullname:
+          type: string
+          description: Adquiriente de la factura.
+          example: "Enrique Marquez"
+        billingEndDate:
+          type: string
+          description: Fecha de vencimiento de la factura.
+          example: "15/04/2023"
+        status:
+          $ref: '#/components/schemas/CreditLineStatus'
+    Error:
+      additionalProperties: false
+      properties:
+        errorCode:
+          maxLength: 6
+          pattern: "^[a-zA-Z]+$\\d+$"
+          type: string
+        developerMessage:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        userMessage:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        moreInfo:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        status:
+          type: integer
+          default: 409
+        version:
+          type: string
+          pattern: "^[0-9\\.]*$"
+        code:
+          type: string
+          pattern: "^[a-zA-Z]+$\\d+$"
+      type: object
+  securitySchemes:
+    ApiKeyAuth:
+      in: header
+      name: x-api-key
+      type: apiKey

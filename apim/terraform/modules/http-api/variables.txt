@@ -1,0 +1,100 @@
+# ================================
+# modules/http-api/variables.tf
+# ================================
+
+# Nombre de la API (visible en API Gateway)
+variable "api_name" {
+  type = string
+}
+
+# Descripción opcional de la API
+variable "api_description" {
+  type    = string
+  default = null
+}
+
+# Nombre del stage (p.ej. "dev", "qa", "prod")
+variable "stage_name" {
+  type = string
+}
+
+# Si apuntas a un archivo OpenAPI (YAML/JSON), el módulo creará la API desde el spec.
+# Si es null, creará la API de forma declarativa (recursos/ rutas con este módulo).
+variable "openapi_path" {
+  type    = string
+  default = null
+}
+
+# ================================
+# Autorización JWT
+# ================================
+# Emisor (issuer) del proveedor de identidad (p.ej. https://login.microsoftonline.com/<TENANT_ID>/v2.0)
+variable "jwt_issuer" {
+  type = string
+}
+
+# Lista de audiencias
+variable "jwt_audiences" {
+  type = list(string)
+}
+
+# ================================
+# Rutas declarativas
+# ================================
+# Cada ruta se define por su route_key (p.ej. "GET /api/demo") y su integración.
+# Tipos de integración soportados:
+#  - "VPC_LINK"   : requiere listener_arn (o fallback por variable)
+#  - "LAMBDA"     : requiere lambda_name (se resolverá contra lambda_arns_by_name)
+#  - "AWS_PROXY"  : igual que LAMBDA (para invocación proxy)
+#  - "HTTP_PROXY" : requiere url (o nlb_dns + port)
+variable "routes" {
+  type = list(object({
+    route_key   = string                 # p.ej. "POST /foo"
+    auth_scopes = optional(list(string)) # scopes JWT opcionales
+    integration = object({
+      type = string # "VPC_LINK" | "LAMBDA" | "AWS_PROXY" | "HTTP_PROXY"
+      # ---- VPC_LINK ----
+      listener_arn = optional(string) # ARN del listener del NLB (si no viene, se usa el fallback)
+      # ---- HTTP_PROXY ----
+      url     = optional(string) # URI completa (si no, se intenta con nlb_dns + port)
+      method  = optional(string) # Método a usar en la integración HTTP (si no, se deduce de route_key)
+      nlb_dns = optional(string) # DNS del NLB (cuando no pasas url)
+      port    = optional(number) # Puerto del NLB (cuando no pasas url)
+      # ---- LAMBDA / AWS_PROXY ----
+      lambda_name            = optional(string) # Nombre lógico de la función (clave del mapa lambda_arns_by_name)
+      payload_format_version = optional(string) # "2.0" para Lambda por defecto; "1.0" para HTTP por defecto
+    })
+  }))
+  default = []
+}
+
+# ================================
+# Resolución de Lambdas por nombre
+# ================================
+# Mapa: nombre_de_lambda -> ARN (lo recibe el módulo desde el root)
+variable "lambda_arns_by_name" {
+  type = map(string)
+}
+
+# ================================
+# VPC Link y Fallbacks
+# ================================
+# ID del VPC Link (obligatorio si usas rutas con VPC_LINK)
+variable "vpc_link_id" {
+  type    = string
+  default = null
+}
+
+# Fallback para el ARN del listener del NLB (si en la ruta VPC_LINK no se entrega listener_arn)
+variable "fallback_nlb_listener_arn" {
+  type    = string
+  default = null
+}
+
+# ================================
+# Etiquetas
+# ================================
+variable "tags" {
+  type    = map(string)
+  default = {}
+}

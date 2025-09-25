@@ -1,0 +1,11 @@
+{
+  "name": "pre-proc-normalize",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "build": "mkdir -p dist && zip -rq dist/pre-proc-normalize.zip index.js package.json node_modules",
+    "install:prod": "npm ci --only=production"
+  },
+  "dependencies": {}
+}

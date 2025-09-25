@@ -1,0 +1,697 @@
+openapi: 3.0.0
+info:
+  title: API Credit Card V1
+  version: v1  
+  description: API que permite realizar procesos y obtener información relacionados a tarjetas de crédito.
+    <br>
+    > <b>Área de negocio</b> `Operations and Execution`<br>
+    > <b>Dominio de negocio</b> `Cards`
+
+tags:
+  - name: "Credit Card"
+    description: "Credit Card Controller"
+  - name: "Transaction"
+    description: "Transaction Controller"
+
+servers:
+- url: https://bancaempresasdev.pichincha.pe/api
+  description: Ambiente de desarrollo.
+- url: https://bancaempresastest.pichincha.pe/api
+  description: Ambiente de pruebas.
+- url: https://bancaempresas.pichincha.pe/api
+  description: Ambiente de producción.
+
+security:
+  - bearerAuth: []
+
+paths:
+  /credit-card/v1/credit-cards/{creditCardId}:
+    get:
+      summary: Obtiene información relacionada a una tarjeta de crédito.
+      tags:
+        - Credit Card
+      operationId: GetCreditCardById
+      description: 
+        <h2> Detalles </h2>
+        Retorna la información de una tarjeta de crédito.
+      parameters:
+      - $ref: '#/components/parameters/creditCardId'
+      - $ref: '#/components/parameters/apigeeCredentials'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCreditCardByIdResponse"
+        "400":
+          $ref: '#/components/responses/400'
+        "401":
+          $ref: '#/components/responses/401'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "429":
+          $ref: '#/components/responses/429'
+        "500":
+          $ref: '#/components/responses/500'
+        "504":
+          $ref: '#/components/responses/504'
+          
+  /credit-card/v1/credit-cards/{creditCardId}/search:
+    post:
+      summary: Obtiene una lista de tarjetas de crédito relacionadas a cuentas.
+      tags:
+        - Credit Card
+      operationId: PostCreditCardSearch
+      description:
+        <h2> Detalles </h2> 
+        Obtiene una lista de tarjetas de crédito relacionadas a una cuenta.
+      parameters:
+      - $ref: '#/components/parameters/creditCardId'
+      - $ref: '#/components/parameters/apigeeCredentials'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostCreditCardSearchResponse"
+        "400":
+          $ref: '#/components/responses/400'
+        "401":
+          $ref: '#/components/responses/401'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "429":
+          $ref: '#/components/responses/429'
+        "500":
+          $ref: '#/components/responses/500'
+        "504":
+          $ref: '#/components/responses/504'
+  
+  /credit-card/v1/credit-cards/{creditCardId}/transactions:
+    get:
+      summary: Obtiene movimientos corrientes/diferidos, paagos y ajustes de una tarjeta de crédito.
+      tags:
+        - Transaction
+      operationId: GetTransactionByFilters
+      description:
+        <h2> Detalles </h2>
+        Retorna los movimientos de una tarjeta de crédito. <br>
+        <br><hr><br>
+        <h3>Usos Válidos de Parametros:</h3>
+        <table>
+          <tr bgcolor="#E3E9EA">
+            <th align="left">Resultado esperado</th>
+            <th align="left">Parámetro - Query</th>
+          </tr>
+          <tr>
+            <td>Transacciones de movimientos corrientes/diferidos, pagos y ajustes.</td>
+            <td>
+              -
+            </td>
+          </tr>
+          <tr>
+            <td>Transacciones por tipo.</td>
+            <td>
+              <dl>
+                <li>creditCardInternalId</li>
+                <li>type</li>
+                <dd>current-expediture</dd>
+                <dd>deferred-expediture</dd>
+                <dd>payments</dd>
+                <dd>adjustment</dd>
+              </dl>
+            </td>
+          </tr>
+        </table>
+
+      parameters:
+      - name: creditCardInternalId
+        in: query
+        description: Identificador de la tarjeta de crédito.
+        required: true
+        schema:
+          type: number
+          example: 16679939
+      - name: type
+        in: query
+        description: Tipo de transacción.
+        required: false
+        schema:
+          type: string
+          example: 
+            "current-expenditures"
+      - $ref: '#/components/parameters/creditCardId'
+      - $ref: '#/components/parameters/apigeeCredentials'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTransactionByFiltersResponse"
+              examples:
+                current-expenditures:
+                  $ref: '#/components/examples/current-expenditures'
+                deferred-expenditures:
+                  $ref: '#/components/examples/deferred-expenditures'
+                payment:
+                  $ref: '#/components/examples/payment'
+                adjustment:
+                  $ref: '#/components/examples/adjustment'
+        "400":
+          $ref: '#/components/responses/400'
+        "401":
+          $ref: '#/components/responses/401'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "429":
+          $ref: '#/components/responses/429'
+        "500":
+          $ref: '#/components/responses/500'
+        "504":
+          $ref: '#/components/responses/504'
+    
+components:
+  responses:
+    400:
+      description: Problemas con la solicitud del cliente.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            title: Missing mandatory fields.
+            detail: The input fields are not correct
+            errors:
+            - message: Bad Request
+              businessMessage: The xyz field is mandatory
+            instance: "022"
+            type: /v1/name/pathSuffix
+    401:
+      description: El cliente no tiene permisos suficientes.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            title: Authorization Error
+            detail: Client credentials are invalid
+            instance: "033"
+            type: /v1/name/pathSuffix
+    403:
+      description: El cliente no tiene acceso.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            title: Forbidden access to the resource {URI}
+            detail: You do not have permissions for this API, please contact support to request it.
+            instance: "033"
+            type: /v1/name/pathSuffix
+    404:
+      description: Recurso no encontrado.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            title: Not Found
+            detail: Path not found
+            instance: "404"
+            type: /v1/name/pathSuffix
+    429:
+      description: Demasiadas solicitudes.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            title: Too many requests to the resource {URI}
+            detail: Too many requests to the resource, please wait a minute and try again.
+            instance: "429"
+            type: /v1/name/pathSuffix
+    500:
+      description: Error en el servidor.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            title: Internal Server
+            detail: Se produjo un error interno, lo estamos revisando.
+            instance: "0188"
+            type: /v1/name/pathSuffix
+            resource: UMPClientes0020/ConsultaInformacionCliente01
+            component: TX067050
+            backend: "00045"
+    504:
+      description: Se superó el tiempo de espera de la solicitud. Si sucede repetidamente, considere reducir la complejidad de la solicitud.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            title: Gateway Timeout. Request timeout exceeded. If it happens repeatedly, consider reducing the request complexity.
+            detail: Gateway connection problems.
+            instance: "504"
+            type: /v1/name/pathSuffix
+  parameters:
+    apigeeCredentials:
+      name: x-api-key
+      in: header
+      description: Authorization token
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: czg0a2I6eUxtVURRdlZhM2pTb2w1cg==
+    creditCardId:
+      name: creditCardId
+      in: path
+      description: Número de la tarjeta encriptado.
+      required: true
+      schema:
+        type: string
+        example: "5466054753441602"
+  schemas:
+    PostCreditCardSearchResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            creditCards:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreditCard'
+            balanceSummary:
+              $ref: '#/components/schemas/BalanceSummary'
+    GetCreditCardByIdResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/CreditCard'
+    GetTransactionByFiltersResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+        meta:
+          type: object
+          description: Contiene metadata de la respuesta.
+          properties:
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+    CreditCard:
+      type: object
+      properties:
+        internalId:
+          type: string
+          description: Identificador interno de la tarjeta.
+          example: "15584218"
+        creditCardId:
+          type: string
+          description: Número de la tarjeta.
+          example: "5466054753441602"
+        maskedCreditCardNumber:
+          type: string
+          description: Número de la tarjeta enmascarado.
+          example: 5171227841
+        customer:
+          type: object
+          properties:
+            name:
+              type: string
+              example: SIMONS CONCHA ROBERT RICHARD
+        brand:
+          $ref: '#/components/schemas/CardBrand'
+        type:
+          $ref: '#/components/schemas/CardType'
+        balanceInformation:
+          $ref: '#/components/schemas/BalanceInformation'
+        isPrincipal:
+          type: boolean
+          description: Es una tarjeta de crédito principal.
+          example: true
+    BalanceInformation:
+      type: object
+      properties:
+        totalCreditAdjustmentAmount:
+          type: number
+          format: double
+          example: 142.26
+          description: Sumatoria total del monto de los ajustes de crédito de una tarjeta.
+        totalDebitAdjustmentAmount:
+          type: number
+          format: double
+          example: 490.99
+          description: Sumatoria total del monto de los ajustes de débito de una tarjeta.
+        totalCurrentExpendituresAmount:
+          type: number
+          format: double
+          example: 4326.8
+          description: Sumatoria total del monto de los gastos corrientes de una tarjeta.
+        totalDeferredExpendituresAmount:
+          type: number
+          format: double
+          example: 630.13
+          description: Sumatoria total del monto de los gastos diferidos de una tarjeta.
+        outstandingDeferredAmount:
+          type: number
+          format: double
+          example: 845.85
+          description: Saldo pendiente del monto por pagar de gastos diferidos de una tarjeta.
+        totalPaymentsAmount:
+          type: number
+          format: double
+          example: 4095.3
+          description: Sumatoria total del monto de los pagos realizados por una tarjeta.
+        openingBalanceAmount:
+          type: number
+          format: double
+          example: 3576.81
+          description: Saldo inicial de una tarjeta.
+        creditLineAmount:
+          type: number
+          format: double
+          example: 0
+          description: Cupo asignado de una tarjeta.
+        availableCreditLineAmount:
+          type: number
+          format: double
+          example: 0
+          description: Cupo disponible de una tarjeta.
+    BalanceSummary:
+      type: object
+      properties:
+        totalCreditAdjustmentAmount:
+          type: number
+          format: double
+          example: 142.26
+          description: Sumatoria total del monto de los ajustes de crédito de una tarjeta.
+        totalDebitAdjustmentAmount:
+          type: number
+          format: double
+          example: 490.99
+          description: Sumatoria total del monto de los ajustes de débito de una tarjeta.
+        totalCurrentExpendituresAmount:
+          type: number
+          format: double
+          example: 4326.8
+          description: Sumatoria total del monto de los gastos corrientes de una tarjeta.
+        totalDeferredExpendituresAmount:
+          type: number
+          format: double
+          example: 630.13
+          description: Sumatoria total del monto de los gastos diferidos de una tarjeta.
+        outstandingDeferredAmount:
+          type: number
+          format: double
+          example: 845.85
+          description: Saldo pendiente del monto por pagar de gastos diferidos de una tarjeta.
+        totalPaymentsAmount:
+          type: number
+          format: double
+          example: 4095.3
+          description: Sumatoria total del monto de los pagos realizados por una tarjeta.
+        openingBalanceAmount:
+          type: number
+          format: double
+          example: 3576.81
+          description: Saldo inicial de una tarjeta.
+        totalOutstandingPaymentAmount:
+          type: number
+          format: double
+          example: 0
+          description: Sumatoria Total de los montos a pagar.
+    CardBrand:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Código de la marca de la tarjeta.
+          example: ""
+        description:
+          type: string
+          description: Descripción de la marca de la tarjeta.
+          example: "MASTER"
+    CardType:
+      type: object
+      properties:
+        code:
+          type: number
+          description: Código del tipo de tarjeta.
+          example: 29
+        description:
+          type: string
+          description: Descripción del tipo de tarjeta.
+          example: ""
+    Transaction:
+      type: object
+      properties:
+        internalId:
+          type: number
+          description: Identificador de la transacción.
+          example: 7320395
+        creditCard:
+          type: object
+          properties:
+            internalId:
+              type: number
+              description: Identificador de la tarjeta de crédito.
+              example: 16679939
+        businessDocumentId:
+          type: number
+          description: Identificador de documento generado por el negocio.
+          example: 529570
+        description:
+          type: string
+          description: Descripción de la transacción realizada.
+          example: BOOKS BITS ECUADOR BOT
+        type:
+          type: object
+          description: Tipo de operación de la transacción.
+          properties:
+            code:
+              type: string
+              description: Código de la operación realizada.
+              example: 8
+            description:
+              type: string
+              description: Descripción de la operación realizada.
+              example: ""
+        amount:
+          type: number
+          description: Monto de la transacción
+          example: 15.59
+        currency:
+          type: object
+          description: Información de la moneda.
+          properties:
+            code:
+              type: string
+              description: Código de la moneda.
+              example: USD
+            description:
+              type: string
+              description: Descripción de la moneda.
+              example: Dólares
+        transactionDate:
+          type: string
+          description: Fecha y hora de la transacción.
+          example: "2021-05-13T00:00:00"
+        outstandingInstallmentQuantity:
+          type: number
+          description: Número de cuotas pendientes.
+          example: 1
+        term:
+          type: object
+          description: Plazos de la transacción.
+          properties:
+            quantity:
+              type: number
+              description: Plazo de la transacción.
+              example: 3
+            description:
+              type: string
+              description: Descripción del tipo de plazo.
+              example: Meses
+        defferedExpenditureAmount:
+          type: number
+          description: Saldo diferido.
+          example: 31.18
+        downPaymentAmount:
+          type: number
+          description: Cuota inicial.
+          example: 15.59
+        gracePeriod:
+          type: object
+          description: Periodo de gracia.
+          properties:
+            quantity:
+              type: number
+              description: Número de periodo de gracia.
+              example: 1
+            description:
+              type: string
+              description: Descripción del tipo del periodo de gracia.
+              example: Meses
+    Pagination:
+      type: object
+      description: Información relacionada a la paginación de la consulta.
+      properties:
+        limit:
+          type: number
+          description: Límite de registros a traer en la consulta.
+        total:
+          type: number
+          description: Total de páginas de la consulta.
+        offset:
+          type: number
+          description: Página actual de la consulta.
+        totalRecords:
+          type: number
+          description: Total de registros.
+    Error:    
+      type: object
+      properties:
+        title:
+          maximum: 50
+          type: string
+          description: Mensaje de error técnico.
+        detail:
+          maximum: 50
+          type: string
+          description: Mensaje a presentar al cliente.
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error_errors'
+        instance:
+          maximum: 50
+          type: string
+          description: Código de catálogo de errores.
+        type:
+          maximum: 100
+          type: string
+          description: Dirección de la fuente solicitada por el proxy
+        resource:
+          maximum: 100
+          type: string
+          description: Recurso del servicio en el que se produjo el error.
+        component:
+          maximum: 100
+          type: string
+          description: Componente del servicio en el que sucedió el error.
+        backend:
+          maximum: 100
+          type: string
+          description: Código de error interno.
+    Error_errors:
+      properties:
+        name:
+          type: string
+          description: Código de error interno de la API.
+        reason:
+          type: string
+          description: Mensaje de error técnico
+  examples:
+    payment:
+      value:
+        data:
+          - transactionId: 1209259
+            creditCardId: 16679939
+            businessDocumentId: 304994
+            description: "P A G O"
+            operation:
+              code: "3"
+              description: ""
+            amount: 82
+            timestamp: "2022-01-18T00:00:00"
+        meta:
+          pagination:
+            limit: 30
+            total: 2
+            offset: 1
+            totalRecords: 31
+      summary: Pago
+    adjustment:
+      value:
+        data:
+          - transactionId: 3949290
+            creditCardId: 16679939
+            businessDocumentId: 353285
+            description: "NC INCOMING"
+            operation:
+              code: "2"
+              description: ""
+            amount: 16.74
+            timestamp: "2021-05-08T00:00:00"
+        meta:
+          pagination:
+            limit: 30
+            total: 3
+            offset: 1
+            totalRecords: 75
+      summary: Ajuste
+    current-expenditures:
+      value:
+        data:
+          - transactionId: 2206434
+            creditCardId: 16679939
+            businessDocumentId: 448910
+            description: "Rappi BV  WA USA        A"
+            operation:
+              code: "22"
+              description: ""
+            amount: 18.51
+            timestamp: "2022-01-18T00:00:00"
+        meta:
+          pagination:
+            limit: 30
+            total: 4
+            offset: 1
+            totalRecords: 100
+      summary: Gasto corriente
+    deferred-expenditures:
+      value:
+        data:
+          - transactionId: 7320395
+            creditCardId: 16679939
+            businessDocumentId: 529570
+            description: "BOOKS BITS ECUADOR BOT"
+            operation:
+              code: "8"
+              description: ""
+            amount: 15.59
+            timestamp: "2021-05-13T00:00:00"
+            term: 3
+            outstandingQuotasQuantity: 1
+            defferedBalanceAmount: 31.18
+            downPaymentAmount: 15.59
+            graceMonthQuantity: 0
+        meta:
+          pagination:
+            limit: 30
+            total: 1
+            offset: 1
+            totalRecords: 16
+      summary: Gasto diferido
+    
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 

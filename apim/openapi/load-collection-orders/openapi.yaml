@@ -1,0 +1,531 @@
+openapi: 3.0.0
+info:
+  title: "API api channel business banking load collection order"
+  description: "Api for retrieving load collection orders."
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8080/channel/business-banking/v1/load-collection-orders
+    description: Development
+tags:
+  - name: "Account"
+    description: "Account Controller"
+  - name: "Collection Order"
+    description: "Collection Order Controller"
+  - name: "Collection Order Item"
+    description: "Collection Order Item Controller"
+  - name: "Beneficiary"
+    description: "Beneficiary Controller"
+paths:
+  /accounts:
+    get:
+      tags:
+        - Account
+      summary: Retrieve an account List
+      description: >+
+        ### Details:
+        
+        Retrieve an account List for load collection services.
+
+      operationId: getAccountByFilter
+      parameters:
+        - in: header
+          name: Authorization
+          description: token jwt send Front
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAccountByFilterResponse'
+
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /collection-orders:
+    post:
+      tags:
+        - Collection Order
+      summary: Create Collection Order
+      description: >+
+        ### Details:
+
+        Create collection order with information from inputs to cache memory 
+
+      operationId: postCollectionOrder
+      parameters:
+        - in: header
+          name: Authorization
+          description: token jwt send Front
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+      requestBody:
+        description: Request before to post the collection order
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCollectionOrderRequest'
+
+      responses:
+        200:
+          description: Collection order uuid
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/PostCollectionOrderResponse'
+
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /beneficiaries:
+    get:
+      tags:
+        - Beneficiary
+      summary: Retrieve a beneficiary List
+      description: >+
+        ### Details:
+        
+        Retrieve a beneficiary List for collection services
+
+      operationId: getBeneficiary
+      parameters:
+        - in: header
+          name: Authorization
+          description: token jwt send Front
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+        - in: query
+          name: fullName
+          schema:
+            type: string
+          required: true
+          description: search full name
+          example: "full"
+        - in: query
+          name: collectionOrderId
+          schema:
+            type: string
+          required: true
+          description: collection order uuid for get collection order feature
+          example: "15623996-0c48-4551-b895-58cc9fdd3dfe"
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBeneficiaryResponse'
+
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /collection-order-item:
+    post:
+      tags:
+        - Collection Order Item
+      summary: Create a collection order item
+      description: >+
+        ### Details:
+
+        Create a collection order item into collection orders database.
+
+      operationId: postCollectionOrderItem
+      parameters:
+        - in: header
+          name: Authorization
+          description: token jwt send Front
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+      requestBody:
+        description: Request to post the collection order
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCollectionOrderItemRequest'
+      responses:
+        200:
+          description: OK
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  parameters:
+    companyContractUuid:
+      name: companyContractUuid
+      in: query
+      description: Contract company Id
+      example: 2100080794
+      required: true
+      schema:
+        type: string
+  schemas:
+    GetAccountByFilterResponse:
+      type: array
+      title: GetAccountByFilterResponse
+      items:
+        $ref: "#/components/schemas/Accounts"
+    Accounts:
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: 'jshdjshd5454584sd4sd45sd7assasw54as4'
+          description: uuid generated for each account
+          x-mapping: "redis.accountUuid"
+        accountNumber:
+          type: string
+          description: account identification | acccount number
+          example: 2100080794
+          x-mapping: "accountId"
+        alias:
+          type: string
+          description: alias account
+          example: 'alias account'
+        currency:
+          type: object
+          properties:
+            code:
+              type: string
+              description: currency code | ISO-4217
+              example: USD
+            description:
+              type: string
+              description: currency description | ISO-4217
+              example: Dolares Americanos
+        type:
+          $ref : "#/components/schemas/AccountType"
+    GetBeneficiaryResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/BeneficiariesList'
+    BeneficiariesList:
+      title: BeneficiariesList
+      type: object
+      required:
+        - fullName
+        - documentType
+        - documentNumber
+        - email
+      properties:
+        fullName:
+          type: string
+          example: "fullName"
+          description: "Full name the beneficiary."
+          nullable: false
+          x-mapping: "beneficiary.full_name"
+        documentType:
+          type: string
+          example: "documentType"
+          description: "Type document the beneficiary."
+          nullable: false
+          x-mapping: "beneficiary.document_type"
+        documentNumber:
+          type: string
+          example: "documentNumber"
+          description: "Number document the beneficiary."
+          nullable: false
+          x-mapping: "beneficiary.document_number"
+        email:
+          type: string
+          example: "example@nttdata.com"
+          description: "Email the beneficiary."
+          nullable: false
+          x-mapping: "beneficiary.email"
+
+    PostCollectionOrderRequest:
+      description: Body request for write attributes to cache
+      required:
+        - accountId
+        - startCollectionDate
+        - endCollectionDate
+      properties:
+        accountId:
+          title: accountId
+          type: string
+          example: "nascbsdjbshfvbvbfhhf"
+        startCollectionDate:
+          title: startCollectionDate
+          type: string
+          example: "10/05/2022"
+        endCollectionDate:
+          title: endCollectionDate
+          type: string
+          example: "15/05/2022"
+
+
+
+    PostCollectionOrderItemRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - collectionOrderId
+        - amount
+        - identificationType
+        - identificationValue
+        - description
+        - beneficiary
+      properties:
+        collectionOrderId:
+          type: string
+          example: "12345678-eb18-432b-a9ac-0aa5e80ebe9a"
+          description: Transacction universal unique identifier.
+          nullable: false
+        amount:
+          type: number
+          format: float
+          example: 100.0
+        identificationType:
+          $ref: "#/components/schemas/IdentificationType"
+        identificationValue:
+          type: string
+          example: "098567"
+          description: beneficiary identification Value.
+          nullable: false
+        description:
+          type: string
+          example: 'Collection order description'
+          maxLength: 100
+        beneficiary:
+          $ref: "#/components/schemas/Beneficiary"
+    Beneficiary:
+      type: object
+      properties:
+        documentType:
+          type: string
+          example: "RUC"
+          description: Beneficiary Document type.
+          nullable: false
+          x-mapping: "order-item.document_type"
+        documentNumber:
+          type: string
+          example: "1231233450"
+          description: Beneficiary ocument number.
+          nullable: false
+          x-mapping: "order-item.document_number"
+        fullname:
+          type: string
+          example: "Jesus Alberto"
+          description: beneficiary fullName.
+          nullable: false
+          x-mapping: "order-item.fullname"
+        email:
+          type: string
+          example: "collectionorder@domain.com"
+          description: Email beneficiary.
+          nullable: false
+          x-mapping: "order-item.email"
+        saveBeneficiary:
+          type: boolean
+          example: "True/false"
+          description: Data Beneficiary .
+          nullable: false
+
+    IdentificationType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code or number bill
+          example: B
+        description:
+          type: string
+          description: Description bill
+          example: BILL IDENTIFICATION
+          x-mapping: "order-item.billId"
+    AccountType:
+      type: object
+      properties:
+        description:
+          type: string
+          description: description type account
+          example: CORRIENTE
+    PostCollectionOrderResponse:
+      type: object
+      required:
+        - collectionOrderId
+      properties:
+        collectionOrderId:
+          type: string
+          example: "asasdf4d5fd54df545dfdssax"
+
+    Error:
+      type: object
+      properties:
+        title:
+          maximum: 50
+          type: string
+          description: Mensaje de error técnico.
+        detail:
+          maximum: 50
+          type: string
+          description: Mensaje a presentar al cliente.
+        instance:
+          maximum: 50
+          type: string
+          description: Código de catálogo de errores.
+        type:
+          maximum: 100
+          type: string
+          description: Dirección de la fuente solicitada por el proxy
+        resource:
+          maximum: 100
+          type: string
+          description: Recurso del servicio en el que se produjo el error.
+        component:
+          maximum: 100
+          type: string
+          description: Componente del servicio en el que sucedió el error.
+        backend:
+          maximum: 100
+          type: string
+          description: Código de error interno.

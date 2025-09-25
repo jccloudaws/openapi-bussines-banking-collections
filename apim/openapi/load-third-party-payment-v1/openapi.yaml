@@ -1,0 +1,782 @@
+openapi: 3.0.2
+info:
+  title: Api Channel Bussines Banking Load Third Party Payment V1
+  version: 1.0.0
+servers:
+  - description: Server in devops in busines banking layer
+    url: http://localhost:8080/channel/business-banking/v1/load-third-party-payments
+tags:
+  - name: "Account"
+    description: "Account Controller"
+  - name: "Third Party Payment Order"
+    description: "Third Party Payment Order Controller"
+  - name: "Beneficiary"
+    description: "Beneficiary Controller"
+  - name: "Third Party Payment Order Item"
+    description: "Third Party Payment Order Item Controller"
+  - name: "Financial Entity"
+    description: "Financial Entity Controller"
+
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /accounts:
+    get:
+      tags:
+        - Account
+      summary: Retrieve an account List
+      description: >+
+        ### Details:
+        
+        Retrieve an account List for load Third Party Payment services, the data in contract shows some fields, but in cache save the next data about the account 
+        account-uuid -> detail {companyContractProductUuid =asdfaswwwer333, account_id (productUuid/de la cuenta),
+        type,  alias + nro account + product_uuid(uuid servicio/padre), currency_type)}
+
+      operationId: getAccountByFilter
+      parameters:
+        - in: header
+          name: Authorization
+          description: token jwt send Front
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+      responses:
+        200:
+          description: Validate User
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UxGetAccountByFilterResponse"
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /third-party-payment-orders:
+    post:
+      tags:
+        - Third Party Payment Order
+      summary: Create Third Party Payment Order
+      description: >+
+        ### Details:
+
+        Create Third Party Payment Order with information from inputs 
+        to cache memory, this information will help in 
+        the workflow for extract data about account, product and dates
+
+      operationId: postThirdPartyPaymentOrder
+      parameters:
+        - in: header
+          name: Authorization
+          description: token jwt send Front
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+      requestBody:
+        description: Request before to post the Third Party Payment order
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UxPostThirdPartyPaymentOrderRequest'
+
+      responses:
+        200:
+          description: Third Party Payment order uuid
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/UxPostThirdPartyPaymentOrderResponse'
+
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /beneficiaries:
+    get:
+      tags:
+        - Beneficiary
+      summary: Retrieve a beneficiary List
+      description: >+
+        ### Details:
+        
+        Retrieve a beneficiary List for Third Party Payment services
+
+      operationId: getBeneficiaryByFilter
+      parameters:
+        - in: header
+          name: Authorization
+          description: token jwt send Front
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+        - in: query
+          name: fullName
+          schema:
+            type: string
+          required: true
+          description: search full name
+          example: "Nombre Apellido"
+        - in: query
+          name: thirdPartyPaymentOrderId
+          schema:
+            type: string
+          required: true
+          description: Third Party Payment order uuid for get Third Party Payment order header
+          example: "9483640a-f05a-4475-8a10-556ee21e3da8"
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBeneficiaryByFilterResponse'
+
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /financial-entities:
+    get:
+      tags:
+        - Financial Entity
+      summary: Retrieve a financial entitys List
+      description: >+
+        ### Details:
+        
+        Retrieve a financial entitys List for select a entitye
+
+      operationId: getFinancialEntity
+      parameters:
+        - in: header
+          name: Authorization
+          description: token jwt send Front
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+        - in: query
+          name: fullName
+          schema:
+            type: string
+          required: true
+          description: search full name
+          example: "Nombre Apellido"
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UxGetFinancialEntityResponse'
+
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /third-party-payment-order-items:
+    post:
+      tags:
+        - Third Party Payment Order Item
+      summary: Create a Third Party Payment order item
+      description: >+
+        ### Details:
+
+        Create a Third Party Payment order item. Some data is in cache 
+        referenced by field thirdPartyPaymentOrderId in the body request
+
+      operationId: postThirdPartyPaymentOrderItem
+      parameters:
+        - in: header
+          name: Authorization
+          description: token jwt send Front
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+      requestBody:
+        description: Request to post the Third Party Payment Order
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UxPostThirdPartyPaymentOrderItemRequest'
+      responses:
+        200:
+          description: OK
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
+
+components:
+  schemas:
+
+    UxPostThirdPartyPaymentOrderItemRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - thirdPartyPaymentOrderId
+      properties:
+        thirdPartyPaymentOrderId:
+          type: string
+          example: 12345678
+          description: payment third order uuid
+          nullable: false
+        beneficiary:
+          $ref: "#/components/schemas/Beneficiary"
+        payment:
+          $ref: "#/components/schemas/Payment"
+        destinationProduct:
+          $ref: "#/components/schemas/DestinationProduct"
+
+    Balance:
+      type: object
+      properties:
+        availableBalance:
+          type: number
+          format: double
+          description: Balance disponible de la cuenta.
+          example: 500.00
+        countableBalance:
+          type: number
+          format: double
+          description: Balance contable de la cuenta.
+          example: 500.00
+
+    DestinationProduct:
+      type: object
+      properties:
+        productNumber:
+          type: string
+          example: "232343333"
+          description: account number for payment
+
+        type:
+          $ref: "#/components/schemas/TypeProduct"
+        financialEntity:
+          $ref: "#/components/schemas/FinancialEntity"
+
+    FinancialEntity:
+      title: FinancialEntityList
+      type: object
+      properties:
+        financialEntityId:
+          type: string
+          example: "21341111"
+          description: "uuid in cache"
+          nullable: false
+        fullName:
+          type: string
+          example: "Banco Pichincha"
+          description: "id for entity"
+          x-mapping:
+
+    TypeProduct:
+      type: object
+      description: Kind of Product.
+      properties:
+        code:
+          type: string
+          example: ""
+        description:
+          type: string
+          example: CTA.CTE PERSONAL
+    Payment:
+      type: object
+      properties:
+        description:
+          type: string
+          example: "Entrega material de factura 293837744343"
+          description: Description payment
+          nullable: false
+        amount:
+          type: number
+          format: float
+          example: 100.0
+          nullable: false
+        currency:
+          $ref: "#/components/schemas/Currency"
+        paymentMethod:
+          type: string
+          example: "Crédito a cuenta"
+          description: Type of payment ej efectivo, cheque, crédito a cuenta
+          nullable: false
+        identificationValue:
+          type: string
+          example: "098567"
+          description: value for get a counterpart.
+          nullable: false
+        identificationType:
+          $ref : "#/components/schemas/IdentificationType"
+    Beneficiary:
+      type: object
+      properties:
+        documentType:
+          type: string
+          example: "RUC"
+          description: Beneficiary Document type.
+          nullable: false
+          x-mapping: "order-item.document_type"
+        documentNumber:
+          type: string
+          example: "1231233450"
+          description: Beneficiary ocument number.
+          nullable: false
+          x-mapping: "order-item.document_number"
+        fullname:
+          type: string
+          example: "Jesus Alberto"
+          description: beneficiary fullName.
+          nullable: false
+          x-mapping: "order-item.fullname"
+        email:
+          type: string
+          example: "order@domain.com"
+          description: Email beneficiary.
+          nullable: false
+          x-mapping: "order-item.email"
+        saveInformation:
+          type: boolean
+          example: "True/false"
+          description: Data Beneficiary .
+          nullable: false
+    IdentificationType:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Detail bill
+          example: Factura
+          x-mapping: "third_party_payment_order.bill_description"
+
+    UxPostThirdPartyPaymentOrderResponse:
+      type: object
+      properties:
+        thirdPartyPaymentOrderId:
+          type: string
+          description: uuid in cache for get payment third order
+          example: "asasdf4d5fd54df545dfdssax"
+
+    UxPostThirdPartyPaymentOrderRequest:
+      description: Body request for write attributes to cache
+      properties:
+        accountId:
+          title: accountId
+          type: string
+          description: uuid in cache for account
+          example: "jshdjshd5454584sd4sd45sd7assasw54as4"
+        approvalDeadline:
+          title: approvalDeadline
+          type: string
+          example: "10/05/2022"
+        paymentDeadline:
+          title: paymentDeadline
+          type: string
+          example: "15/05/2022"
+        loadType:
+          $ref: "#/components/schemas/LoadType"
+    LoadType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Manual
+          example:
+        description:
+          type: string
+          description: Description load type
+          example: Manual
+          x-mapping: "items-order.loadType"
+
+    UxGetFinancialEntityResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/FinancialEntityList'
+    FinancialEntityList:
+      title: FinancialEntityList
+      type: object
+      properties:
+        financialEntityId:
+          type: string
+          example: "21341111"
+          description: "Id for entity"
+          nullable: false
+        fullName:
+          type: string
+          example: "Banco Pichincha"
+          description: "Full name the beneficiary."
+          nullable: false
+        hasAgreement:
+          type: string
+          example: "Y | N"
+          description: "If the entitie have a agreement"
+          nullable: false
+    GetBeneficiaryByFilterResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/BeneficiariesList'
+    BeneficiariesList:
+      title: BeneficiariesList
+      type: object
+      required:
+        - fullName
+        - documentType
+        - documentNumber
+        - email
+      properties:
+        documentType:
+          type: string
+          example: "documentType"
+          description: "Type document the beneficiary."
+          nullable: false
+          x-mapping: "beneficiary.document_type"
+        documentNumber:
+          type: string
+          example: "documentNumber"
+          description: "Number document the beneficiary."
+          nullable: false
+          x-mapping: "beneficiary.document_number"
+        fullName:
+          type: string
+          example: "Jhon Doe"
+          description: "Full name the beneficiary."
+          nullable: false
+          x-mapping: "beneficiary.full_name"
+        email:
+          type: string
+          example: "example@nttdata.com"
+          description: "Email the beneficiary."
+          nullable: false
+          x-mapping: "beneficiary.email"
+
+    UxGetTrayOrderResponse:
+      type: object
+      properties:
+        orderId:
+          description: id order in cache
+          type: string
+          example: "asdf-213-dsdewwww-56666"
+        product:
+          $ref: "#/components/schemas/Product"
+        identificationValue:
+          description: value for get a counterpart
+          type: string
+          example: "17913233"
+        startOrderDate:
+          type: string
+          description: Initial Date for collect money
+          example: "28/01"
+        endOrderDate:
+          type: string
+          description: End Date for collect money
+          example: "28/01"
+        amount:
+          type: number
+          description: amount for collect
+          example: 10.00
+        currency:
+          $ref: "#/components/schemas/Currency"
+        state:
+          $ref: "#/components/schemas/Status"
+
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code for currency
+          example: "USD"
+        description:
+          type: string
+          description: Name currency
+          example: "Dolares Estadounidences"
+    Status:
+      type: object
+      properties:
+        code:
+          type: number
+          description: Code for status
+          example: "APR"
+        description:
+          type: string
+          description: Name status
+          example: "Pendiente"
+
+    Product:
+      type: object
+      properties:
+        productId:
+          description: product Id
+          type: string
+          example: "asdf-32323"
+        name:
+          description: product name
+          type: string
+          example: "Recaudación"
+
+    UxPostOrderApproveRequest:
+      type: object
+      properties:
+        orderId:
+          description: order uuid in cache
+          type: string
+          example: "asdf-213-dsdewwww-56666"
+
+    UxPostTrayOrdersApproveResponse:
+      type: object
+      properties:
+        orderNumber:
+          description: order number
+          type: number
+          example: 12
+        status:
+          $ref: "#/components/schemas/Status"
+        message:
+          description: reason if order is not processed
+          type: number
+          example: "there are not approver for order"
+
+
+    UxGetAccountByFilterResponse:
+      $ref: "#/components/schemas/Accounts"
+    Accounts:
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: 'jshdjshd5454584sd4sd45sd7assasw54as4'
+          description: uuid generated for each account
+        accountNumber:
+          type: string
+          description: account identification | acccount number
+          example: 2100080794
+          x-mapping: "accountId"
+        customerProductId:
+          type: string
+          description: companyContractProductUuid
+          example: 'asdf332323'
+        alias:
+          type: string
+          description: alias account
+          example: 'alias account'
+        balanceInformation:
+          $ref: "#/components/schemas/Balance"
+        type:
+          $ref : "#/components/schemas/AccountType"
+        currency:
+          $ref : "#/components/schemas/Currency"
+
+    AccountType:
+      type: object
+      properties:
+        description:
+          type: string
+          description: description type account
+          example: CORRIENTE
+
+    Error:
+      type: object
+      properties:
+        title:
+          maximum: 50
+          type: string
+          description: Mensaje de error técnico.
+        detail:
+          maximum: 50
+          type: string
+          description: Mensaje a presentar al cliente.
+        instance:
+          maximum: 50
+          type: string
+          description: Código de catálogo de errores.
+        type:
+          maximum: 100
+          type: string
+          description: Dirección de la fuente solicitada por el proxy
+        resource:
+          maximum: 100
+          type: string
+          description: Recurso del servicio en el que se produjo el error.
+        component:
+          maximum: 100
+          type: string
+          description: Componente del servicio en el que sucedió el error.
+        backend:
+          maximum: 100
+          type: string
+          description: Código de error interno.
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key

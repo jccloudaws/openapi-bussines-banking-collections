@@ -1,0 +1,37 @@
+openapi: 3.0.1
+info:
+  title: API BB Channel Proxy Nginx
+  description: 'API Channel Proxy Nginx for simple proxy redirect to internal pod k8s with nginx'
+  version: '1.0.0'
+servers:
+  - url: https://apim-develop-business-banking.azure-api.net/channel/business-banking/proxy-nginx
+paths:
+  /token:
+    get:
+      summary: Token / Redirect
+      description: Url Redirect to App Store or Play Store
+      operationId: GetToken
+      responses:
+        '200':
+          description: Redirect URL Token to Client
+  /transactions-container:
+    get:
+      summary: Blob container
+      description: Redirect to capture error on containers
+      operationId: GetTransactions-container
+      responses:
+        '200':
+          description: Send Error when user try recovery file is not exist or saas token expired
+components:
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    apiKeyQuery:
+      type: apiKey
+      name: subscription-key
+      in: query
+security:
+  - apiKeyHeader: []
+  - apiKeyQuery: []

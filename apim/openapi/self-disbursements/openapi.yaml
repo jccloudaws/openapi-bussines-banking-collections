@@ -1,0 +1,1197 @@
+openapi: 3.0.0
+info:
+  title: API Channel - Business Banking - Self Disbursement V1
+  description: |
+    API Chanel For Manage Disbursement <br>
+    > <b>Dominio de Servicio BIAN</b> `Disbursement`<br>
+  version: 1.0.3
+  contact:
+    name: Yesica Quispe
+    email: yesqui-ext@pichincha.pe
+servers:
+  - url: http://localhost:8080/channel/business-banking/v1/self-disbursements
+    description: Development
+security:
+  - ApiKeyAuth: []
+tags:
+  - name: Self Disbursement
+    description: Self Disbursement Controller
+  - name: Simulation
+    description: Simulation Controller
+  - name: Payment Schedule
+    description: Payment Schedule Controller
+  - name: Self Disbursement Order
+    description: Self Disbursement Order Controller
+paths:
+  /initiate:
+    post:
+      tags:
+        - Self Disbursement
+      summary:  initiates customer validation processes.
+      description: |
+        ### Details:
+
+        Initiates validation processes so that the customer can access the self-disbursement option.
+      operationId: PostSelfDisbursementInitiate
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSelfDisbursementInitiateResponse'
+          description: successful validation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: "Cliente no cumple con requisitos para solicitar autodesembolso"
+        '403':
+          description: El usuario no tiene autorización para realizar esta operación.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Internal error (UCP002, UCP003)"
+      deprecated: false
+  /simulation/execute:
+    post:
+      tags:
+        - Simulation
+      summary: Self disbursement simulation.
+      description: |
+        ### Details:
+        Execute the simulation of the self-disbursement product at the client's request.
+      operationId: PostSimulationExecute
+      parameters:
+        - name: authorization
+          in: header
+          description: JWT Authorization Token.
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck
+        - name: app-name
+          in: header
+          description: Application Name - BackOffice | BusinessBanking | MobileToken
+          required: true
+          schema:
+            type: string
+            example: BackOffice
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          schema:
+            type: string
+          example: 2019-04-29 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          schema:
+            type: string
+            example: id of request
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostSimulationExecuteRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSimulationExecuteResponse'
+          description: successful simulation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Bad request (UCP001)"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Internal error (UCP002, UCP003)"
+  /payment-schedules:
+    get:
+      tags:
+        - Payment Schedule
+      summary: retrieve payment schedule.
+      description:  "### Details: \n Retrieves the payment schedule of the self-disbursement simulation.\n"
+      operationId: GetPaymentSchedule
+      parameters:
+        - name: authorization
+          in: header
+          description: JWT Authorization Token.
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck
+        - name: app-name
+          in: header
+          description: Application Name - BackOffice | BusinessBanking | MobileToken
+          required: true
+          schema:
+            type: string
+            example: BackOffice
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          schema:
+            type: string
+          example: 2019-04-29 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          schema:
+            type: string
+            example: id of request
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPaymentScheduleResponse'
+          description: successful simulation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Bad request (UCP001)"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Internal error (UCP002, UCP003)"
+  /self-disbursement-orders:
+    post:
+      tags:
+        - Self Disbursement Order
+      summary: Self disbursement Orders.
+      description: |
+        ### Details:
+        Creates a Self Disbursement Order for display in tray.
+      operationId: PostSelfDisbursementOrder
+      parameters:
+        - name: authorization
+          in: header
+          description: JWT Authorization Token.
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck
+        - name: app-name
+          in: header
+          description: Application Name - BackOffice | BusinessBanking | MobileToken
+          required: true
+          schema:
+            type: string
+            example: BackOffice
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          schema:
+            type: string
+          example: 2019-04-29 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          schema:
+            type: string
+            example: id of request
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostSelfDisbursementOrderRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSelfDisbursementOrderResponse'
+          description: successful order creation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Bad request (UCP001)"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Internal error (UCP002, UCP003)"
+    get:
+      tags:
+        - Self Disbursement Order
+      summary: Self disbursement Orders.
+      description: >+
+        ### Details:
+        Retrieve a self-disbursement order
+
+        ### Valid use of parameters:
+
+        | Expected result | Path Parameter | Query Parameter |
+
+        |--------------------|--------------- |-----------------|
+
+        |Retrieves a self-disbursement order        | - | trayOrderId |.
+      operationId: GetSelfDisbursementOrderByFilter
+      parameters:
+        - name: authorization
+          in: header
+          description: JWT Authorization Token.
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck
+        - name: app-name
+          in: header
+          description: Application Name - BackOffice | BusinessBanking | MobileToken
+          required: true
+          schema:
+            type: string
+            example: BackOffice
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          schema:
+            type: string
+          example: 2019-04-29 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          schema:
+            type: string
+            example: id of request
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: trayOrderUuid
+          in: query
+          description: tray Order Id
+          required: true
+          schema:
+            type: string
+            example: "123"
+        - name: moreData
+          in: query
+          description: Retrive information complete Self Disbursement Order
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: "selfDisbursementOrderItem"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSelfDisbursementOrderByFilterResponse'
+          description: successful order creation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Bad request (UCP001)"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: "Internal error (UCP002, UCP003)"
+components:
+  schemas:
+    PostSelfDisbursementInitiateResponse:
+      type: object
+      properties:
+        initialData:
+          $ref: '#/components/schemas/initialData'
+    PostSimulationExecuteRequest:
+      type: object
+      properties:
+        creditLineIdUuid:
+          type: string
+          example: 341c0c63-a88a-48b3-85a7-c762c4504022
+          description: Number Fees
+        simulationData:
+          $ref: '#/components/schemas/SimulationRequestData'
+    PostSimulationExecuteResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/SimulationExecuteData'
+    GetPaymentScheduleResponse:
+      type: object
+      properties:
+        paymentSchedule:
+          $ref: '#/components/schemas/PaymentScheduleRequestData'
+    PostSelfDisbursementOrderRequest:
+      type: object
+      properties:
+        numberSimulateUuid:
+          type: string
+          example: 41c0c63-a88a-48b3-85a7-c762c4504022
+          description: disbursement
+        accountUuid:
+          type: string
+          example: 341c0c63-a88a-48b3-85a7-c762c4504022
+          description: Number Fees
+        creditLineIdUuid:
+          type: string
+          example: 341c0c63-a88a-48b3-85a7-c762c4504022
+          description: Number Fees
+      title: PostSelfDisbursementOrderRequest
+    initialData:
+      type: object
+      properties:
+        creditLines:
+          $ref: '#/components/schemas/CreditLineData'
+        accounts:
+          $ref: '#/components/schemas/AccountData'
+      title: SelfDisbursementValidateResponse
+    CreditLineData:
+      type: array
+      title: CreditLine
+      items:
+        $ref: '#/components/schemas/CreditLine'
+    AccountData:
+      type: array
+      title: Accounts
+      items:
+        $ref: '#/components/schemas/Account'
+    Account:
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: 1234567890
+          description: Account identifier for redis.
+        alias:
+          type: string
+          example: Cuenta
+          description: Account number.
+        productType:
+          $ref: "#/components/schemas/AccountType"
+        status:
+          $ref: "#/components/schemas/StatusAccount"
+        currency:
+          $ref: "#/components/schemas/Currency"
+    AccountType:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 001
+          description: Account code
+        description:
+          type: string
+          example: CTA CORRIENTE
+          description: Description Account
+      title: AccountType
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          example: USD
+          description: currency Code
+        description:
+          type: string
+          example: Dolares Americanos
+          description: currency description
+      title: CurrencyAccount
+    StatusAccount:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 1
+          description: Código
+        description:
+          type: string
+          example: Activo
+          description: Description status account
+      title: StatusAccount
+    CreditLine:
+      type: object
+      properties:
+        creditLineId:
+          type: string
+          example: "345234534"
+          description: credit line identifier for redis
+        availableAmount:
+          type: number
+          example: 500
+          description: Amount of money available from credit line
+        utilisationAmount:
+          type: number
+          example: 1000
+          description: Amount of money used from credit line
+        amount:
+          type: number
+          example: 1000
+          description: Total amount of line of credit
+        terminationDate:
+          type: number
+          example: 1000
+          description: Term of day
+      title: CreditLineResponse
+    SimulationRequestData:
+      type: object
+      properties:
+        accountUuid:
+          type: string
+          example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+          description: account uuid
+        amount:
+          type: number
+          example: 60000
+          description: disbursement amount
+        terminationDate:
+          type: number
+          example: 30
+          description: Term of day
+        gracePeriod:
+          type: string
+          example: Y
+          description: Grace period selection
+        description:
+          type: string
+          example: Hola Mundo
+          description: Description
+        payment:
+          $ref: '#/components/schemas/Payment'
+        currency:
+          $ref: '#/components/schemas/Currency'
+      title: SimulationRequestData
+    SimulationExecuteData:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Simulacion Exitosa
+          description: simulation response message.
+        loanNumberSimulate:
+          type: string
+          example: 5
+          description: Number of loan simulations.
+        rateTEA:
+          type: string
+          example: 78.5
+          description: TEA rate of disbursement.
+        rateTCEA:
+          type: string
+          example: 54.56
+          description: TCEA rate of disbursement..
+        feeAmount:
+          type: number
+          example: 40000
+          description: disbursement amount
+      title: SimulationExecuteDataResponse
+    Payment:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 001
+          description: payment type Code
+        description:
+          type: string
+          example: Cuotas
+          description: payment type description
+        frecuency:
+          type: string
+          example: M
+          description: payment frequency
+      title: payment
+    PaymentScheduleRequestData:
+      type: array
+      title: PaymentSchedule
+      items:
+        $ref: '#/components/schemas/PaymentSchedule'
+    PaymentSchedule:
+      type: object
+      properties:
+        feeNumber:
+          type: integer
+          example: 1
+          description: number fee.
+        feeExpirationDate:
+          type: string
+          example: 23-05-2023
+          description: expiration date.
+        amount:
+          type: number
+          example: 2500
+          description:   Amount of the tranche.
+        interestsAmount:
+          type: number
+          example: 546.50
+          description:   Interest Accrual Amount
+        totalFee:
+          type: number
+          example: 3546.50
+          description:   Total amount of the fee
+      title: PaymentScheduleResponse
+    PostSelfDisbursementOrderResponse:
+      title: SelfDisbursementOrder
+      type: object
+      properties:
+        customerAffiliationId:
+          type: string
+          description: company identification
+          example: "341c0c63-a88a-48b3-85a7-c762c4504022"
+        customerUserId:
+          type: string
+          description: user identification
+          example: "341c0c63-a88a-48b3-85a7-c762c4504022"
+        customerProductId:
+          type: string
+          description: Customer product id
+          example: 14AUHYA-127201-QQ
+        amount:
+          type: number
+          description: Amount Self Disbursement.
+          example: 56000
+        currency:
+          $ref: '#/components/schemas/Currency'
+        status:
+          $ref: '#/components/schemas/StatusOrder'
+        registerDate:
+          type: string
+          description: Id Customer Product.
+          nullable: false
+          example: 2022-03-16
+        selfDisburmentOrderDetail:
+          type: array
+          title: PaymentSchedule
+          items:
+            $ref: '#/components/schemas/PostselfDisbursementOrderItem'
+    StatusOrder:
+      type: object
+      properties:
+        code:
+          type: string
+          description: estatus for order
+          example: PENDING
+    PostselfDisbursementOrderItem:
+      title: selfDisbursementOrderItemRequest
+      type: object
+      properties:
+        loanNumberSimulate:
+          type: string
+          description: Number Simulate
+          example: "245718"
+        amount:
+          type: number
+          description: amount Self Disbursement.
+          nullable: false
+          example: 1000
+        currency:
+          $ref: '#/components/schemas/Currency'
+        gracePeriod:
+          type: string
+          example: Y
+          description: Grace period selection
+        paymentType:
+          type: string
+          example: 1
+          description: payment type
+        terminationDate:
+          type: integer
+          description: Number fees
+          example: 5
+        rateDetails:
+          $ref: '#/components/schemas/RateDetails'
+        creditorAccount:
+          $ref: '#/components/schemas/CreditorAccount'
+        feeAmount:
+          type: number
+          description: Self-disbursement fee amount
+          example: 456.70
+        description:
+          type: string
+          description: description
+          example: Description
+    RateDetails:
+      type: object
+      properties:
+        tceaPercentage:
+          type: number
+          description: TCEA rate percentage.
+          nullable: false
+          example: 54.7
+        teaPercentage:
+          type: number
+          description: TEA rate percentage.
+          nullable: false
+          example: 20.7
+        tpoolPercentage:
+          type: number
+          description: Pool rate percentage.
+          nullable: false
+          example: 10.5
+        tspreadPercentage:
+          type: number
+          description: Spread rate percentage.
+          nullable: false
+          example: 4.5
+    CreditorAccount:
+      type: object
+      properties:
+        productNumber:
+          type: string
+          description: currency code | ISO-4217
+          example: "123444444"
+          x-mapping: orderItem.productNumber
+        productType:
+          $ref: '#/components/schemas/ProductType'
+    ProductType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Account Type
+          example: Cuenta Cte Juridica Garantia
+        description:
+          type: string
+          description: Account description
+          example: Cuenta Cte Juridica Garantia
+    GetSelfDisbursementOrderByFilterResponse:
+      title: GetSelfDisbursementOrderByFilterResponse
+      type: object
+      properties:
+        SelfDisbursementOrder:
+          $ref: '#/components/schemas/GetSelfDisbursementOrderByFilter'
+    GetSelfDisbursementOrderByFilter:
+      title: GetSelfDisbursementOrderByFilter
+      type: object
+      properties:
+        trayOrderId:
+          type: string
+          description: tray order id
+          example: "14621"
+        orderType:
+          type: string
+          description: order type
+          example: SELFDBMNT
+        customerAffiliationId:
+          type: string
+          description: company identification
+          example: "341c0c63-a88a-48b3-85a7-c762c4504022"
+        customerProductId:
+          type: string
+          description: Customer product id
+          example: 14AUHYA-127201-QQ
+        customerId:
+          type: string
+          description: customer Id
+          example: "000153707"
+        amount:
+          type: integer
+          description: Amount Self Disbursement.
+          example: 56000
+        channel:
+          type: string
+          description: Transaccional channel
+          example: BUSINESS BANKING
+        entityTag:
+          type: string
+          description: document version ID
+          example: 14AUHYA-127201-QQ
+        currency:
+          $ref: '#/components/schemas/Currency'
+        status:
+          $ref: '#/components/schemas/StatusOrder'
+        processingType:
+          $ref: '#/components/schemas/ProcessingType'
+        registerDate:
+          type: string
+          description: Register Date.
+          nullable: false
+          example: 2022-03-16T00:00:00Z
+        expirationDate:
+          type: string
+          description: Id Customer Product.
+          nullable: false
+          example: 2022-03-16
+        executionDate:
+          type: string
+          description: Id Customer Product.
+          nullable: false
+          example: 2022-03-16
+        operatorUsername:
+          type: string
+          description: Operator Username
+          example: Usuario operador
+        approverUsername:
+          type: string
+          description: Approver Username
+          example: Usuario aprobador
+        selfDisbursementOrderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetselfDisbursementOrderItemResponse'
+    GetselfDisbursementOrderItemResponse:
+      title: SelfDisbursementOrderItemResponse
+      type: object
+      properties:
+        selfDisbursementOrderItemId:
+          type: string
+          description: order detail id
+          nullable: false
+          example: 40840-9082802
+        loanNumberSimulate:
+          type: string
+          description: Number Simulate
+          example: 343553
+        codeProduct:
+          type: string
+          description: code product
+          example: BPRD
+        amount:
+          type: number
+          description: amount Self Disbursement.
+          nullable: false
+          example: 1000
+        paymentTypes:
+          $ref: '#/components/schemas/PaymentTypes'
+        terminationDate:
+          type: string
+          description: Number fees
+          example: 5
+        rateDetails:
+          $ref: '#/components/schemas/RateDetails'
+        gracePeriod:
+          $ref: '#/components/schemas/GracePeriod'
+        creditorAccount:
+          $ref: '#/components/schemas/CreditorAccount'
+        beneficiary:
+          $ref: '#/components/schemas/Beneficiary'
+        feeAmount:
+          type: string
+          description: Self-disbursement fee amount
+          example: 456.70
+        description:
+          type: string
+          description: description
+          example: 5
+    PaymentTypes:
+      type: object
+      properties:
+        paymentTypeId:
+          type: string
+          description: Code or number bill that identifies the order
+          example: "1"
+        description:
+          type: string
+          description: Description that specify the meaning of the identification value
+          example: Cuotas
+    GracePeriod:
+      type: object
+      properties:
+        time:
+          type: string
+          description: grace period term
+          example: 30
+        UnitType:
+          type: string
+          description: grace period unit type Days or Months
+          example: D
+    ProcessingType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: order type (online or scheduled)
+          example: IMMEDIATE
+          enum:
+            - IMMEDIATE
+            - SCHEDULED
+    Beneficiary:
+      type: object
+      properties:
+        fullName:
+          type: string
+          description: beneficiary fullName.
+          nullable: false
+          example: Empresa Test SAC
+        documentType:
+          type: string
+          description: beneficiary document type.
+          nullable: false
+          example: "1"
+        documentNumber:
+          type: string
+          description: beneficiary document number.
+          nullable: false
+          example: "20394987652"
+        email:
+          type: string
+          description: beneficiary email
+          nullable: false
+          example: email@email.com
+    Error:
+      additionalProperties: false
+      properties:
+        errorCode:
+          maxLength: 6
+          pattern: "^[a-zA-Z]+$\\d+$"
+          type: string
+        developerMessage:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        userMessage:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        moreInfo:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        status:
+          type: integer
+          default: 409
+        version:
+          type: string
+          pattern: "^[0-9\\.]*$"
+        code:
+          type: string
+          pattern: "^[a-zA-Z]+$\\d+$"
+      type: object
+    ErrorModel:
+      additionalProperties: false
+      properties:
+        errorCode:
+          maxLength: 6
+          example: "ERR_01"
+          pattern: "^[a-zA-Z]+$\\d+$"
+          type: string
+        developerMessage:
+          maxLength: 256
+          example: "Cliente no cumple con requisitos para solicitar autodesembolso"
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        userMessage:
+          maxLength: 256
+          example: "Cliente no cumple con requisitos para solicitar autodesembolso"
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        moreInfo:
+          maxLength: 256
+          example: "Cliente no cumple con requisitos para solicitar autodesembolso"
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        errorMessages:
+          type: array
+          items:
+            type: string
+      type: object
+  securitySchemes:
+    ApiKeyAuth:
+      in: header
+      name: x-api-key
+      type: apiKey

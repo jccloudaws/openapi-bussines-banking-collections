@@ -1,0 +1,862 @@
+openapi: 3.0.0
+info:
+  title: Api Channel Bussines Banking User Registration
+  version: 1.4.2
+servers:
+  - description: Server in devops in busines banking layer
+    url: http://localhost:8080/channel/business-banking/v1/user-registration
+tags:
+  - name: "User"
+    description: "User Controller"
+
+  - name: "Profile Template"
+    description: "Profile Template Controller"
+
+  - name: "Banking Product Operation"
+    description: "Banking Product Operation Controller"
+
+  - name: "User Product Permission"
+    description: "User Product Permission Controller"
+
+  - name: "Banking Product Approval Level"
+    description: "Banking Product Approval Level Controller"
+
+  - name: "User Approval Level"
+    description: "User Approval Level Controller"
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+
+  /users/register:
+    post:
+      tags:
+        - User
+      summary: Save basic user information.
+      description: >+
+        ### Details:
+
+         Saves the basic information of the user and returns the masked id of the saved user.
+
+      operationId: postUserRegister
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/PostUserRegisterRequest"
+        required: true
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            description: Authorization token
+            example: Bearer Dasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbw
+      responses:
+        200:
+          description: The user was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostUserRegisterResponse'
+        409:
+          description: The user document and your email are not valid.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /profile-templates:
+    get:
+      tags:
+        - Profile Template
+      summary: Obtains the profile templates defined by the bank.
+      description: >+
+        ### Details:
+
+        Return a list of profile templates defined by the bank.
+
+      operationId: getProfileTemplate
+      parameters:
+        - in: header
+          name: Authorization
+          required: false
+          schema:
+            type: string
+            description: Authorization token
+            example: Bearer Dasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbw
+      responses:
+        200:
+          description: Profile template list.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetProfileTemplateResponse'
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /banking-product-operations:
+    get:
+      tags:
+        - Banking Product Operation
+      summary: Obtain the permits and accounts of the consolidated position.
+      description: >+
+        ### Details:
+
+        Obtain the permits and accounts of the consolidated position.
+      operationId: getBankingProductOperationByFilter
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+            description: Authorization token
+            example: Bearer Dasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbw
+        - in: query
+          name: userId
+          schema:
+            type: string
+            description: User id
+          required: true
+      responses:
+        200:
+          description: Returns the list of accounts and permissions of the consolidated position.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBankingProductOperationByFilterResponse'
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /user-product-permissions:
+    post:
+      tags:
+        - User Product Permission
+      summary: Save user products and actions assigned
+      description: >+
+        ### Details:
+
+          Saves the accounts and actions selected by the administrator for the user that is being registered
+      operationId: postUserProductPermission
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: '#/components/schemas/PostUserProductPermissionRequest'
+        required: true
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+            description: Authorization token
+            example: Bearer Dasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbw
+      responses:
+        200:
+          description: User accounts and actions was assigned succesfully.
+
+        409:
+          description: The information are not valid
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /banking-product-approval-levels:
+    get:
+      tags:
+        - Banking Product Approval Level
+      summary: Retrieve a list of categories and levels for a company product.
+      description: >+
+        ### Details:
+          Retrieve a list of categories and levels related a company product in base a list of company product uuids and a user contract uuid
+      operationId: getBankingProductApprovalLevelByFilter
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+            description: Authorization token
+            example: Bearer Dasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbw
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+          example: "236087d9-89d6-47f8-bab3-180aa16b3rty"
+          description: Uuid of the user in registration process
+      responses:
+        200:
+          description: Return the data structure to show in the screen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetBankingProductApprovalLevelByFilterResponse'
+        409:
+          description: The information are not valid
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /user-approval-levels:
+    post:
+      tags:
+        - User Approval Level
+      summary:  Save the information of the categories and products assigned to a user
+      description: >+
+        ### Details:
+          Save the information of the categories and products selected to be assigned to the user
+      operationId: postUserApprovalLevel
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: '#/components/schemas/PostUserApprovalLevelRequest'
+        required: true
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+            description: Authorization token
+            example: Bearer Dasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbw
+      responses:
+        200:
+          description: User Approval Levels were assigned succesfully to the user.
+
+        409:
+          description: The information are not valid
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /users/update:
+    post:
+      tags:
+        - User
+      summary: Update basic user information and send a notification.
+      description: >+
+        ### Details:
+
+        Updates the basic information of the user and send a notification.
+
+      operationId: postUserUpdate
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/PostUserUpdateRequest"
+        required: true
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            description: Authorization token
+            example: Bearer Dasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbwDasd123123asdad1231jbw
+      responses:
+        200:
+          description: The user has been updated.
+        409:
+          description: The user document and your email are not valid.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    PostUserRegisterRequest:
+      title: PostUserRegisterRequest
+      type: object
+      properties:
+        documentNumber:
+          type: string
+          example: "1721553616"
+          description: "Customer identification document number."
+          maxLength: 10
+        documentType:
+          type: string
+          example: "0001"
+          description: "Client identifier type. ID (0001) - Passport (0002) - RUC (0003)."
+          maxLength: 4
+        names:
+          title: "Names of user."
+          type: string
+          example: "Jhon Carlos"
+        surnames:
+          title: "Last names of user."
+          type: string
+          example: "Steward Colling"
+        email:
+          title: "Email"
+          type: string
+          example: "jhondoe@mail.com"
+        position:
+          type: string
+          example: "Manager"
+          description: "Employment relationship."
+        username:
+          title: Username
+          type: string
+          example: "UserDev002"
+          pattern: "^(?=.*?[A-Z])(?=.*?[0-9])(?!.*[^a-zA-Z0-9]).{8,12}$"
+        profileTemplateId:
+          title: Profile Id to assign
+          type: string
+          example: "236087d9-89d6-47f8-bab3-180aa16b3rty"
+        customer:
+          $ref: "#/components/schemas/Customer"
+        isLegalRepresentative:
+          title: Legal Representative
+          type: boolean
+          default: false
+          example: true
+        password:
+          title: Password
+          type: string
+          pattern: "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-.]).{8,}$"
+          example: "aDMIN001@"
+        cellphone:
+          $ref: "#/components/schemas/CellPhone"
+        customerUser:
+          $ref: "#/components/schemas/CustomerUser"
+        typeAccess:
+          $ref: "#/components/schemas/AccessType"
+    PostUserRegisterResponse:
+      title: PostUserRegisterResponse
+      type: object
+      properties:
+        userId:
+          type: string
+          example: "4085b199-5994-4016-ad0c-e28486c59008"
+          description: "User's masked id."
+    CellPhone:
+      title: Cellphone information
+      type: object
+      properties:
+        internationalPrefix:
+          type: string
+          example: "593"
+          description: "International prefix"
+        number:
+          type: string
+          example: "0987654321"
+          description: "Phone number"
+    Customer:
+      title: Company information
+      type: object
+      properties:
+        cif:
+          title: CIF Banking
+          type: string
+          example: '123-123'
+    CustomerUser:
+      title: Company information
+      type: object
+      properties:
+        customerUserId:
+          type: string
+          example: "1f0086f0-fdfb-4e9f-b92c-6c48db2a5e3f"
+          description: "Contract Company id"
+          x-mapping: "contract_company_id"
+        status:
+          $ref: "#/components/schemas/CustomerUserStatus"
+    CustomerUserStatus:
+      title: Company information
+      type: object
+      properties:
+        code:
+          type: string
+          example: "DISABLED-STEP1"
+          description: "User configuration status."
+        description:
+          type: string
+          example: "Step 1 of the user configuration."
+          description: "description"
+    AccessType:
+      title: User Status Lock
+      type: object
+      properties:
+        code:
+          type: string
+          description: "Status code of block/unblock"
+          example: "BLOCK-001/BLOCK-002/UNLOCK-001"
+        description:
+          type: string
+          description: "status description"
+          example: "ENABLED/DISABLED"
+    GetProfileTemplateResponse:
+      title: GetProfileResponse
+      type: object
+      properties:
+        profileTemplateId:
+          type: string
+          example: "5e20adb4-f1b9-454c-8670-08bc8d2acc3e"
+          description: "Profile´s uuid"
+          x-mapping: "profile_template_identity"
+        name:
+          type: string
+          example: "Perfil Operador"
+          description: "Profile´s name"
+          x-mapping: "name"
+        description:
+          type: string
+          example: "Tendrá acceso a crear y generar transacciones"
+          description: "Profile´s description"
+          x-mapping: "description"
+        status:
+          $ref: "#/components/schemas/GetProfileTemplateResponseStatus"
+        registerDate:
+          type: string
+          format: date-time
+          example: "2017-07-21T17:32:28Z"
+          description: "Profile´s creation date"
+          x-mapping: "creation_date"
+        configParameters:
+          type: array
+          items:
+            $ref: "#/components/schemas/GetProfileTemplateResponseParam"
+    GetProfileTemplateResponseParam:
+      title: GetProfileTemplateResponseParam
+      type: object
+      properties:
+        name:
+          type: string
+          example: "isEditable"
+          description: "Param code"
+          x-mapping: "profile_parameter.code_parameter"
+        value:
+          type: string
+          example: "1"
+          description: "Param value"
+          x-mapping: "profile_parameter.value"
+    GetProfileTemplateResponseStatus:
+      title: GetProfileResponseStatus
+      type: object
+      properties:
+        code:
+          type: string
+          example: "ENABLED"
+          description: "Profile´s status code"
+          x-mapping: "status"
+    GetBankingProductOperationByFilterResponse:
+      title: GetBankingProductOperationByFilterResponse
+      type: object
+      properties:
+        accounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Account"
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Action"
+    Action:
+      type: object
+      properties:
+        actionId:
+          type: string
+          example: "2ad8b8fb-f414-4bd7-8733-82b8d8160444"
+          description: "Action´s id"
+          x-mapping: "action_uuid"
+        name:
+          type: string
+          example: "APR"
+          description: "Action´s name"
+          x-mapping: "name"
+        description:
+          type: string
+          example: "Aprobar las transferencias"
+          description: "Action´s description"
+          x-mapping: "description"
+    Account:
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: "2ad8b8fb-f414-4bd7-8733-82b8d8160452"
+          description: "Uuid of account number"
+        name:
+          type: string
+          example: "Cuenta ahorros"
+          description: "Product´s name"
+        alias:
+          type: string
+          example: "PRIN Santo domingo"
+          description: "Alias of account"
+        type:
+          $ref: '#/components/schemas/AccountType'
+        accountNumber:
+          type: string
+          example: "2255889965"
+          description: "Account number"
+          x-mapping: "name"
+    AccountType:
+      type: object
+      description: Tipo de producto.
+      properties:
+        code:
+          type: string
+          example: ""
+        description:
+          type: string
+          example: CTA.CTE PERSONAL
+    PostUserProductPermissionRequest:
+      title: PostUserProductPermissionRequest
+      type: object
+      properties:
+        userId:
+          type: string
+          example: "4085b199-5994-4016-ad0c-e28486c59008"
+          description: "Uuid user"
+        coreProducts:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostCoreProduct"
+          description: "List of accounts Uuids to assign to the user"
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostAction"
+          description: "List of actions Uuids to assign to the user"
+    PostCoreProduct:
+      type: object
+      description: Core product Uuid
+      properties:
+        coreProductId:
+          type: string
+          example: "4085b199-5994-4016-ad0c-e28486c59008"
+    PostAction:
+      type: object
+      description: Action Uuid
+      properties:
+        actionId:
+          type: string
+          example: "4085b199-5994-4016-ad0c-e28486c59008"
+
+    GetBankingProductApprovalLevelByFilterResponse:
+      title: GetBankingProductApprovalLevelByFilterResponse
+      type: object
+      properties:
+        product:
+          $ref: "#/components/schemas/Product"
+    Product:
+      type: object
+      properties:
+        productId:
+          type: string
+          example: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+        name:
+          type: string
+          example: "APR"
+        description:
+          type: string
+          example: "Aprobar transferencias"
+        claim:
+          type: string
+          example: "TRX.CTA.APR"
+        approvalLevels:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApprovalLevel"
+
+    ApprovalLevel:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+        limitsAmount:
+          type: array
+          items:
+            $ref: "#/components/schemas/LimitAmount"
+    Category:
+      title: Category
+      type: object
+      properties:
+        categoryId:
+          type: string
+          example: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+        name:
+          type: string
+          example: "Name example"
+        isSelected:
+          type: boolean
+          example: false
+    LimitAmount:
+      title: Level
+      type: object
+      properties:
+        minAmount:
+          type: string
+          example: "0"
+        maxAmount:
+          type: string
+          example: "10"
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/CategoryId"
+    CategoryId:
+      title: CategoryId
+      type: object
+      properties:
+        categoryId:
+          type: string
+          example: "01906096-eb18-432b-a9ac-0aa5e80ebe9a"
+    PostUserApprovalLevelRequest:
+      title: PostUserApprovalLevelRequest
+      type: object
+      properties:
+        userId:
+          type: string
+          example: "4085b199-5994-4016-ad0c-e28486c59008"
+        userCustomerProduct:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserCustomerProduct"
+
+    UserCustomerProduct:
+      title: UserPermissionCustomerProduct
+      type: object
+      properties:
+        productId:
+          type: string
+          example: "4085b199-5994-4016-ad0c-e28486c59008"
+        approvalLevels:
+          $ref: "#/components/schemas/UserPermissionCustomerProduct"
+
+    UserPermissionCustomerProduct:
+      title: UserPermissionCustomerProduct
+      type: object
+      properties:
+        categoryId:
+          type: string
+          example: "4085b199-5994-4016-ad0c-e28486c59008"
+        isSelected:
+          type: boolean
+          example: true
+
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        errorCode:
+          type: string
+          pattern: ^[a-zA-Z]+$\d+$
+          maxLength: 6
+        developerMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        userMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        moreInfo:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        version:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: "1.0.0"
+        status:
+          maxLength: 15
+          type: integer
+          example: 409
+    PostUserUpdateRequest:
+      title: PostUserUpdateRequest
+      type: object
+      properties:
+        tokenAuthenticationId:
+          title: tokenAuthenticationId
+          type: string
+          example: "25850f86-24d7-4db6-8fd1-29e865112b02"
+          nullable: false
+        userId:
+          type: string
+          example: "4085b199-5994-4016-ad0c-e28486c59008"
+          description: Uuid of the user in registration process
+        language:
+          type: string
+          example: "es"
+          description: user language
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key

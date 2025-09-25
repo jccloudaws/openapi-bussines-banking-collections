@@ -1,0 +1,362 @@
+openapi: 3.0.0
+info:
+  title: "API Channel Business Banking Own Account Transfer Order Overview V1"
+  description: "Api for retrieve a own account transfer order information."
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8080/channel/business-banking/v1/own-account-transfer-order-overview
+    description: Development
+tags:
+  - name: "Own Account Transfer Order"
+    description: "Own Account Transfer Order Controller"
+
+
+paths:
+  /own-account-transfer-orders/{ownAccountTransferOrderId}:
+   get:
+      tags:
+        - Own Account Transfer Order
+      summary: Retrieve information about an Own Account Transfer Order
+      description: >+
+        ### Details:
+
+        Retrieves an Own Account Transfer Order for display in any tray
+
+        ### Valid use of parameters:
+
+        | Expected result | Path Parameter | Query Parameter |
+
+        |--------------------|--------------- |-----------------|
+
+        |Retrieves a Own Account Transfer Order       | - |  trayOrderId       |
+
+        |Retrieves a Own Account Transfer and its items        | - |  trayOrderId      , moreData=ownAccountTransferOrderItems | 
+
+      operationId: GetOwnAccountTransferOrderByFilter
+      parameters:
+        - $ref: '#/components/parameters/ownAccountTransferOrderId'
+        - $ref: '#/components/parameters/moreData'
+        - $ref: '#/components/parameters/authorization'
+
+      responses:
+        200:
+          description: Own Account transfer order information.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/UxGetOwnAccountTransferOrderByFilterResponse'
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  parameters:
+    ownAccountTransferOrderId:
+      name: ownAccountTransferOrderId
+      in: path
+      description: Own account transfer order id 
+      required: true
+      schema:
+        type: string
+        example: "123"
+      x-mapping: "own_account_transfer_order.approval_order_id"
+  
+    moreData:
+      in: query
+      name: moreData
+      required: false
+      schema:
+        type: string
+      description: indicates additional resources to retrieve
+      example: "ownAccountTransferOrderItem"
+    authorization:
+      in: header
+      name: Authorization
+      description: token jwt send Front
+      required: true
+      schema:
+        type: string
+      example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+  schemas:
+
+    Type:
+      type: object
+      properties:
+        code:
+          type: string
+          description: account type code
+          example: "CTA.CTE PERSONAL"
+        description:
+          type: string
+          description: account Type description
+          example: ""
+    Status:
+      type: object
+      properties:
+        code:
+          type: string
+          description: status code
+          example: ENABLE
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: currency code | ISO-4217
+          example: USD
+    UxGetOwnAccountTransferOrderByFilterResponse:
+      $ref: "#/components/schemas/UxGetOwnAccountTransferOrderByFilter"
+    UxGetOwnAccountTransferOrderByFilter:
+      type: object
+      properties:
+        ownAccountTransferOrderId:
+          type: string
+          example: "00C62080-B636-43DE-B3DB-B5E4133DCE01"
+          description: "Id Item"
+          nullable: false
+          x-mapping: "own_account_transfer_order.own_acctra_order_uuid"
+        displayMessage:
+          type: string
+          example: "Transferencia directa entre cuentas propias"
+          description: Service type.
+          nullable: false
+        customerAffiliationId:
+          type: string
+          example: "b2f01259-a60b-45e8-b5e3-215924834e5"
+          description: "Company Contract Product Uuid"
+          nullable: false
+          x-mapping: "own_account_transfer_order.company_contract_product_uuid"
+        customerProduct:
+          $ref: "#/components/schemas/CustomerProduct"
+        customer:
+          $ref: "#/components/schemas/Customer"
+        sourceProduct:
+          $ref: "#/components/schemas/SourceProduct"
+        registerDate:
+          type: string
+          example: "2017-07-21"
+          description: "Id Customer Product."
+          nullable: false
+          x-mapping: "own_account_transfer_order.create_date"
+        uploadType:
+          $ref: "#/components/schemas/LoadType"
+        trayOrderId:
+          type: string
+          example: "123444444"
+          description: "Id Customer Product."
+          nullable: false
+          x-mapping: "own_account_transfer_order.approval_order_id"
+        status:
+          $ref: "#/components/schemas/Status"
+        ownAccountTransferOrderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnAccountTransferOrderItemResponse'
+        orderHistory:
+          $ref: "#/components/schemas/BsGetOrderHistoryResponse"
+    BsGetOrderHistoryResponse:
+      type: object
+      properties:
+        startOrderDate:
+          type: string
+          description: Initial Date for collect money
+          example: "28/01"
+        endOrderDate:
+          type: string
+          description: End Date for collect money
+          example: "28/01"
+        lastChangeDate:
+          type: string
+          description: Last Date when the order changes
+          example: "28/01"
+        status:
+          $ref: "#/components/schemas/Status"
+        orderHistoryChanges:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderHistory"
+    OrderHistory:
+      type: object
+      properties:
+        changeDate:
+          type: string
+          description: Date when the status change was made
+          example: "2022-06-05T20:10:05"
+        customerUser:
+          $ref: "#/components/schemas/User"
+        status:
+          $ref: "#/components/schemas/Status"
+        action:
+          type: string
+          description: Action performed
+          example: "TO_APPROVAL"
+        nextStatus:
+          $ref: "#/components/schemas/Status"
+    User:
+      type: object
+      properties:
+        documentNumber:
+          type: string
+          example: "1721553616"
+          description: "Customer identification document number."
+          maxLength: 10
+        documentType:
+          type: string
+          example: "0001"
+          description: "Client identifier type. ID (0001) - Passport (0002) - RUC (0003)."
+          maxLength: 4
+        names:
+          title: "Names of user."
+          type: string
+          example: "Jhon Carlos"
+        surnames:
+          title: "Last names of user."
+          type: string
+          example: "Steward Colling"
+        email:
+          title: "Email"
+          type: string
+          example: "jhondoe@mail.com"
+        position:
+          type: string
+          example: "Manager"
+          description: "Employment relationship"
+    Customer:
+      title: Customer
+      type: object
+      properties:
+        fullName:
+          type: string
+          example: Mayra Alejandra Romero Alava
+          description: "Customer Name"
+          nullable: false
+    OwnAccountTransferOrderItemResponse:
+      title: OwnAccountTransferOrderItemResponse
+      type: object
+      properties:
+        ownAccountTransferOrderItemId:
+          type: number
+          example: 123
+          description: "Id Item"
+          nullable: false
+          x-mapping: "own_account_transfer_order.items_own_acctra_order_uuid"
+        amount:
+          type: number
+          example: 1000
+          description: "amount for order"
+          nullable: false
+          x-mapping: "items_own_account_transfer.amount"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        destinationProduct:
+          $ref: "#/components/schemas/DestinationProduct"
+        status:
+          $ref: "#/components/schemas/Status"
+        description:
+          type: string
+          example: "its a description"
+          description: "Id Customer Product."
+          nullable: false
+          x-mapping: "own_account_transfer_order.description"
+    LoadType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Load Type  MANUAL | MASIVA
+          example: MANUAL
+          x-mapping: "own_account_transfer_order.upload_type"
+    CustomerProduct:
+      title: CustomerProduct
+      type: object
+      properties:
+        customerProductId:
+          type: string
+          example: 341c0c63-a88a-48b3-85a7-c762c4504022
+          description: "Id Customer Product."
+          nullable: false
+          x-mapping: "own_account_transfer_order.company_contract_product_uuid"
+    DestinationProduct:
+      type: object
+      properties:
+        productNumber:
+          type: string
+          description: account product uuid
+          example: "98765537890"
+          x-mapping: "items_own_account_transfer.account_number_dest"
+        type:
+          $ref: "#/components/schemas/Type"
+    SourceProduct:
+      type: object
+      properties:
+        productNumber:
+          type: string
+          example: "232343333"
+          description: "Id Customer Product."
+          nullable: false
+          x-mapping: "own_account_transfer_order.account_number"
+        type:
+          $ref: "#/components/schemas/Type"
+
+    Error:
+      type: object
+      properties:
+        title:
+          maximum: 50
+          type: string
+          description: Mensaje de error técnico.
+        detail:
+          maximum: 50
+          type: string
+          description: Mensaje a presentar al cliente.
+        instance:
+          maximum: 50
+          type: string
+          description: Código de catálogo de errores.
+        type:
+          maximum: 100
+          type: string
+          description: Dirección de la fuente solicitada por el proxy
+        resource:
+          maximum: 100
+          type: string
+          description: Recurso del servicio en el que se produjo el error.
+        component:
+          maximum: 100
+          type: string
+          description: Componente del servicio en el que sucedió el error.
+        backend:
+          maximum: 100
+          type: string
+          description: Código de error interno.
+  examples:
+    SignatureGETStructure:
+      summary: Estructura GET
+      value: '{APP_ID} + ''|'' + {GUID} + ''|'' + {URI} + ''|'' + {API_SECRET}'

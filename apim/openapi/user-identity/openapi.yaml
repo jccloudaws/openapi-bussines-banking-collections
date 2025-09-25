@@ -1,0 +1,258 @@
+openapi: 3.0.0
+info:
+  title: Api UX Azure B2C Validate User Identity
+  version: v1
+servers:
+  - description: Server in devops in busines banking layer
+    url: http://localhost:8080/channel/business-banking/v1/user-identities
+tags:
+  - name: "User"
+    description: "User Controller "
+  - name: "Notification"
+    description: "Notification Controller"
+  - name: "Token"
+    description: "Validation with SofToken"
+
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /users/validate:
+    post:
+      tags:
+        - User
+      summary: User Validate
+      description: "### Details: \n Retrieve user account list ++++++"
+      operationId: postUserValidate
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          description: Authorization token
+          example: Dasd123123asdad1231jbw
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUserValidateRequest"
+      responses:
+        200:
+          description: Validate User 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostUserValidateResponse"
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /notifications/send:
+    post:
+      tags:
+        - Notification
+      summary: Send a notification.
+      operationId: postNotificationSend
+      description: >-
+        Send a notification when some user recovers username or change the password.
+
+      parameters:
+        - name: x-api-key
+          in: header
+          description: Api Key for security in Apim
+          required: false
+          style: simple
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostNotificationRequest"
+      responses:
+        200:
+          description: OK
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorB2C"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorB2C"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorB2C"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorB2C"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorB2C"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorB2C"
+
+components:
+  schemas:
+    PostUserValidateResponse:
+      required:
+        - userIdentity
+      type: object
+      properties:
+        userIdentity:
+          title: userIdentity
+          type: string
+          example: "25850f86-24d7-4db6-8fd1-29e865112b02"
+          nullable: false
+    PostUserValidateRequest:
+      type: object
+      properties:
+        documentNumber:
+          description: document Number
+          type: string
+          example: "1720508870"
+        customerDocumentNumber:
+          description: customer
+          type: string
+          example: "1791991281001"
+ 
+
+    PostNotificationRequest:
+      type: object
+      properties:
+        userIdentificationId:
+          description: Object id
+          type: string
+          example: "6dad56bc-0ad2-4046-88eb-6d178ed35093"
+        transactionType:
+          description: Notification Type
+          type: string
+          example: "B2C_1A_BusinessBanking_RestoreUsername"
+        lang:
+          description: languaje for response in error case
+          type: string
+          example: "es"
+        ip:
+          description: ip request
+          type: string
+          example: "200.10.89.34"
+    ErrorB2C:
+      type: object
+      additionalProperties: false
+      properties:
+        errorCode:
+          maxLength: 6
+          pattern: "^[a-zA-Z]+$\\d+$"
+          type: string
+          example: 006
+        developerMessage:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: "Coding Error"
+        userMessage:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: "El codigo captcha esta duplicado o ha expirado"
+        moreInfo:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: ""
+        version:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: "1.0.0"
+        status:
+          maxLength: 15
+          type: integer
+          example: 409
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        errorCode:
+          type: string
+          pattern: ^[a-zA-Z]+$\d+$
+          maxLength: 6
+        developerMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        userMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        moreInfo:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        version:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: "1.0.0"
+        status:
+          maxLength: 15
+          type: integer
+          example: 409
+
+    
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+

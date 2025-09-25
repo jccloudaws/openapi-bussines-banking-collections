@@ -1,0 +1,312 @@
+openapi: 3.0.0
+info:
+  title: "API Channel Business Banking Collection Order Overview V1"
+  description: "Api for retrieves Collection Orders"
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8080/channel/business-banking/v1/collection-order-overview
+    description: Development
+tags:
+  - name: "Collection Order"
+    description: "Collection Order Controller"
+
+paths:
+  /collection-orders/{collectionOrderId}:
+    get:
+      tags:
+        - Collection Order
+      summary: Retrieves a Collection Order
+      description: >+
+        ### Details:
+
+        Retrieves Collecion order and its items.
+
+      operationId: GetCollectionOrderById
+      parameters:
+        - in: path
+          name: collectionOrderId
+          required: true
+          schema:
+            type: string
+          description: uuid for get id in collection order
+          example: "efc48586-e9a2-4fb0-bcb0-afd0e3db07f5"
+          x-mapping: "collection_order.collection_order_uuid"
+        - in: header
+          name: Authorization
+          description: token jwt send Front
+          required: true
+          schema:
+            type: string
+          example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UxGetCollectionOrderByIdResponse'
+
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    UxGetCollectionOrderByIdResponse:
+      title: SpGetCollectionOrderByIdResponse
+      type: object
+      properties:
+        collectionOrderId:
+          type: string
+          example: "d2c5b902-a968-4193-9e84-46db6eefa23f"
+          description: Transacction universal unique identifier.
+          nullable: false
+          x-mapping: "collection-order.collection_order_uuid"
+        displayMessage:
+          type: string
+          example: "RECAUDACIONES"
+          description: Service type.
+          nullable: false
+        account:
+          $ref: "#/components/schemas/CollectionOrderAccount"
+        customerProductId:
+          type: string
+          example: "12345678-eb18-432b-a9ac-0aa5e80ebe9a"
+          description: "Id Customer Product."
+          nullable: false
+          x-mapping: "collection-order.company_contract_product_uuid"
+        startCollectionDate:
+          type: string
+          example: "2017-07-21"
+          description: "Start date collection"
+          nullable: false
+          x-mapping: "collection-order.date_start"
+        endCollectionDate:
+          type: string
+          example: "2017-07-30"
+          description: "End date collection"
+          nullable: false
+          x-mapping: "collection-order.date_expiration"
+        customerUserId:
+          type: string
+          example: "12345678-eb18-432b-a9ac-0aa5e80ebe9a"
+          description: "User company contract universally unique identifier"
+          nullable: false
+          x-mapping: "collection-order.user_comp_cont_uuid"
+        trayOrderId:
+          type: integer
+          example: "123"
+          description: "Tray approval order id"
+          nullable: false
+          x-mapping: "collection-order.approval_order_id"
+        loadType:
+          $ref: "#/components/schemas/LoadType"
+        status:
+          $ref: "#/components/schemas/Status"
+        collectionOrderItem:
+          $ref: "#/components/schemas/UxGetCollectionOrderItemResponse"
+
+    UxGetCollectionOrderItemResponse:
+      title: SpGetCollectionOrderItemResponse
+      type: object
+      properties:
+        amount:
+          type: number
+          example: 123.80
+          description: item Amount.
+          nullable: false
+          x-mapping: "items_order.amount"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        identificationType:
+          $ref: "#/components/schemas/IdentificationType"
+        identificationValue:
+          type: string
+          example: "098567"
+          description: beneficiary identification Value.
+          nullable: false
+          x-mapping: "items_order.bill_id"
+        description:
+          type: string
+          example: "Description collection order item"
+          description: Description order.
+          nullable: false
+          x-mapping: "items_order.description"
+        beneficiary:
+          $ref: "#/components/schemas/Beneficiary"
+        status:
+          $ref: "#/components/schemas/Status"
+
+    CollectionOrderAccount:
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: account identification | acccount number
+          example: 2100080794
+        type:
+          $ref: "#/components/schemas/Type"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        alias:
+          type: string
+          example: 'alias account'
+
+    LoadType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Manual
+          example:
+        description:
+          type: string
+          description: Description load type
+          example: Manual
+          x-mapping: "items-order.loadType"
+
+    Type:
+      type: object
+      properties:
+        code:
+          type: string
+          description: account type code
+          example: CTE
+        description:
+          type: string
+          description: account Type description
+          example: "CTA.CTE PERSONAL"
+
+    Status:
+      type: object
+      properties:
+        code:
+          type: string
+          description: status code
+          example: A
+        description:
+          type: string
+          description: status description
+          example: "ACTIVO"
+
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: currency code | ISO-4217
+          example: USD
+        description:
+          type: string
+          description: currency description | ISO-4217
+          example: Dolares Americanos
+
+    IdentificationType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code or number bill
+          example: B
+        description:
+          type: string
+          description: Description bill
+          example: BILL IDENTIFICATION
+
+    Beneficiary:
+      title: Beneficiary
+      type: object
+      properties:
+        fullname:
+          type: string
+          example: "Jesus Alberto"
+          description: beneficiary fullName.
+          nullable: false
+          x-mapping: "order-item.fullname"
+        documentType:
+          type: string
+          example: "RUC"
+          description: Beneficiary Document type.
+          nullable: false
+          x-mapping: "order-item.document_type"
+        documentNumber:
+          type: string
+          example: "1231233450"
+          description: Beneficiary ocument number.
+          nullable: false
+          x-mapping: "order-item.document_number"
+        email:
+          type: string
+          example: "collectionorder@domain.com"
+          description: Email beneficiary.
+          nullable: false
+          x-mapping: "order-item.email"
+        saveInformation:
+          type: boolean
+          example: true
+          description: "Save beneficiary information"
+          nullable: false
+
+    Error:
+      type: object
+      properties:
+        title:
+          maximum: 50
+          type: string
+          description: Mensaje de error técnico.
+        detail:
+          maximum: 50
+          type: string
+          description: Mensaje a presentar al cliente.
+        instance:
+          maximum: 50
+          type: string
+          description: Código de catálogo de errores.
+        type:
+          maximum: 100
+          type: string
+          description: Dirección de la fuente solicitada por el proxy
+        resource:
+          maximum: 100
+          type: string
+          description: Recurso del servicio en el que se produjo el error.
+        component:
+          maximum: 100
+          type: string
+          description: Componente del servicio en el que sucedió el error.
+        backend:
+          maximum: 100
+          type: string
+          description: Código de error interno.

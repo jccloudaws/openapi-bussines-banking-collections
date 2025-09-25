@@ -1,0 +1,135 @@
+terraform {
+  required_version = ">= 1.6.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = var.region
+}
+
+# NLB expuesto por EKS (resuelto por TAGS)
+data "aws_lb" "k8s_nlb" {
+  tags = {
+    "kubernetes.io/cluster/${var.eks_cluster_name}" = "owned"
+    "kubernetes.io/service-name"                    = "${var.svc_namespace}/${var.svc_name}"
+  }
+}
+
+# Listener del NLB (¡clave para HTTP API + VPC_LINK!)
+data "aws_lb_listener" "k8s_nlb_listener" {
+  load_balancer_arn = data.aws_lb.k8s_nlb.arn
+  port              = var.nlb_listener_port # 80 o 443 (según tu NLB)
+}
+
+# SG para Lambdas pre-proxy
+resource "aws_security_group" "lambda_sg" {
+  name        = "lambda-preproxy-sg"
+  description = "Egress from Lambda to NLB"
+  vpc_id      = var.vpc_id
+  tags        = merge(var.tags, { Name = "lambda-preproxy-sg" })
+}
+
+resource "aws_security_group_rule" "lambda_egress_to_nlb" {
+  type              = "egress"
+  security_group_id = aws_security_group.lambda_sg.id
+  protocol          = "tcp"
+  from_port         = var.nlb_port
+  to_port           = var.nlb_port
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
+# ===== Secrets Manager: resolver ARN del secreto RSA =====
+data "aws_secretsmanager_secret" "rsa_keys" {
+  name = var.rsa_keys_secret_name
+}
+
+
+# VPC Link
+module "vpclink" {
+  source             = "./modules/vpc-link"
+  name               = "vpclink"
+  subnet_ids         = var.lambda_subnet_ids
+  security_group_ids = [aws_security_group.lambda_sg.id]
+  tags               = var.tags
+}
+
+# Lambdas pre-proxy
+module "lambda_pre" {
+  for_each = { for l in var.preproxy_lambdas : l.name => l }
+  source   = "./modules/lambda-preproxy"
+
+  name     = "pre-${each.value.name}"
+  zip_path = each.value.zip_path
+  handler  = each.value.handler
+  runtime  = each.value.runtime
+  role_arn = try(each.value.role_arn, null)
+
+  subnet_ids         = var.lambda_subnet_ids
+  security_group_ids = [aws_security_group.lambda_sg.id]
+
+  env_vars = merge(each.value.env_vars, {
+    # === claves para decrypt ===
+    RSA_KEYS_SECRET_NAME = var.rsa_keys_secret_name
+    FORWARD_BASE_PATH = "/channel/back-office/v1/servicing-order"
+    # === forward al NLB (upstream) ===
+    NLB_HOST          = data.aws_lb.k8s_nlb.dns_name
+    NLB_PORT          = tostring(var.nlb_port)
+    NLB_SCHEME        = var.nlb_listener_port == 443 ? "https" : "http"
+    FORWARD_BASE_PATH = "/channel/back-office/v1"
+  })
+
+  tags = var.tags
+}
+
+
+# HTTP APIs (uno por cada entrada en var.apis)
+module "http_api" {
+  for_each = { for a in var.apis : a.name => a }
+  source   = "./modules/http-api"
+
+  api_name        = each.value.display_name
+  api_description = try(each.value.description, null)
+  stage_name      = var.stage_name
+  openapi_path    = try(each.value.openapi_path, null)
+
+  # JWT
+  jwt_issuer    = each.value.jwt.issuer
+  jwt_audiences = each.value.jwt.audiences
+
+  # Inyecta listener_arn cuando la ruta sea VPC_LINK y no lo traiga
+  routes = [
+    for r in try(each.value.routes, []) : merge(r, {
+      integration = (
+        r.integration.type == "VPC_LINK" && try(r.integration.listener_arn, "") == ""
+        ? merge(r.integration, { listener_arn = data.aws_lb_listener.k8s_nlb_listener.arn })
+        : r.integration
+      )
+    })
+  ]
+
+  # Lambdas por nombre
+  lambda_arns_by_name = { for k, m in module.lambda_pre : k => m.lambda_arn }
+
+  # VPC Link y fallback del listener
+  vpc_link_id               = module.vpclink.vpc_link_id
+  fallback_nlb_listener_arn = data.aws_lb_listener.k8s_nlb_listener.arn
+
+  tags = var.tags
+}
+
+# Outputs útiles
+output "api_endpoints" {
+  value = { for k, m in module.http_api : k => m.invoke_url }
+}
+
+output "nlb" {
+  value = {
+    arn = data.aws_lb.k8s_nlb.arn
+    dns = data.aws_lb.k8s_nlb.dns_name
+  }
+}

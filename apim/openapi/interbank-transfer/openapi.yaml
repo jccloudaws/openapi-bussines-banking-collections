@@ -1,0 +1,1320 @@
+openapi: 3.0.0
+info:
+  title: Api Channel - Bussines Banking - Interbank Transfer Order V1
+  description: |
+    API Channel For Manage Interbank Transfer Order
+    <br>
+    <b>Service Domain:</b> `Payment Order`
+    <br>
+  version: 1.0.0
+  contact:
+    name: luis aponte
+    email: laponte-ext@pichincha.pe
+servers:
+  - description: Server in devops in busines banking layer
+    url: http://localhost:8080/channel/business-banking/v1/interbank-transfer-orders
+tags:
+  - name: "Account"
+    description: "Account Controller"
+  - name: "Interbank Transfer Order"
+    description: "Interbank Transfer Order Controller"
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /:
+    get:
+      tags:
+        - Interbank Transfer Order
+      summary: Retrive transfer order.
+      description:
+        "### Details:\n   Functionality that allows obtaining the details of a transfer order by filter.\n
+          ### Valid use of parameters:\n
+          | Expected result       | Path Parameter | Query Parameter |\n
+          |--------------------   |--------------- |-----------------|\n
+          |  Retrieve an Account Transfer header order    | - |  trayOrderId   |\n
+          |  Retrieve an Account Transfer order complete      | - |    moreData=accountTransferOrderItem  |\n
+          ### The combination described above are the only possible combinations of parameters, other combinations will return error."
+      operationId: GetInterbankTransferOrderByFilter
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: trayOrderId
+          in: query
+          description: Tray Order Id
+          required: true
+          schema:
+            type: string
+            example: a4a94634-e16d-4470-a251-d88f622fca3d
+        - name: moreData
+          in: query
+          description: Obtains the complete information of the transfer order
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: "accountTransferOrderItem"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetInterbankTransferOrderByFilterResponse'
+          description: successful validation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: "Error in request"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: "Internal error (UCP002, UCP003)"
+    post:
+      tags:
+        - Interbank Transfer Order
+      summary:  Save transfer order.
+      description: |
+        ### Details: 
+          Save the information for transfer to accounts for another bank.
+      operationId: PostInterbankTransferOrder
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostInterbankTransferOrderRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: "Error in request"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: "Internal error"
+  /accounts:
+    get:
+      tags:
+        - Account
+      summary: Retrieve list active accounts.
+      description:
+
+        "### Details:\n   Retrieve list customer's transactional accounts to be debited for your transfers.\n"
+      operationId: GetInterbankTransferAccount
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      responses:
+        "200":
+          description: |
+            <b>`OK`</b>
+            <br>Accounts</br>
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetInterbankTransferAccountResponse"
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: "Error in request"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: "Internal error (UCP002, UCP003)"
+  /validate:
+    post:
+      tags:
+        - Account
+      summary:  Verify the amount information for interbank transfers.
+      description: |
+        ### Details: 
+          Verify the amount information for transfer between interbank accounts.
+      operationId: PostInterbankTransferValidate
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostInterbankTransferValidateRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostInterbankTransferValidateResponse'
+          description: successful validation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: "Error in request"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: "Internal error (UCP002, UCP003)"
+  /exchange-rates:
+    get:
+      tags:
+        - Currency Exchange
+      summary: Retrive exchange rates.
+      description: "### Details:\n   Retrieves exchange rates according to currency for buying or selling.\n
+          ### Valid use of parameters:\n
+          | Expected result       | Path Parameter | Query Parameter |\n
+          |--------------------   |--------------- |-----------------|\n
+          |  Exchange rate code    | - |  codeExchangeRate   |\n
+          |  Type of currency      | - |  codeExchangeRate  |\n
+          |  Amount to change      | - |  amount  |\n
+          |  Flag for amount ranges| - |  rangesFlag  |\n
+          ### The combination described above are the only possible combinations of parameters, other combinations will return error."
+      operationId: GetAccountTransferOrderExchangeRatesByFilter
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: amount
+          in: query
+          description: Amount to change.
+          required: true
+          style: form
+          explode: false
+          allowEmptyValue: false
+          schema:
+            type: string
+        - name: codeExchangeRate
+          in: query
+          description:   Exchange rate code.
+          required: true
+          style: form
+          explode: false
+          allowEmptyValue: false
+          schema:
+            type: string
+        - name: currencyExchange
+          in: query
+          description: Type of currency.
+          required: true
+          style: form
+          explode: false
+          allowEmptyValue: false
+          schema:
+            type: string
+        - name: rangesFlag
+          in: query
+          description: Flag for amount ranges.
+          required: true
+          style: form
+          explode: false
+          allowEmptyValue: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAccountTransferOrderExchangeRatesByFilterResponse"
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: "Error in request"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: "Internal error (UCP002, UCP003)"
+  /verify:
+    post:
+      tags:
+        - Account
+      summary: Verifies the CCI account.
+      description: |
+        ### Details:
+        Verifies the CCI account and returns the CCE transfer fees.
+      operationId: PostCCEExecute
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: true
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCCEValidateRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostCCEValidateResponse'
+          description: successful validation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: "Error in request"
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: "Internal error (UCP002, UCP003)"
+components:
+  schemas:
+    GetInterbankTransferOrderByFilterResponse:
+      title: GetInterbankTransferOrderByFilterResponse
+      type: object
+      properties:
+        accountTransferOrder:
+          $ref: '#/components/schemas/GetInterbankTransferOrderByFilter'
+    GetInterbankTransferOrderByFilter:
+      type: object
+      properties:
+        trayOrderId:
+          type: string
+          description: Tray order id.
+          example: "123444444"
+        orderType:
+          type: string
+          description: Order type
+          example: TRINTB
+        entityTag:
+          type: string
+          example: QEDFADFASF
+          description: Entity tag.
+        customerProductId:
+          type: string
+          example: 122afbb1-0e80-4198-acd9-42ffde1e208b
+          description: Customer product id
+        customerUserId:
+          type: string
+          description: User identification
+          example: 122afbb1-0e80-4198-acd9-42ffde1e208b
+        customerAffiliationId:
+          type: string
+          description: Company identification
+          example: 122afbb1-0e80-4198-acd9-42ffde1e208b
+        customerId:
+          type: string
+          example: 122afbb1-0e80-4198-acd9-42ffde1e208b
+          description: Customer id
+        currencyOrder:
+          $ref: "#/components/schemas/Currency"
+        sourceAccount:
+          $ref: "#/components/schemas/SourceAccount"
+        uploadType:
+          $ref: "#/components/schemas/UploadType"
+        expirationDate:
+          type: string
+          description: Date of expiration
+          example: "12-12-2022"
+        executionDate:
+          type: string
+          description: Date of execution.
+          example: "12-12-2022"
+        registerDate:
+          type: string
+          description: Date of register
+          example: "12-12-2022"
+        operatorUsername:
+          type: string
+          description: Operator user
+          example: "USER_01"
+        approverUsername:
+          type: string
+          description: Approver user
+          example: "USER_02"
+        processingType:
+          $ref: '#/components/schemas/ProcessingType'
+        status:
+          $ref: "#/components/schemas/Status"
+        referenceCce:
+          $ref: "#/components/schemas/ReferenceCce"
+        accountTransferOrderItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/GetInterbankTransferOrderItemResponse"
+    GetInterbankTransferAccountResponse:
+      required:
+        - token
+      type: object
+      properties:
+        accounts:
+          $ref: "#/components/schemas/AccountData"
+    GetInterbankTransferOrderItemResponse:
+      type: object
+      properties:
+        accountTransferOrderItemId:
+          type: string
+          example: 122afbb1-0e80-4198-acd9-42ffde1e208b
+          description:  Order detail id.
+        orderItemId:
+          type: string
+          example: 122afbb1-0e80-4198-acd9-42ffde1e208b
+          description: Identifies the order item.
+        entityTag:
+          type: string
+          example: QEDFADFASF
+          description: Entity tag.
+        currency:
+          $ref: "#/components/schemas/Currency"
+        amount:
+          type: number
+          example: 10.50
+          description: Amount charged for the service.
+        totalAmount:
+          type: number
+          description: Total amount debit source account.
+          example: 2000
+        status:
+          $ref: "#/components/schemas/Status"
+        description:
+          type: string
+          example: This is a description
+          description: Information about the goods and/or services of a trade transaction.
+        beneficiary:
+          $ref: "#/components/schemas/Beneficiary"
+        destinationProduct:
+          $ref: "#/components/schemas/CashAccount"
+        currencyExchange:
+          $ref: "#/components/schemas/ForeignExchangeTrade"
+        commission:
+          $ref: "#/components/schemas/CommissionVerify"
+        typeTransfer:
+          type: string
+          example: 1
+          description: Type transfer.
+        typeOperation:
+          type: string
+          example: 1
+          description: Type operation.
+    PostInterbankTransferValidateRequest:
+      required:
+        - token
+      type: object
+      properties:
+        amount:
+          type: number
+          example: 4000
+          description: Amount to transfer.
+        currency:
+          $ref: "#/components/schemas/Currency"
+    ForeignExchangeTrade:
+      title: ForeignExchangeTrade
+      type: object
+      properties:
+        buyAmount:
+          type: number
+          example: 3.1819
+          description: Purchase exchange rate.
+        sellAmount:
+          type: number
+          example: 3.1820
+          description: Selling exchange rate
+    Beneficiary:
+      type: object
+      properties:
+        fullName:
+          type: string
+          description: beneficiary fullName.
+          nullable: false
+          example: Empresa Test SAC
+        documentType:
+          type: string
+          description: beneficiary document type.
+          nullable: false
+          example: "1"
+        documentNumber:
+          type: string
+          description: beneficiary document number.
+          nullable: false
+          example: "20394987652"
+        isSameClient:
+          type: string
+          description: Define if the account is of the same client or another client. 1 - Same client 0 - Other client for inmediate, M - Same client O - Other client for schedule.
+          example: "0"
+        financialEntity:
+          type: string
+          description: Finacial Entity Name.
+          example: Bank Test SAC
+    PostInterbankTransferValidateResponse:
+      required:
+        - token
+      type: object
+      properties:
+        params:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransferOption"
+    PostCCEValidateRequest:
+      required:
+        - amount
+        - currency
+        - creditorAccount
+      type: object
+      properties:
+        amount:
+          type: number
+          example: 4000
+          description: Amount send to the destination bank.
+        currency:
+          $ref: "#/components/schemas/Currency"
+        description:
+          type: string
+          example: Optional description of the operation, data recorded in the accounting narrative.
+          description: Information about transfer.
+        creditorAccount:
+          $ref: "#/components/schemas/CreditorAccount"
+        debtorAccountUuid:
+          type: string
+          example: a4a94634-e16d-4470-a251-d88f622fca3d
+          description: Debit account uuid of the transfer.
+        beneficiary:
+          $ref: "#/components/schemas/Beneficiary"
+        currencyExchange:
+          $ref: "#/components/schemas/ForeignExchangeTrade"
+        processingType:
+          $ref: '#/components/schemas/ProcessingType'
+    PostCCEValidateResponse:
+      type: object
+      properties:
+        beneficiaryUuid:
+          type: string
+          example: a4a94634-e16d-4470-a251-d88f622fca3d
+          description: UUID Beneficiary.
+        destinationName:
+          type: string
+          example: Juan Perez Gonzales
+          description: First Name + Paternal Last Name + Maternal Last Name.
+        isSameClient:
+          type: number
+          description: Define if the account is of the same client or another client. 1 - Same client 0 - Other client
+          example: "0"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        numberReferenceCce:
+          type: string
+          description: Number reference of Electronic Commerce Chamber.
+          example: "2023030214314400358190041407"
+        trace:
+          type: string
+          description: Number of trace.
+          example: "041407"
+        referenceNumber:
+          type: string
+          description: Reference number of the transaction.
+          example: "030214314401"
+        totalAmount:
+          type: number
+          example: 4000
+          description: Amount with commision.
+        amount:
+          type: number
+          example: 3799
+          description: Amount without commision.
+        currencyExchange:
+          type: number
+          example: 3.799
+          description: Applicate exchange rate.
+        commission:
+          $ref: "#/components/schemas/Commission"
+        operationNumber:
+          type: string
+          description: Generated number of transaction.
+          example: "480"
+        plazaCode:
+          type: string
+          description: Location code defined by the bank code and agency code. Plaza 'M' - Same bank, 'O' - Another bank 'EN' - Exclusive plaza.
+          example: "M"
+        description:
+          type: string
+          example: TRF. INMEDIATA CTA
+          description: Optional description of the operation, data recorded in the accounting narrative.
+        creditorAccount:
+          $ref: "#/components/schemas/CashAccount"
+    AccountData:
+      type: array
+      title: Accounts
+      items:
+        $ref: '#/components/schemas/Account'
+    Account:
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: 1234567890
+          description: Account identifier for redis.
+        alias:
+          type: string
+          example: Cuenta
+          description: Account number.
+        customerProductId:
+          type: string
+          description: customer product id
+          example: "2100080794"
+        productType:
+          $ref: "#/components/schemas/AccountType"
+        status:
+          $ref: "#/components/schemas/StatusAccount"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        balanceInformation:
+          $ref: '#/components/schemas/Balance'
+    AccountType:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 001
+          description: Account code
+        description:
+          type: string
+          example: CTA CORRIENTE
+          description: Description Account
+      title: AccountType
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          example: USD
+          description: currency Code
+        description:
+          type: string
+          example: US Dollars
+          description: currency description
+      title: CurrencyAccount
+    Balance:
+      type: object
+      properties:
+        availableAmount:
+          type: string
+          example: 1
+          description: available amount
+        countableAmount:
+          type: string
+          example: 1
+          description: countable amount
+    StatusAccount:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 1
+          description: Code status account
+        description:
+          type: string
+          example: Activo
+          description: Description status account
+      title: StatusAccount
+    TransferOption:
+      type: object
+      properties:
+        value:
+          type: integer
+          example: 1
+          description: Identificator of product parameter.
+    Status:
+      type: object
+      properties:
+        code:
+          type: string
+          description: status code
+          example: A
+        description:
+          type: string
+          description: status description
+          example: ACTIVO
+    CashAccount:
+      title: CashAccount
+      type: object
+      properties:
+        productNumber:
+          type: string
+          example: 001-123456789-12
+          description: product number
+        currency:
+          $ref: "#/components/schemas/Currency"
+        productType:
+          $ref: "#/components/schemas/ProductType"
+    SourceAccount:
+      title: SourceAccount
+      type: object
+      properties:
+        productNumber:
+          type: string
+          example: 001-123456789-12
+          description: product number
+        currency:
+          $ref: "#/components/schemas/Currency"
+        productType:
+          $ref: "#/components/schemas/ProductType"
+        company:
+          $ref: "#/components/schemas/Company"
+    ProductType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: product code
+          example: "003"
+        description:
+          type: string
+          description: product description
+          example: Cuenta corriente
+    CommissionVerify:
+      type: object
+      properties:
+        totalCommision:
+          type: number
+          example: 6.00
+          description: Commission sum.
+        detail:
+          $ref: "#/components/schemas/CommissionDetail"
+    CommissionDetail:
+      type: object
+      properties:
+        itf:
+          type: number
+          example: 1.50
+          description: Amount of the ITF commission.
+        bank:
+          type: number
+          example: 1.50
+          description: Amount of the Bank commission.
+        service:
+          type: number
+          example: 1.50
+          description: Amount of the Service commission.
+        payment:
+          type: number
+          example: 1.50
+          description: Amount of the Payment commission.
+    Commission:
+      type: object
+      properties:
+        itf:
+          type: number
+          example: 1.50
+          description: ITF Commission.
+        transferTax:
+          type: number
+          example: 1.50
+          description: Transfer commission.
+    UploadType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: upload code
+          example: MANUAL
+    ProcessingType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: order type (inmediate or scheduled)
+          example: IMMEDIATE
+    GetAccountTransferOrderExchangeRatesByFilterResponse:
+      type: object
+      properties:
+        uuidExchange:
+          type: string
+          example: EXCHANGE_984db797-1068-458b-8315-defr85d
+          description: Exchange identifier for redis.
+        purchaseRate:
+          type: number
+          example: 1
+          description: Currency and amount bought in a foreign exchange trade.
+        saleRate:
+          type: number
+          example: 1
+          description: Currency and amount sold in a foreign exchange trade.
+      title: ExchangeRateResponse
+    ErrorModel:
+      additionalProperties: false
+      properties:
+        errorCode:
+          maxLength: 6
+          example: "ERR_01"
+          pattern: "^[a-zA-Z]+$\\d+$"
+          type: string
+        developerMessage:
+          maxLength: 256
+          example: "Cliente no cumple con requisitos para solicitar transferencias interbancarias."
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        userMessage:
+          maxLength: 256
+          example: "Cliente no cumple con requisitos para solicitar transferencias interbancarias."
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        moreInfo:
+          maxLength: 256
+          example: "Cliente no cumple con requisitos para solicitar transferencias interbancarias."
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        errorMessages:
+          type: array
+          items:
+            type: string
+      type: object
+    CreditorAccount:
+      title: CashAccount
+      type: object
+      properties:
+        productNumber:
+          type: string
+          example: 001-123456789-12
+          description: product number
+    Company:
+      type: object
+      properties:
+        name:
+          type: string
+          example: TRANSPORTES PATRONA SANTA ANA SAC
+          description: company name
+        documentType:
+          type: string
+          example: 1
+          description: ID Type
+        documentNumber:
+          type: string
+          example: 20539082508
+          description: identification number
+    ReferenceCce:
+      type: object
+      properties:
+        operationNumber:
+          type: number
+          description: Number reference of Electronic Commerce Chamber.
+          example: "2023030214314400358190041407"
+        trace:
+          type: number
+          description: Number of trace.
+          example: "041407"
+        description:
+          type: string
+          example: TRF. INMEDIATA CTA
+          description: Reference description obtained by consulting the CCE.
+        authorizationCode:
+          type: number
+          description: Authorization number received from CCE.
+          example: "43434543543544355354"
+    PostInterbankTransferOrderRequest:
+      type: object
+      properties:
+        beneficiaryUuid:
+          type: string
+          example: a4a94634-e16d-4470-a251-d88f622fca3d
+          description: UUID Beneficiary.
+        currencyUuid:
+          type: string
+          example: a4a94634-e16d-4470-a251-d88f622fca3d
+          description: currency code
+        debtorAccountUuid:
+          type: string
+          example: a4a94634-e16d-4470-a251-d88f622fca3d
+          description: Debit account uuid of the transfer.
+        beneficiary:
+          $ref: "#/components/schemas/Beneficiary"
+        typeTransfer:
+          type: string
+          example: 1
+          description: Type transfer.
+        creditorAccount:
+          $ref: "#/components/schemas/CreditorAccount"
+        description:
+          type: string
+          example: Transfer BCR.
+          description: Description of transaction.
+        processingType:
+          $ref: '#/components/schemas/ProcessingType'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key

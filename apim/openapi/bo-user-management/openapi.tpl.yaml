@@ -1,0 +1,987 @@
+openapi: 3.0.1
+info:
+  title: Api Channel Back Office User Management V1
+  description: ' Api for manage user <br> <br> Business Area `Operations and Execution`
+    <br> Business Domain `Operational Services` <br> Service Domain `User Management` '
+  version: 1.1.0
+  contact:
+    name: Rossmel Mendoza
+    email: rmendoza-ext@pichincha.pe
+servers:
+- description: Back Office User Management Layer
+  url: http://localhost:8080/channel/back-office/v1/user-management
+security:
+- oauth2: []
+tags:
+- name: Profile Template
+  description: Profile Template Controller
+- name: User
+  description: User Controller
+- name: Account
+  description: Account Controller
+- name: Banking Product Operation
+  description: Banking Product Operation Controller
+- name: User Approval Level
+  description: User Approval Level Controller
+paths:
+  /channel/back-office/v1/user-management/profile-templates:
+    get:
+      tags:
+      - Profile Template
+      summary: Retrieve a list of profile templates
+      description: "### Details:\n\n  Retrieve a list profile templates\n"
+      operationId: getProfileTemplateByFilters
+      responses:
+        200:
+          description: Profile template list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetProfileTemplateByFiltersResponse'
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /channel/back-office/v1/user-management/users:
+    get:
+      tags:
+      - User
+      summary: Retrieves users list by customer
+      description: "### Details:\n  Retrieves a users list by customer\n\n### Valid\
+        \ use of parameters:\n| Expected result | Path Parameter | Query Parameter\
+        \ |\n|--------------------|--------------- |-----------------|\n|Retrieve\
+        \ a list of users by customer | - | customerAffiliationId |\n### The combination\
+        \ described above are the only possible combinations of parameters, other\
+        \ combinations will return error.\n"
+      operationId: getUser
+      responses:
+        200:
+          description: The User Information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetUserByFilterResponse'
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+    post:
+      tags:
+      - User
+      summary: Save basic user information
+      description: '### Details:
+
+        Saves the basic information of the user and returns the masked id of the saved
+        user
+
+        '
+      operationId: postUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUserRequest'
+      responses:
+        200:
+          description: User information saved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostUserResponse'
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /channel/back-office/v1/user-management/users/activate:
+    post:
+      tags:
+      - User
+      summary: Activate the user
+      description: '### Details:
+
+        Activate the user and the session will expire it
+
+        '
+      operationId: postUserActivate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUserActivateRequest'
+        required: true
+      responses:
+        200:
+          description: Operation validated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostUserResponse'
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /channel/back-office/v1/user-management/accounts:
+    get:
+      tags:
+      - Account
+      summary: Retrieve a list of accounts and permissions
+      description: '### Details
+
+        Retrieves a list of accounts and permissions available to the user id
+
+        '
+      operationId: getAccountByFilter
+      parameters:
+      - name: app-name
+        in: header
+        description: Application Name
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: businessBanking
+      - name: caller-name
+        in: header
+        description: Api name who request
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: bbe-msa-bs-guided-experience
+      - name: process-code
+        in: header
+        description: Identifies the process or functionality
+        required: false
+        schema:
+          type: string
+          example: BJACAR01
+      - name: request-date
+        in: header
+        description: Request Date | RFC 3339 Format
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 2019-10-12 07:20:50.520000+00:00
+      - name: request-id
+        in: header
+        description: Request Identifier
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: x-session
+        in: header
+        description: Indicates the active session in which the user is transacting.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+      - name: x-device
+        in: header
+        description: Identifier of the device.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 9939aadd00ee32
+      - name: x-device-ip
+        in: header
+        description: IP address of origin of the request.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 200.10.89.34
+      - name: x-language
+        in: header
+        description: ISO – 639-1  – Language Code - 2 digit code.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 5
+          type: string
+      - in: query
+        name: userId
+        schema:
+          type: string
+          description: User Masked Uuid
+        required: true
+      responses:
+        200:
+          description: Profile customer products list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAccountByFilterResponse'
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /channel/back-office/v1/user-management/banking-product-operations:
+    post:
+      tags:
+      - Banking Product Operation
+      summary: Save the user accounts and actions assigned
+      description: '### Details:
+
+        Save a list of accounts with a group of actions selected to assing to the
+        accounts
+
+        '
+      operationId: postBankingProductOperation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostBankingProductOperationRequest'
+      responses:
+        200:
+          description: Accounts and actions assigned successfully
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /channel/back-office/v1/user-management/user-approval-levels:
+    get:
+      tags:
+      - User Approval Level
+      summary: Retrieve a list of categories and levels for a company product.
+      description: '### Details:
+
+        Retrieve a list of categories and levels related a company product in base
+        a list of company product uuids and a user contract uuid
+
+        '
+      operationId: getUserApprovalLevelByFilter
+      parameters:
+      - in: query
+        name: userId
+        required: true
+        schema:
+          type: string
+        example: 236087d9-89d6-47f8-bab3-180aa16b3rty
+        description: Uuid of the user in registration process
+      responses:
+        200:
+          description: Return the data structure to show in the screen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetUserApprovalLevelByFilterResponse'
+        409:
+          description: The information are not valid
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: You're not authorized to perform this operation
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An error has occurred
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        502:
+          description: The service is not available
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+    post:
+      tags:
+      - User Approval Level
+      summary: Save the information of the categories and products assigned to a user
+      description: '### Details:
+
+        Save the information of the categories and products selected to be assigned
+        to the user
+
+        '
+      operationId: postUsersUserApprovalLevel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUserApprovalLevelRequest'
+        required: true
+      responses:
+        200:
+          description: Categories and products assigned successfully
+        409:
+          description: The information are not valid
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: You're not authorized to perform this operation
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An error has occurred
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        502:
+          description: The service is not available
+          content:
+            application/json;charset-UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+components:
+  schemas:
+    GetProfileTemplateByFiltersResponse:
+      title: GetProfileTemplateByFiltersResponse
+      type: object
+      properties:
+        profileTemplateId:
+          type: string
+          example: 1234-5678-90AB-CDEF
+        name:
+          type: string
+          example: Operator
+        description:
+          type: string
+          example: You will have access to create and generate transactions
+        registerDate:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        configParameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileTemplateParam'
+    ProfileTemplateParam:
+      title: ProfileTemplateParam
+      type: object
+      properties:
+        name:
+          type: string
+          example: isEditable
+          description: Param code
+          x-mapping: profile_parameter.code_parameter
+        value:
+          type: string
+          example: '1'
+          description: Param value
+          x-mapping: profile_parameter.value
+    GetUserByFilterResponse:
+      title: GetUserByFilterResponse
+      type: object
+      required:
+      - customerAffiliationId
+      properties:
+        userId:
+          type: string
+          description: user id
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        documentNumber:
+          type: string
+          description: document of identification user
+          example: '171655333001'
+        documentType:
+          type: string
+          description: type of documento
+          example: '0001'
+        names:
+          type: string
+          description: Names of user
+          example: Name
+        surnames:
+          type: string
+          description: Surnames
+          example: Lastname
+        position:
+          type: string
+          description: Surnames
+          example: Lastname
+        email:
+          type: string
+          description: Email of user
+          example: gobc@email.com
+        registerDate:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        channel:
+          type: string
+          example: Cliente
+        cellphone:
+          $ref: '#/components/schemas/CellPhone'
+        userProfile:
+          $ref: '#/components/schemas/Profile'
+        status:
+          $ref: '#/components/schemas/Status'
+    PostUserRequest:
+      title: PostUserRequest
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 1234-5678-90AB-CDEF
+        profileTemplateId:
+          type: string
+          example: 1234-5678-90AB-CDEF
+        customerAffiliationId:
+          type: string
+          example: 1234-5678-90AB-CDEF
+        documentNumber:
+          type: string
+          example: '1721553616'
+          maxLength: 10
+        documentType:
+          type: string
+          example: '0001'
+          maxLength: 4
+        names:
+          type: string
+          example: Jhon Carlos
+        surnames:
+          type: string
+          example: Steward Colling
+        email:
+          type: string
+          example: jhondoe@mail.com
+        position:
+          type: string
+          example: Manager
+        cellphone:
+          $ref: '#/components/schemas/CellPhone'
+    CellPhone:
+      title: CellPhone
+      type: object
+      properties:
+        internationalPrefix:
+          type: string
+          example: '593'
+        number:
+          type: string
+          example: 0987654321
+    Profile:
+      title: Profile
+      type: object
+      required:
+      - userProfileId
+      properties:
+        userProfileId:
+          type: string
+          description: Code of profile
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        name:
+          type: string
+          description: name of profile
+          example: Administrator
+        description:
+          type: string
+          description: Description
+          example: Allows you to perform operations to add, delete or modify
+    Status:
+      title: Status
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          description: Code of status
+          example: STEP-1
+        description:
+          type: string
+          description: description of status
+          example: User in step 1
+    PostUserResponse:
+      title: PostUserResponse
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 4085b199-5994-4016-ad0c-e28486c59008
+    GetAccountByFilterResponse:
+      title: GetAccountByFilterResponse
+      type: object
+      properties:
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetAccount'
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetPermission'
+    GetAccount:
+      title: GetAccount
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+        name:
+          type: string
+          example: Cuenta ahorros
+        alias:
+          type: string
+          example: PRIN Santo domingo
+        type:
+          $ref: '#/components/schemas/GetAccountType'
+        accountNumber:
+          type: string
+          example: '2255889965'
+    GetAccountType:
+      title: GetAccountType
+      type: object
+      properties:
+        code:
+          type: string
+          example: ''
+        description:
+          type: string
+          example: CTA.CTE PERSONAL
+    GetPermission:
+      title: GetPermission
+      type: object
+      properties:
+        permissionId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+        description:
+          type: string
+          example: persmission descripcion example
+        claim:
+          type: string
+          example: RE.ASD.ED
+        isSelected:
+          type: boolean
+          example: true
+    PostBankingProductOperationRequest:
+      title: PostBankingProductOperationRequest
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostAccount'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostAction'
+    PostAccount:
+      title: PostAccount
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+    PostAction:
+      title: PostAction
+      type: object
+      properties:
+        actionId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+    GetUserApprovalLevelByFilterResponse:
+      title: GetUserApprovalLevelByFilterResponse
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/GetProduct'
+    GetProduct:
+      title: GetProduct
+      type: object
+      properties:
+        productId:
+          type: string
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        name:
+          type: string
+          example: APR
+        description:
+          type: string
+          example: Aprobar transferencias
+        claim:
+          type: string
+          example: ABC.DEF.GHI
+        approvalLevels:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetApprovalLevel'
+    GetApprovalLevel:
+      title: GetApprovalLevel
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetCategory'
+        limitsAmount:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetLimitAmount'
+    GetCategory:
+      title: Category
+      type: object
+      properties:
+        categoryId:
+          type: string
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        name:
+          type: string
+          example: Name example
+        isSelected:
+          type: boolean
+          example: false
+    GetLimitAmount:
+      title: GetLimitAmount
+      type: object
+      properties:
+        minAmount:
+          type: string
+          example: '0'
+        maxAmount:
+          type: string
+          example: '10'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetCategoryId'
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code for currency
+          example: USD
+    GetCategoryId:
+      title: GetCategoryId
+      type: object
+      properties:
+        categoryId:
+          type: string
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+    PostUserApprovalLevelRequest:
+      title: PostUserApprovalLevelRequest
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 4085b199-5994-4016-ad0c-e28486c59008
+        userProfileId:
+          type: string
+          example: 4085b199-5994-4016-ad0c-e28486c59008
+        userCustomerProduct:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostUserCustomerProduct'
+    PostUserCustomerProduct:
+      title: PostUserCustomerProduct
+      type: object
+      properties:
+        productId:
+          type: string
+          example: 1234-5678-90AB-CDEFGH
+        approvalLevel:
+          $ref: '#/components/schemas/PostApprovalLevel'
+    PostApprovalLevel:
+      title: PostApprovalLevel
+      type: object
+      properties:
+        categoryId:
+          type: string
+          example: 1234-5678-90AB-CDEFGH
+        isSelected:
+          type: boolean
+          example: true
+    PostUserActivateRequest:
+      title: PostUserActivateRequest
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 1234-5678-90AB-CDEFGH
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        errorCode:
+          type: string
+          pattern: ^[a-zA-Z]+$\d+$
+          maxLength: 6
+        developerMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        userMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        moreInfo:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        version:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+          example: 1.0.0
+        status:
+          maxLength: 15
+          type: integer
+          example: 409
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+    oauth2:
+      type: oauth2
+      x-amazon-apigateway-authorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        jwtConfiguration:
+          issuer: ${jwt_issuer}
+          audience: ["${jwt_audiences_list}"]
+x-amazon-apigateway-cors:
+  allowOrigins:
+  - '*'
+  allowHeaders:
+  - Authorization
+  - Content-Type
+  - x-api-key
+  - x-language
+  - app-name
+  - caller-name
+  - client-ip
+  allowMethods:
+  - GET
+  - POST
+  - OPTIONS

@@ -1,0 +1,612 @@
+openapi: 3.0.2
+info:
+  title: Channel Api Affiliation Ticket
+  version: 1.0.0
+servers:
+  - url: https://apim-desarrollo-business-banking.azure-api.net/v1/business-banking/cxp/affiliation/
+    description: Developmen
+tags:
+  - name: "affiliation"
+    description: "Affiliation Service"
+paths:
+  /ticket:
+    post:
+      tags:
+        - affiliation
+      operationId: createTicket
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/Ticket"
+        required: true
+      responses:
+        "201":
+          description: Ticket created
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/TicketOk"
+        "400":
+          description: Bad request (005, 006, 007)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: API key is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden (003, 004)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Resource not found (001, 002)
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal error
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /ticket/{id}:
+    get:
+      tags:
+        - affiliation
+      operationId: validateOtp
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Company id
+        - in: query
+          name: otp
+          schema:
+            type: string
+            maxLength: 6
+            pattern: ^[0-9]+$
+          required: true
+          description: OTP code
+      responses:
+        "200":
+          description: Ticket exists
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/TicketOk"
+        "400":
+          description: Bad request (008, 009)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: API key is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Resource not found
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal error
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Error"
+    patch:
+      tags:
+        - default
+      operationId: partialTicketUpdate
+      requestBody:
+        required: true
+        description: To save the user name and password of the user
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketPatch"
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Ticket to update
+
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketOk"
+        "400":
+          description: Bad request (010, 011, 012)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: API key is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal error
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /ticket/generate:
+    post:
+      tags:
+        - affiliation
+      operationId: postTicketGenerate
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/TicketGenerateRequest"
+        required: true
+      responses:
+        "201":
+          description: Ticket generate
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available:
+                    type: string
+        "400":
+          description: Bad request (005, 006, 007)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: API key is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden (003, 004)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Resource not found (001, 002)
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal error
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /affiliate/{id}/get-link-download/{language}:
+    get:
+      tags:
+        - default
+      operationId: sendLinkDownload
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Ticket to post
+        - in: path
+          name: language
+          schema:
+            type: string
+          required: true
+          description: Language of sms
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerPost"
+        "400":
+          description: Bad request (010, 011, 012)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: API key is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal error
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Error"
+  /ticket/{id}/customer:
+    post:
+      tags:
+        - default
+      operationId: createCustomer
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Ticket to post
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/CustomerCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerPost"
+        "400":
+          description: Bad request (010, 011, 012)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: API key is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal error
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Error"
+  /ticket/{id}/terms-conditions/{language}:
+    get:
+      tags:
+        - default
+      operationId: getTermsConditions
+      parameters:
+        - in: header
+          name: X-Auth-Token
+          schema:
+            type: string
+          description: Authorization token
+          example: Dasd123123asdad1231jbw
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Ticket for get terms and conditions
+        - in: path
+          name: language
+          schema:
+            type: string
+          required: true
+          description: Language of terms and conditions
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TermConditionResponse"
+        "400":
+          description: Bad request (010, 011, 012)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: API key is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal error
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Error"
+  /username/{id}/verification/{language}:
+    post:
+      tags:
+        - default
+      operationId: postVerificationUserName
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: UUID de la transacción
+        - in: path
+          name: language
+          schema:
+            type: string
+          required: true
+          description: language of affiliation
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/PostVerificationRequest"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available:
+                    type: boolean
+        "400":
+          description: Bad request (010, 011, 012)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: API key is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal error
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    TermConditionResponse:
+      required:
+        - url
+        - description
+        - name
+      type: object
+      properties:
+        url:
+          title: url term and conditions
+          type: string
+          example: "http://document.download.com/term-conditions.pdf"
+        description:
+          title: Documento text
+          type: string
+          example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id mi id arcu commodo faucibus. Aenean vel viverra libero, vel auctor metus. Proin turpis sapien, sagittis non pharetra vehicula, faucibus eget nibh. In at magna a mi facilisis suscipit. Nam hendrerit iaculis risus nec auctor. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam sem neque, euismod sit amet egestas non, tempus non tortor. Nunc commodo nisl ac ex commodo, ut ultrices odio maximus. Nunc molestie tempus massa convallis ultricies. Nunc vestibulum leo a nisl cursus, eget posuere nisl porta. Duis vulputate lacus vel justo accumsan euismod. Donec at sapien luctus ipsum finibus tristique ut sed erat. Vestibulum porta, risus vitae facilisis dictum, erat dui aliquam tellus, ac pretium diam urna ac augue. Praesent facilisis tristique nisl non rutrum. Nulla ante arcu, accumsan ac lacus id, congue tincidunt nisl. Morbi ac enim vel lectus tincidunt sodales. Maecenas id ipsum pharetra, fermentum justo vitae, interdum velit. Quisque non ex leo. Praesent eget facilisis tellus. Sed pharetra purus et nibh dictum, sit amet tincidunt nibh feugiat. Pellentesque feugiat tristique sapien a ultrices. Suspendisse sed tincidunt ipsum, non feugiat velit."
+        name:
+          title: Document name
+          type: string
+          example: "Term_conditions.pdf"
+    Ticket:
+      type: object
+      additionalProperties: false
+      required:
+        - customerDocument
+        - associateDocument
+        - lang
+        - token
+      properties:
+        customerDocument:
+          type: string
+          pattern: ^[0-9]+$
+          maxLength: 13
+        associateDocument:
+          type: string
+          pattern: ^[0-9]+$
+          maxLength: 10
+        token:
+          type: string
+          description: "The captcha information"
+          nullable: false
+        lang:
+          type: string
+          description: "Language according to browser"
+          nullable: false
+    PostVerificationRequest:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+        language:
+          type: string
+
+    TicketGenerateRequest:
+      type: object
+      required:
+        - language
+        - uuid
+      properties:
+        uuid:
+          type: string
+        language:
+          type: string
+
+    ResponseProperties:
+      type: object
+      properties:
+        uuid:
+          type: string
+          pattern: ^[0-9]+$
+          maxLength: 32
+        validateCode:
+          type: string
+          pattern: ^[0-9]+$
+          maxLength: 32
+        userName:
+          type: string
+          pattern: ^[A-Za-z0-9]+$
+          maxLength: 32
+        userPassword:
+          type: string
+          pattern: ^[A-Za-z0-9]+$
+          maxLength: 32
+        userDocType:
+          type: string
+          pattern: ^[A-Z]+$
+          maxLength: 3
+          example: DNI
+        userDocNumber:
+          type: string
+          pattern: ^[A-Z]+$
+          maxLength: 3
+          example:
+            DNI
+        customerDocNumber:
+          type: string
+          pattern: ^[a-zA-z0-9]+$
+          maxLength: 32
+        idTermsAndConditions:
+          type: string
+          example: 1
+    TicketOk:
+      type: object
+      properties:
+        contactInfo:
+          allOf:
+            - $ref: '#/components/schemas/ContactInfo'
+            - required:
+                - email
+                - number
+      allOf:
+        - $ref: "#/components/schemas/ResponseProperties"
+        - required:
+            - uuid
+            - userDocType
+            - customerDocNumber
+        - additionalProperties: true
+
+    Uuid:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/ResponseProperties"
+        - required:
+            - uuid
+        - additionalProperties: false
+    TicketPatch:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/ResponseProperties"
+        - required:
+            - userName
+            - userPassword
+        - additionalProperties: false
+    CustomerPost:
+      type: object
+      properties:
+        has_downloaded_token:
+          type: string
+
+    CustomerCreate:
+      type: object
+      required:
+        - password
+      properties:
+        password:
+          type: string
+          minLength: 8
+          example: Secure#0044
+    ContactInfo:
+      properties:
+        email:
+          maxLength: 32
+          minLength: 8
+          type: string
+        phone:
+          maxLength: 14
+          pattern: "^[0-9]+$"
+          type: string
+        internationalPrefix:
+          maxLength: 6
+          type: string
+
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        errorCode:
+          type: string
+          pattern: ^[a-zA-Z]+$\d+$
+          maxLength: 6
+        developerMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        userMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        moreInfo:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+security:
+  - ApiKeyAuth: []

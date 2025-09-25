@@ -1,0 +1,137 @@
+// modules/http-api/main.tf
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
+# Si pasas un OpenAPI -> crea la API desde el spec
+resource "aws_apigatewayv2_api" "api_from_spec" {
+  count         = var.openapi_path == null ? 0 : 1
+  name          = var.api_name
+  protocol_type = "HTTP"
+  description   = var.api_description
+  body          = file(abspath(var.openapi_path))
+  tags          = var.tags
+}
+
+# Si NO pasas OpenAPI -> crea API “vacía” y luego rutas/integraciones
+resource "aws_apigatewayv2_api" "api" {
+  count         = var.openapi_path == null ? 1 : 0
+  name          = var.api_name
+  protocol_type = "HTTP"
+  description   = var.api_description
+  tags          = var.tags
+}
+
+locals {
+  api_id     = var.openapi_path == null ? aws_apigatewayv2_api.api[0].id : aws_apigatewayv2_api.api_from_spec[0].id
+  routes_map = { for r in var.routes : r.route_key => r } # clave: "GET /path"
+}
+
+# Authorizer JWT
+resource "aws_apigatewayv2_authorizer" "jwt" {
+  api_id           = local.api_id
+  name             = "jwt"
+  authorizer_type  = "JWT"
+  identity_sources = ["$request.header.Authorization"]
+
+  jwt_configuration {
+    issuer   = var.jwt_issuer
+    audience = var.jwt_audiences
+  }
+}
+
+# Integraciones por ruta
+resource "aws_apigatewayv2_integration" "int" {
+  for_each = local.routes_map
+  api_id   = local.api_id
+
+  # Tipo integración
+  integration_type = (
+    contains(["LAMBDA", "AWS_PROXY"], upper(each.value.integration.type))
+    ? "AWS_PROXY"
+    : "HTTP_PROXY"
+  )
+
+  # Método: POST para Lambda; para HTTP/VPC_LINK toma de route_key o de integration.method
+  integration_method = (
+    contains(["LAMBDA", "AWS_PROXY"], upper(each.value.integration.type))
+    ? "POST"
+    : upper(coalesce(try(each.value.integration.method, null), element(split(" ", each.value.route_key), 0)))
+  )
+
+  # Conexión / VPC Link
+  connection_type = (
+    upper(each.value.integration.type) == "VPC_LINK" ? "VPC_LINK" : "INTERNET"
+  )
+  connection_id = (
+    upper(each.value.integration.type) == "VPC_LINK" ? var.vpc_link_id : null
+  )
+
+  # URI de integración
+  integration_uri = (
+    contains(["LAMBDA", "AWS_PROXY"], upper(each.value.integration.type))
+    ? "arn:aws:apigateway:${data.aws_region.current.name}:lambda:path/2015-03-31/functions/${var.lambda_arns_by_name[each.value.integration.lambda_name]}/invocations"
+    : (
+      upper(each.value.integration.type) == "VPC_LINK"
+      ? coalesce(try(each.value.integration.listener_arn, null), var.fallback_nlb_listener_arn)
+      : coalesce(
+        try(each.value.integration.url, null),
+        format(
+          "http://%s:%d",
+          coalesce(try(each.value.integration.nlb_dns, null), "localhost"),
+          coalesce(try(each.value.integration.port, null), 80)
+        )
+      )
+    )
+  )
+
+  # Payload version por tipo (2.0 Lambda/AWS_PROXY; 1.0 HTTP/VPC_LINK salvo override)
+  payload_format_version = (
+    coalesce(
+      try(each.value.integration.payload_format_version, null),
+      contains(["LAMBDA", "AWS_PROXY"], upper(each.value.integration.type)) ? "2.0" : "1.0"
+    )
+  )
+}
+
+# Rutas
+resource "aws_apigatewayv2_route" "route" {
+  for_each = local.routes_map
+  api_id   = local.api_id
+
+  route_key            = each.key
+  authorization_type   = "JWT"
+  authorizer_id        = aws_apigatewayv2_authorizer.jwt.id
+  authorization_scopes = try(each.value.auth_scopes, null)
+  target               = "integrations/${aws_apigatewayv2_integration.int[each.key].id}"
+}
+
+# Permisos Lambda (solo cuando la integración es Lambda/AWS_PROXY)
+locals {
+  lambda_routes = {
+    for k, r in local.routes_map :
+    k => r if contains(["LAMBDA", "AWS_PROXY"], upper(r.integration.type))
+  }
+}
+
+resource "aws_lambda_permission" "allow_apigw" {
+  for_each = local.lambda_routes
+
+  statement_id  = "AllowAPIGW-${replace(replace(each.key, " ", "-"), "/", "-")}"
+  action        = "lambda:InvokeFunction"
+  function_name = var.lambda_arns_by_name[each.value.integration.lambda_name]
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${local.api_id}/*/*"
+}
+
+# Stage
+resource "aws_apigatewayv2_stage" "stage" {
+  api_id      = local.api_id
+  name        = var.stage_name
+  auto_deploy = true
+  tags        = var.tags
+}
+
+# Output
+output "invoke_url" {
+  value = aws_apigatewayv2_stage.stage.invoke_url
+}

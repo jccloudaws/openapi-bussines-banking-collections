@@ -1,0 +1,717 @@
+openapi: 3.0.0
+info:
+  title: API Channel Bussines Banking Tray Order V1
+  description: |
+    Channel API for Tray Order <br>
+    > <b>Dominio de Servicio BIAN</b> `Payment Order`<br>
+  contact:
+    name: Jhojan Guillermo
+    email: jguillermob-ext@pichincha.com
+  version: 1.0.2
+externalDocs:
+  description: API Documentation
+  url: https://pichincha.sharepoint.com/sites/BankFormers/SitePages/Gobierno-de-Apis.aspx
+servers:
+  - url: http://localhost:8080/channel/business-banking/v1/tray-orders
+    description: Development
+security:
+  - ApiKeyAuth: []
+tags:
+  - name: Order
+    description: Order Controller
+paths:
+  /orders/retrieve:
+    post:
+      tags:
+        - Order
+      summary: Retrieve orders from desired
+      description: |+
+        ### Details:
+        Retrieves the orders that the user can view in the loading tray.
+
+        The orders that the user can see are the orders in which the user has  the necessary permissions and that are in a valid state for display in the choosed tray.
+
+      operationId: PostOrderRetrieve
+      parameters:
+        - name: authorization
+          in: header
+          description: JWT Authorization Token.
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck
+        - name: app-name
+          in: header
+          description: Application Name - BackOffice | BusinessBanking | MobileToken
+          required: true
+          schema:
+            type: string
+            example: BackOffice
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          schema:
+            $ref: '#/components/schemas/request-date'
+          example: 2019-04-29 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          schema:
+            type: string
+            example: id of request
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: offset
+          in: query
+          description: index to start returning the elements
+          required: false
+          style: form
+          explode: true
+          schema:
+            minimum: 0
+            type: integer
+          example: 10
+        - name: limit
+          in: query
+          description: Number of orders to return
+          required: false
+          style: form
+          explode: true
+          schema:
+            minimum: 1
+            type: integer
+          example: 5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostOrderRetrieveRequest'
+        required: true
+      responses:
+        "200":
+          description: The information is correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UxGetOrderResponse'
+        "400":
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "502":
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders/{orderId}:
+    patch:
+      tags:
+        - Order
+      summary: Change the status of an order
+      description: "### Details: \nAction for the approvals engine to modify the status of the order by orderId\n"
+      operationId: PatchOrder
+      parameters:
+        - name: authorization
+          in: header
+          description: JWT Authorization Token.
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck
+        - name: app-name
+          in: header
+          description: Application Name - BackOffice | BusinessBanking | MobileToken
+          required: true
+          schema:
+            type: string
+            example: BackOffice
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          schema:
+            $ref: '#/components/schemas/request-date'
+          example: 2019-04-29 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          schema:
+            type: string
+            example: id of request
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 1918019-abc-011081
+      requestBody:
+        description: Patch order request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UxPatchOrderRequest'
+      responses:
+        "200":
+          description: Order modified
+        "400":
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "502":
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders/approve:
+    post:
+      tags:
+        - Order
+      summary: Approve Orders
+      description: |+
+        ### Details:
+        Send the orders to be approved in which the user can perform this action.
+
+      operationId: PostOrderApprove
+      parameters:
+        - name: authorization
+          in: header
+          description: JWT Authorization Token.
+          required: true
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck
+        - name: app-name
+          in: header
+          description: Application Name - BackOffice | BusinessBanking | MobileToken
+          required: true
+          schema:
+            type: string
+            example: BackOffice
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          schema:
+            $ref: '#/components/schemas/request-date'
+          example: 2019-04-29 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          schema:
+            type: string
+            example: id of request
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        description: User
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UxPostOrderApproveRequest'
+        required: true
+      responses:
+        "200":
+          description: Orders Approved List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UxPostOrderApproveResponse'
+        "400":
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "502":
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    PostOrderRetrieveRequest:
+      type: object
+      required:
+        - trayType
+      properties:
+        trayType:
+          type: string
+          description: Order tray type
+          example: LOAD
+          x-mapping: query_order.productId
+        dashboardFilters:
+          $ref: '#/components/schemas/DashboardFilters'
+    UxGetOrderResponse:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    Order:
+      type: object
+      properties:
+        orderNumber:
+          type: integer
+          description: order id
+          format: int64
+          example: 127229
+        orderId:
+          type: string
+          description: id order in cache
+          example: asdf-213-dsdewwww-56666
+        customerProduct:
+          $ref: '#/components/schemas/CustomerProduct'
+        orderItem:
+          $ref: '#/components/schemas/OrderItem'
+        startOrderDate:
+          type: string
+          description: Initial Date for collect money
+          example: 28/01
+        endOrderDate:
+          type: string
+          description: End Date for collect money
+          example: 28/01
+        lastChangeDate:
+          type: string
+          description: Last order update
+          example: 28/01
+        amount:
+          type: number
+          description: amount for collect
+          example: 10
+        currency:
+          $ref: '#/components/schemas/Currency'
+        status:
+          $ref: '#/components/schemas/Status'
+        actions:
+          type: array
+          description: Actions that the user can perform on the order
+          example:
+            - SHOW_DETAIL
+            - TO_PENDING
+            - TO_APPROVAL
+          items:
+            type: string
+    UxPostOrderApproveRequest:
+      type: object
+      properties:
+        orderId:
+          type: string
+          description: order uuid in cache
+          example: asdf-213-dsdewwww-56666
+    UxPatchOrderRequest:
+      type: object
+      properties:
+        action:
+          $ref: '#/components/schemas/Action'
+    Pagination:
+      type: object
+      properties:
+        itemQuantity:
+          type: integer
+          description: total number of available orders
+          example: 40
+    Action:
+      type: object
+      properties:
+        code:
+          type: string
+          description: action to perform in order
+          example: TO_DELETE
+    UxPostOrderApproveResponse:
+      type: object
+      properties:
+        orderNumber:
+          type: string
+          description: order number
+          example: "12"
+        status:
+          $ref: '#/components/schemas/Status'
+        customerProduct:
+          $ref: '#/components/schemas/CustomerProduct'
+        message:
+          type: string
+          description: reason if order is not processed
+          example: there are not approver for order
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code for currency
+          example: USD
+    Status:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code for status
+          example: PENDING
+    CustomerProduct:
+      type: object
+      properties:
+        customerProductId:
+          type: string
+          description: product Id
+          example: asdf-32323
+        name:
+          type: string
+          description: product name
+          example: REC
+    OrderItem:
+      type: object
+      properties:
+        identificationValue:
+          type: string
+          description: value for get a counterpart
+          example: "17913233"
+          x-mapping: query_order.billId
+        beneficiary:
+          $ref: '#/components/schemas/Beneficiary'
+    Beneficiary:
+      type: object
+      properties:
+        fullName:
+          type: string
+          description: beneficiry name
+          example: Camilo Casas
+        documentType:
+          type: string
+          description: beneficiry document type
+          example: "0001"
+        documentNumber:
+          type: string
+          description: beneficiry document number
+          example: "9289282"
+    DashboardFilters:
+      type: object
+      properties:
+        beneficiaryFullName:
+          type: string
+          description: Beneficiary full name
+          example: "Sac"
+        productName:
+          type: array
+          description: Product name
+          items:
+            type: string
+          example:
+            - Service1
+            - Service2
+        status:
+          type: array
+          description: Order status
+          items:
+            type: string
+          example:
+            - PENDING
+            - PENDING_APPROVAL
+    Error:
+      type: object
+      properties:
+        errorCode:
+          maxLength: 6
+          pattern: ^[a-zA-Z]+$\d+$
+          type: string
+        developerMessage:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+        userMessage:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+        moreInfo:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+        version:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+          example: 1.0.0
+        status:
+          maxLength: 15
+          type: integer
+          example: 409
+      additionalProperties: false
+    request-date:
+      type: string
+  parameters:
+    authorization:
+      name: authorization
+      in: header
+      description: JWT Authorization Token.
+      required: true
+      schema:
+        type: string
+        example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck
+    app-name:
+      name: app-name
+      in: header
+      description: Application Name - BackOffice | BusinessBanking | MobileToken
+      required: true
+      schema:
+        type: string
+        example: BackOffice
+    caller-name:
+      name: caller-name
+      in: header
+      description: Api name who request
+      required: true
+      schema:
+        type: string
+        example: bbe-msa-bs-guided-experience
+    process-code:
+      name: process-code
+      in: header
+      description: Identifies the process or functionality
+      required: false
+      schema:
+        type: string
+        example: BJACAR01
+    request-date:
+      name: request-date
+      in: header
+      description: Request Date | RFC 3339 Format
+      required: true
+      schema:
+        $ref: '#/components/schemas/request-date'
+      example: 2019-04-29 07:20:50.52Z
+    request-id:
+      name: request-id
+      in: header
+      description: Request Identifier
+      required: true
+      schema:
+        type: string
+        example: id of request
+    x-device:
+      name: x-device
+      in: header
+      description: Identifier of the device.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: 9939aadd00ee32
+    x-device-ip:
+      name: x-device-ip
+      in: header
+      description: IP address of origin of the request.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: 200.10.89.34
+    x-language:
+      name: x-language
+      in: header
+      description: ISO – 639-1  – Language Code - 2 digit code.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        maxLength: 5
+        type: string
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: Authorization
+      in: header

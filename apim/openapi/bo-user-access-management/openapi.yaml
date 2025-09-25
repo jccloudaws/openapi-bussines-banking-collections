@@ -1,0 +1,968 @@
+openapi: 3.0.2
+info:
+  title: API Channel - Back Office - User Access Service V1
+  description: |
+    API Channel to manage user access through orders<br>
+    <br>
+    <b>• Business Area</b> `Sales and Service`
+    <br>
+    <b>• Business Domain</b> `Customer Management`
+    <br>
+    <b>• Service Domain:</b> `Customer Access Entitlement`
+  version: 1.0.0
+  contact:
+    name: Rossmel Mendoza
+    email: rmendoza-ext@pichincha.pe
+servers:
+  - url: http://localhost:8080/channel/back-office/v1/user-access-management
+    description: Development
+security:
+  - ApiKeyAuth: []
+tags:
+  - name: "Order"
+    description: "User Access Management Order Controller"
+paths:
+  /orders:
+    post:
+      tags:
+        - Order
+      summary: Manage a new order for user's access
+      description: >+
+        ### Description
+          Manage a new order for user's access.
+      operationId: PostOrderSaveService
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: true
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostOrderSaveServiceRequest"
+            examples:
+              PostOrderSaveServiceRequestExample:
+                $ref: '#/components/examples/PostOrderSaveServiceRequestExample'
+      responses:
+        "201":
+          description: |-
+            <b>`Created`</b><br>
+            New order managed.
+
+        "400":
+          description: |-
+            <b>`Bad Request`</b><br><br>
+            The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: |-
+            <b>`Unauthorized`</b><br><br>
+            The request requires user authentication.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: |-
+            <b>`Forbidden`</b><br><br>
+            The server understood the request, but is refusing to fulfill it. Authorization will not help and the request SHOULD NOT be repeated.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: |-
+            <b>`Not Found`</b><br><br>
+            The server has not found anything matching the Request-URI.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "409":
+          description: |-
+            <b>`Conflict`</b><br><br>
+            The request could not be completed due to a conflict with the current state of the resource.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "429":
+          description: |-
+            <b>`Too Many Requests`</b><br><br>
+            Indicates that the user has sent too many requests in a given amount of time ("rate limiting").
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: |-
+            <b>`Internal Server Error`</b><br><br>
+            The server encountered an unexpected condition which prevented it from fulfilling the request.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "504":
+          description: |-
+            <b>`Gateway Timeout`</b><br><br>
+            The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags:
+        - Order
+      summary: Get list of orders
+      description:
+        "### Description:\n Retrieves the list of orders to manage user access. \n
+          ### Valid use of parameters:\n
+          | Expected result       | Path Parameter | Query Parameter |\n
+          |--------------------   |--------------- |-----------------|\n
+          |  Retrieve a list of orders according to tray type    | - |  trayType   |\n
+          |  Retrieve a number of orders      | - |    limit, offset  |\n
+          |  Retrieve one or more orders according to the filters entered      | - |    filterType, filterValue  |\n"
+      operationId: GetOrderByFilter
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: true
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: trayType
+          in: query
+          description: Tray type
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+          example: APPROVAL = Bandeja de aprobaciones | HISTORY = Bandeja de historial de aprobaciones
+        - name: limit
+          in: query
+          description: Number of orders to return
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+          example: 10
+        - name: offset
+          in: query
+          description: Index to start returning the elements
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+          example: 10
+        - name: filterType
+          in: query
+          description: Filter type
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+          example: CLIENT= Filtro por cliente | OPERATOR_USER= Filtro por usuario operador
+        - name: filterValue
+          in: query
+          description: Filter value
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+          example: Emp.
+      responses:
+        "200":
+          description: |-
+            <b>`Order data` </b>
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderByFilterResponse'
+              examples:
+                GetOrderByFilterResponseExample:
+                  $ref: '#/components/examples/GetOrderByFilterResponseExample'
+        "400":
+          description: |-
+            <b>`Bad Request`</b><br><br>
+            The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: |-
+            <b>`Unauthorized`</b><br><br>
+            The request requires user authentication.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: |-
+            <b>`Forbidden`</b><br><br>
+            The server understood the request, but is refusing to fulfill it. Authorization will not help and the request SHOULD NOT be repeated.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: |-
+            <b>`Not Found`</b><br><br>
+            The server has not found anything matching the Request-URI.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "409":
+          description: |-
+            <b>`Conflict`</b><br><br>
+            The request could not be completed due to a conflict with the current state of the resource.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "429":
+          description: |-
+            <b>`Too Many Requests`</b><br><br>
+            Indicates that the user has sent too many requests in a given amount of time ("rate limiting").
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: |-
+            <b>`Internal Server Error`</b><br><br>
+            The server encountered an unexpected condition which prevented it from fulfilling the request.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "504":
+          description: |-
+            <b>`Gateway Timeout`</b><br><br>
+            The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders/{orderId}:
+    get:
+      tags:
+        - Order
+      summary: Get a specific order by id
+      description:
+        "### Description:\n Retrieves specific order by id to manage user access. \n
+          ### Valid use of parameters:\n
+          | Expected result       | Path Parameter | Query Parameter |\n
+          |--------------------   |--------------- |-----------------|\n
+          |  Retrieve an specific order    | orderId |  -   |\n
+          |  Retrieve a list of orders according to tray type    | - |  trayType   |\n"
+      operationId: GetOrderById
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: true
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          explode: true
+          schema:
+            type: string
+          example: 123
+        - name: trayType
+          in: query
+          description: Tray type
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+          example: APPROVAL = Bandeja de aprobaciones | HISTORY = Bandeja de historial de aprobaciones
+      responses:
+        "200":
+          description: |-
+            <b>`Order data`</b>
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderByIdResponse'
+              examples:
+                GetOrderByIdResponseExample:
+                  $ref: '#/components/examples/GetOrderByIdResponseExample'
+        "400":
+          description: |-
+            <b>`Bad Request`</b><br><br>
+            The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: |-
+            <b>`Unauthorized`</b><br><br>
+            The request requires user authentication.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: |-
+            <b>`Forbidden`</b><br><br>
+            The server understood the request, but is refusing to fulfill it. Authorization will not help and the request SHOULD NOT be repeated.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: |-
+            <b>`Not Found`</b><br><br>
+            The server has not found anything matching the Request-URI.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "409":
+          description: |-
+            <b>`Conflict`</b><br><br>
+            The request could not be completed due to a conflict with the current state of the resource.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "429":
+          description: |-
+            <b>`Too Many Requests`</b><br><br>
+            Indicates that the user has sent too many requests in a given amount of time ("rate limiting").
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: |-
+            <b>`Internal Server Error`</b><br><br>
+            The server encountered an unexpected condition which prevented it from fulfilling the request.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "504":
+          description: |-
+            <b>`Gateway Timeout`</b><br><br>
+            The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders/{orderId}/action/{actionId}:
+    post:
+      tags:
+        - Order
+      summary: Approve or reject an order by id for user access management
+      description: >+
+        ### Description
+          Approve or reject an order for user access management.
+      operationId: PostOrderActionService
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: true
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: orderId
+          in: path
+          description: Order identifier
+          required: true
+          explode: true
+          schema:
+            type: string
+          example: 123
+        - name: actionId
+          in: path
+          description: Action identifier
+          required: true
+          explode: true
+          schema:
+            type: string
+          example: APPROVE = Aprobar orden | REJECT = Rechazar orden
+      responses:
+        "201":
+          description: |-
+            <b>`Created`</b><br>
+            Managed order
+
+        "400":
+          description: |-
+            <b>`Bad Request`</b><br><br>
+            The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: |-
+            <b>`Unauthorized`</b><br><br>
+            The request requires user authentication.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: |-
+            <b>`Forbidden`</b><br><br>
+            The server understood the request, but is refusing to fulfill it. Authorization will not help and the request SHOULD NOT be repeated.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: |-
+            <b>`Not Found`</b><br><br>
+            The server has not found anything matching the Request-URI.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "409":
+          description: |-
+            <b>`Conflict`</b><br><br>
+            The request could not be completed due to a conflict with the current state of the resource.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "429":
+          description: |-
+            <b>`Too Many Requests`</b><br><br>
+            Indicates that the user has sent too many requests in a given amount of time ("rate limiting").
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: |-
+            <b>`Internal Server Error`</b><br><br>
+            The server encountered an unexpected condition which prevented it from fulfilling the request.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "504":
+          description: |-
+            <b>`Gateway Timeout`</b><br><br>
+            The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    PostOrderSaveServiceRequest:
+      type: object
+      required:
+        - operationType
+        - userIdentity
+        - customerAffiliationId
+        - operatorUser
+      properties:
+        operationType:
+          maxLength: 100
+          description: Operation type
+          type: string
+          example: "CREATE"
+        userIdentity:
+          maxLength: 300
+          description: User identity
+          type: string
+          example: abc123
+        customerAffiliationId:
+          maxLength: 300
+          description: Customer affiliation identity
+          type: string
+          example: def456
+        operatorUser:
+          $ref: "#/components/schemas/OperatorUserInformation"
+    OperatorUserInformation:
+      title: Operator user information
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          maxLength: 100
+          description: Operator user name
+          type: string
+          example: "Jose Torres"
+        email:
+          maxLength: 300
+          description: Operator user email
+          type: string
+          example: "jose.torres@email.com"
+    GetOrderByFilterResponse:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    Order:
+      type: object
+      properties:
+        orderId:
+          maxLength: 100
+          description: Order id
+          type: string
+        status:
+          maxLength: 20
+          description: Status
+          type: string
+        operationType:
+          maxLength: 100
+          description: Operation type
+          type: string
+        companyName:
+          maxLength: 100
+          description: Company name
+          type: string
+        orderUpdateDate:
+          maxLength: 100
+          description: Order approval date
+          type: string
+        operatorUser:
+          maxLength: 100
+          description: Operator user
+          type: string
+    GetOrderByIdResponse:
+      type: object
+      properties:
+        orderId:
+          maxLength: 100
+          description: Order id
+          type: string
+        status:
+          maxLength: 20
+          description: Status
+          type: string
+        operationType:
+          maxLength: 100
+          description: Operation type
+          type: string
+        companyName:
+          maxLength: 100
+          description: Company name
+          type: string
+        userFullName:
+          maxLength: 100
+          description: User fullname
+          type: string
+        userProfile:
+          maxLength: 100
+          description: User profile
+          type: string
+        userDocumentType:
+          maxLength: 20
+          description: User document type
+          type: string
+        userDocumentNumber:
+          maxLength: 50
+          description: User document number
+          type: string
+        userEmail:
+          maxLength: 100
+          description: User email
+          type: string
+        orderUpdateDate:
+          maxLength: 100
+          description: Order update date
+          type: string
+        operatorUser:
+          maxLength: 100
+          description: Operator user
+          type: string
+        approverUser:
+          maxLength: 100
+          description: Approver user
+          type: string
+    Pagination:
+      type: object
+      properties:
+        itemQuantity:
+          maxLength: 10
+          description: Item quantity
+          type: integer
+          example: "CREATE"
+    Error:
+      type: object
+      properties:
+        errorCode:
+          maxLength: 6
+          pattern: "^[a-zA-Z]+$\\d+$"
+          type: string
+        developerMessage:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        userMessage:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        moreInfo:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        version:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: 1.0.0
+        status:
+          maxLength: 15
+          type: integer
+          example: 409
+      additionalProperties: false
+  examples:
+    PostOrderSaveServiceRequestExample:
+      value:
+        operationType: "CREATE"
+        userIdentity: "abc123"
+        customerAffiliationId: "def456"
+        operatorUser:
+          name: "Jose Torres"
+          email: "jose.torres@email.com"
+    GetOrderByFilterResponseExample:
+      value:
+        orders:
+          -
+            orderId: "101"
+            status: "PENDING"
+            operationType: "CREATE"
+            companyName: "Emp. Transporte"
+            orderUpdateDate: "22/10/2024"
+            operatorUser: "Opeuser"
+        pagination:
+          itemQuantity: "10"
+    GetOrderByIdResponseExample:
+      value:
+        orderId: "101"
+        status: "PENDING"
+        operationType: "CREATE"
+        companyName: "Emp. Transporte"
+        userFullName: "Jose"
+        userProfile:  "Administrador"
+        userDocumentType: "1"
+        userDocumentNumber: "12345678"
+        userEmail: "jose@email.com"
+        orderUpdateDate: "22/10/2024"
+        operatorUser: "Opeuser"
+        approverUser: "Appuser"
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: Authorization
+      in: header

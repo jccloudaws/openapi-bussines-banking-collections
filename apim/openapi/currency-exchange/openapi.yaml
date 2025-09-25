@@ -1,0 +1,301 @@
+openapi: 3.0.0
+info:
+  description: Expone todas las operaciones relacionadas al tipo de cambio.
+  version: 1.0.1
+  title: currency-exchange
+tags:
+  - name: CurrencyExchange
+    description: Controller
+paths:
+  /exchange-rates:
+    get:
+      tags:
+        - CurrencyExchange
+      summary: Brinda información sobre el tipo de cambio por un determinado código de
+        tipo de cambio, tipo de moneda, monto a cambiar y flag para rangos de
+        montos.
+      description: "# Implementation Notes\r
+
+        \r
+
+        ### Acerca de la funcionalidad expuesta\r
+
+        \r
+
+        Brinda información sobre el tipo de cambio por un determinado
+        código de tipo de cambio, tipo de moneda, monto a cambiar y flag para
+        rangos de montos.\r
+
+
+\r
+
+        \r
+
+        ### Path parameters\r
+
+        |   Parámetro   |                   Ejemplo                 |\r
+
+        |---------------|-------------------------------------------|\r
+
+        |applicationCode| 16                              |\r
+
+        \r
+
+
+\r
+
+        \r
+
+        ### URI de acceso a la API\r
+
+        \r
+
+        | Método | URI |\r
+
+        |--------|-------------|\r
+
+        |GET
+        |    /channel/bsbk/v1.0/currency-exchange/exchange-rates?codeExchangeRa\
+        te={codeExchangeRate}¤cyExchange={USD}&amount={amount}&rangesFlag\
+        ={rangesFlag}\r
+
+        \r
+
+
+\r
+
+        \r
+
+        ### Precondiciones para el consumo de esta versión de la API\r
+
+        \r
+
+        No aplica.\r
+
+        \r
+
+
+\r
+
+        \r
+
+        ### Headers\r
+
+        \r
+
+        | Header | Ejemplo | Obligatorio |\r
+
+        |--------|---------|-------------|\r
+
+        | Request-ID       | 550e8400-e29b-41d4-a716-446655440000 |
+        S           |\r
+
+        | request-date | 2019-07-11T01:30:00.000-05:00 | S |\r
+
+        | app-code | BSBK | S |\r
+
+        | caller-name | BUSINESSBSBK | S |\r
+
+
+\r
+
+        \r
+
+        ### Query parameters válidos en esta versión de la API\r
+
+        No aplica.\r
+
+        \r
+
+
+\r
+
+        \r
+
+        ### Usos válidos de query parameters\r
+
+        \r
+
+        | Resultado esperado                   | Path param | Query
+        parameters requerido              | Query parameters
+        opcionales    |Query param extrafields   |\r
+
+        \ |--------------------------------------|------------|--------\
+        ---------------------------------|--------------------------------|----\
+        ----------------------|\r
+
+        | Se obtienen el tipo de cambio.
+        |     -      |     codeExchangeRate,currencyExchange,amount,rangesFlag     \
+        |                   -            |-                         |\r
+
+        \r
+
+
+\r
+
+        \r
+
+        ### Variantes válidas del payload (cuerpo del mensaje)\r
+
+        \r
+
+        No aplica.\r
+
+        \r
+
+
+\r
+
+        \r
+
+        ### Lista de valores usados en esta versión de la API\r
+
+        \r
+
+        No aplica.\r
+
+
+\r
+
+        \r
+
+        ### Código de errores del Servicio en esta versión de la API\r
+
+        \r
+
+        | Código | Descripción |\r
+
+        |--------|-------------|\r
+
+        | JA0001 | Request inválido.               |\r
+
+        | JA0003 | Ocurrió un error en el Backend. |\r
+
+        | EBPM0087 | El usuario no tiene autorización para realizar esta
+        operación.|\r
+
+
+"
+      operationId: getCurrencyExchange
+      parameters:
+        - name: amount
+          in: query
+          description: Monto a cambiar.
+          required: false
+          allowEmptyValue: false
+          schema:
+            type: string
+        - name: codeExchangeRate
+          in: query
+          description: Solo serán permitidos los códigos de tipo de cambio como se
+            describen en la sección "Lista de valores usadas en esta versión de
+            la API"
+          required: false
+          allowEmptyValue: false
+          schema:
+            type: string
+        - name: currencyExchange
+          in: query
+          description: "Tipo de moneda, por ejemplo: USD/PEN."
+          required: false
+          allowEmptyValue: false
+          schema:
+            type: string
+        - name: rangesFlag
+          in: query
+          description: Flag para rangos de montos.
+          required: false
+          allowEmptyValue: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExchangeRateResponse"
+        "400":
+          description: Se enviaron datos incorrectos.
+          content:
+            application/json:
+              examples:
+                response:
+                  value: >-
+                    {
+                        "code": "JA0001",
+                        "description": "Request inválido",
+                        "errorType": "TECHNICAL",
+                        "exceptionDetails": [
+                           {
+                                "component": "jarvis-channel-ebpm-personal-loans-v1.0",
+                                "description": "El parámetro personId no está presente.",
+                                "endpoint": "[GET] 	/channel/ebpm/v1.0/personal-loans/registration-applications/persons/{personId}/current-accounts"
+                            }
+                        ]
+                    }
+        "403":
+          description: El usuario no tiene autorización para realizar esta operación.
+        "500":
+          description: Error al realizar la consulta de datos.
+          content:
+            application/json:
+              examples:
+                response:
+                  value: >-
+                    {
+                        "code": "EBPM0008",
+                        "description": "El sistema no está disponible en estos momentos.'",
+                        "errorType": "FUNCTIONAL",
+                        "exceptionDetails": [
+                            {
+                                "component": "jarvis-channel-ebpm-personal-loans-v1.0",
+                                "endpoint": "[GET] /channel/ebpm/v1.0/personal-loans/registration-applications/persons/{applicationCode}/current-accounts"
+                            }
+                        ]
+                    }
+      deprecated: false
+servers:
+  - url: http://localhost:8072/channel/business-banking/v1/currency-exchange/
+components:
+  schemas:
+    ExchangeRateCurrencyResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 1
+          description: Código de Moneda del cambio.
+      title: ExchangeRateCurrencyResponse
+    ExchangeRateResponse:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/ExchangeRateTypeResponse"
+        currency:
+          $ref: "#/components/schemas/ExchangeRateCurrencyResponse"
+        purchaseRate:
+          type: number
+          example: 1
+          description: Tipo de cambio compra.
+        saleRate:
+          type: number
+          example: 1
+          description: Tipo de cambio venta.
+        operationDate:
+          type: string
+          example: 12/12/2022
+          description: Fecha de actualización de tipo de cambio.
+      title: ExchangeRateResponse
+    ExchangeRateTypeResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 1
+          description: Código del tipo de cambio.
+        description:
+          type: string
+          example: soles
+          description: Descripción del código del tipo de cambio.
+      title: ExchangeRateTypeResponse

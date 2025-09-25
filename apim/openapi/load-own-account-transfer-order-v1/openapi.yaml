@@ -1,0 +1,306 @@
+openapi: 3.0.0
+info:
+  title: "API Channel Business Banking Load Own Account Transfer V1"
+  description: "Api for load own account transfer information."
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8080/channel/business-banking/v1/load-own-account-transfer-orders
+    description: Development
+tags:
+  - name: "Own Account Transfer Order"
+    description: "Own Account Transfer Order Controller"
+  - name: "Account"
+    description: "Account Controller"
+
+paths:
+  /accounts:
+    get:
+      tags:
+        - Account
+      summary: Retrieve accounts for own account transfer
+      description: >+
+        ### Details:
+
+        Retrieve a List of own accounts transfer
+
+      operationId: getAccount
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt send Front
+          required: true
+          schema:
+            type: string
+          example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+      responses:
+        200:
+          description: Okay
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UxGetAccountResponse'
+
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /own-account-transfer-orders:
+    post:
+      tags:
+        - Own Account Transfer Order
+      summary: Create a new transfer order .
+      description: >+
+        ### Details:
+        
+        Create a new transfer order between own accounts .
+
+      operationId: postOwnAccountTransferOrder
+      parameters:
+        - name: authorization
+          in: header
+          description: token jwt send Front
+          required: true
+          schema:
+            type: string
+            example: "ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj"
+      requestBody:
+        description: Request to post the own Account transfer order
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UxPostOwnAccountTransferOrderRequest'
+
+      responses:
+        200:
+          description: Ok
+
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    UxGetAccountResponse:
+      title: UxGetAccountsResponse
+      type: object
+      properties:
+        destinationAccounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/DestinationAccount"
+        sourceAccounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/SourceAccount"
+    UxPostOwnAccountTransferOrderRequest:
+      title: UxPostOwnAccountTransferOrderRequest
+      type: object
+      additionalProperties: false
+      properties:
+        sourceProduct:
+          type: object
+          properties:
+            productId:
+              description: product Id registered in cache
+              type: string
+              example: "341c0c63-a88a-48b3-85a7-c762c4504022"
+
+        ownAccountTransferOrderItem:
+          $ref: "#/components/schemas/OrderItem"
+    OrderItem:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+          example: 50000.90
+          description: Amount of the Order.
+        currency:
+          $ref: "#/components/schemas/Currency"
+        destinationProduct:
+          type: object
+          properties:
+            productId:
+              description: accountId registered in cache
+              type: string
+              example: "211aeee-deerer-eeee-2342342342"
+    DestinationAccount:
+      type: object
+      additionalProperties: false
+      properties:
+        accountId:
+          type: string
+          description: Account uuid
+          example: 341c0c63-a88a-48b3-85a7-c762c4504022
+        accountNumber:
+          type: string
+          description: Account number
+          example: "1233332123"
+        type:
+          $ref: "#/components/schemas/Type"
+        status:
+          $ref: "#/components/schemas/Status"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        balanceInformation:
+          $ref: "#/components/schemas/Balance"
+
+    SourceAccount:
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: account uuid
+          example: 341c0c63-a88a-48b3-85a7-c762c4504022
+        accountNumber:
+          type: string
+          description: Account number
+          example: "1233332123"
+
+        type:
+          $ref: "#/components/schemas/Type"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        balanceInformation:
+          $ref: "#/components/schemas/Balance"
+        status:
+          $ref: "#/components/schemas/Status"
+        alias:
+          type: string
+          example: 'alias account'
+    Type:
+      type: object
+      properties:
+        code:
+          type: string
+          description: account type code
+          example: CTE
+        description:
+          type: string
+          description: account Type description
+          example: "CTA.CTE PERSONAL"
+    Status:
+      type: object
+      properties:
+        code:
+          type: string
+          description: status code
+          example: ENABLE
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: currency code | ISO-4217
+          example: USD
+    Balance:
+      type: object
+      properties:
+        availableAmount:
+          type: number
+          format: double
+          description: Available account balance..
+          example: 500.00
+        countableAmount:
+          type: number
+          format: double
+          description: Accounting balance of the account.
+          example: 500.00
+
+    Error:
+      type: object
+      properties:
+        title:
+          maximum: 50
+          type: string
+          description: Mensaje de error técnico.
+        detail:
+          maximum: 50
+          type: string
+          description: Mensaje a presentar al cliente.
+        instance:
+          maximum: 50
+          type: string
+          description: Código de catálogo de errores.
+        type:
+          maximum: 100
+          type: string
+          description: Dirección de la fuente solicitada por el proxy
+        resource:
+          maximum: 100
+          type: string
+          description: Recurso del servicio en el que se produjo el error.
+        component:
+          maximum: 100
+          type: string
+          description: Componente del servicio en el que sucedió el error.
+        backend:
+          maximum: 100
+          type: string
+          description: Código de error interno.
+

@@ -1,0 +1,562 @@
+openapi: 3.0.0
+info:
+  title: Api Channel Bussines Banking User Unlock
+  description: |
+    API Channel to user unlock<br>
+    <br>
+    <b>• Business Area</b> `Sales and Service`
+    <br>
+    <b>• Business Domain</b> `Cross Channel`
+    <br>
+    <b>• Service Domain:</b> `Party Authentication`
+  version: 1.0.1
+  contact:
+    name:  Rossmel Mendoza Medina
+    email: rmendoza-ext@pichincha.pe
+servers:
+  - description: Server in devops in busines banking layer
+    url: http://localhost:8080/channel/business-banking/v1/user-unlock
+tags:
+  - name: "Access"
+    description: "Access Controller "
+  - name: "Token"
+    description: "Token Controller"
+  - name: "One Time Password"
+    description: "One Time Password Controller"
+security:
+  - ApiKeyAuth: []
+paths:
+  /access/verify:
+    post:
+      tags:
+        - Access
+      summary: Verify the type of access the user has
+      description:
+        ### Details:
+
+        Retrieve the status of user if it's blocked and the type of the block Azure B2C  ++++++
+
+      operationId: postAccessVerify
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          description: Authorization token
+          example: Dasd123123asdad1231jbw
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostAccessVerifyRequest"
+      responses:
+        200:
+          description: Validate User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostAccessVerifyResponse"
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /token/authenticate:
+    post:
+      tags:
+        - Token
+      summary: Validates if the entered softotken is correct.
+      description:
+        ### Details:
+
+        Returns if the entered softoken is correct, otherwise returns a state of 400  ++++++
+      operationId: postTokenAuthenticate
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          description: Authorization token
+          example: Dasd123123asdad1231jbw
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostTokenAuthenticateRequest'
+      responses:
+        200:
+          description: The softoken is valid.
+
+        400:
+          description: Problems with the customer request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                title: Missing mandatory fields.
+                detail: The input fields are not correct
+                errors:
+                  - message: Bad Request
+                    businessMessage: The xyz field is mandatory
+                instance: "022"
+                type: /v1/name/pathSuffix
+        401:
+          description: Does not have sufficient permissions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                title: Authorization Error
+                detail: Client credentials are invalid
+                instance: "033"
+                type: /v1/name/pathSuffix
+        403:
+          description: Does not have access.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                title: Forbidden access to the resource {URI}
+                detail: You do not have permissions for this API, please contact support to request it.
+                instance: "033"
+                type: /v1/name/pathSuffix
+        404:
+          description: Recurso no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                title: Not Found
+                detail: Path not found
+                instance: "404"
+                type: /v1/name/pathSuffix
+        429:
+          description: Demasiadas solicitudes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                title: Too many requests to the resource {URI}
+                detail: Too many requests to the resource, please wait a minute and try again.
+                instance: "429"
+                type: /v1/name/pathSuffix
+        500:
+          description: Error en el servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                title: Internal Server
+                detail: Se produjo un error interno, lo estamos revisando.
+                instance: "0188"
+                type: /v1/name/pathSuffix
+                resource: UMPClientes0020/ConsultaInformacionCliente01
+                component: TX067050
+                backend: "00045"
+
+        504:
+          description: Se superó el tiempo de espera de la solicitud. Si sucede repetidamente, considere reducir la complejidad de la solicitud.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                title: Gateway Timeout. Request timeout exceeded. If it happens repeatedly, consider reducing the request complexity.
+                detail: Gateway connection problems.
+                instance: "504"
+                type: /v1/name/pathSuffix
+
+  /access/unlock:
+    post:
+      tags:
+        - Access
+      summary: Unlock user for type access block.
+      operationId: postAccessUnlock
+      description:
+        ### Details:
+        Receives the user's lock status and according to the type of lock perform the unlock, otherwise returns a state of 400  ++++++
+      parameters:
+        - name: x-api-key
+          in: header
+          description: Api Key for security in Apim
+          required: false
+          style: simple
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostAccessUnlockRequest"
+      responses:
+        200:
+          description: OK
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /one-time-passwords/generate:
+    post:
+      tags:
+        - One Time Password
+      summary: Generate a otp code
+      operationId: postOneTimePasswordGenerate
+      description: >+
+        ### Details:
+
+         Generate a One Time Password code for user
+
+      parameters:
+        - name: x-api-key
+          in: header
+          description: Api Key for security in Apim
+          required: false
+          style: simple
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostOneTimePasswordGenerateRequest"
+      responses:
+        200:
+          description: users information
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/PostOneTimePasswordGenerateResponse"
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /one-time-passwords/validate:
+    post:
+      tags:
+        - One Time Password
+      summary: Validate a otp code
+      operationId: postOneTimePasswordValidate
+      description: >+
+        ### Details:
+
+        Validate a One Time Password code
+      parameters:
+        - name: x-api-key
+          in: header
+          description: Api Key for security in Apim
+          required: false
+          style: simple
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostOneTimePasswordValidateRequest"
+      responses:
+        200:
+          description: users information
+
+        400:
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Internal error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: Service not available
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
+components:
+  schemas:
+
+    PostAccessVerifyRequest:
+      type: object
+      properties:
+        documentNumber:
+          description: document Number
+          type: string
+          example: "1720508870"
+        customerDocumentNumber:
+          description: customer
+          type: string
+          example: "1791991281001"
+        lang:
+          type: string
+          description: Language in case of returning an error message.
+          example: "es"
+
+    PostOneTimePasswordGenerateRequest:
+      type: object
+      properties:
+        documentNumber:
+          description: userIdentity
+          type: string
+          example: "1720508868"
+        lang:
+          type: string
+          description: Language in case of returning an error message.
+          example: "es"
+        ip:
+          type: string
+          description: ip.
+          example: "192.168.31.7"
+
+    PostOneTimePasswordGenerateResponse:
+      type: object
+      properties:
+        email:
+          description: userIdentity
+          type: string
+          example: "j***********a@gmail.com"
+        phoneNumber:
+          type: string
+          description: Language in case of returning an error message.
+          example: "099****369"
+
+    PostOneTimePasswordValidateRequest:
+      type: object
+      properties:
+        documentNumber:
+          description: userIdentity
+          type: string
+          example: "1720508868"
+        otp:
+          type: string
+          description: Otp code.
+          example: "123456"
+        lang:
+          type: string
+          description: Language in case of returning an error message.
+          example: "es"
+        ip:
+          type: string
+          description: ip.
+          example: "192.168.31.7"
+
+
+    PostAccessUnlockRequest:
+      type: object
+      properties:
+        userIdentity:
+          description: userIdentity
+          type: string
+          example: "6dad56bc-0ad2-4046-88eb-6d178ed35093"
+        typeCode:
+          description: access type Code
+          type: string
+          example: "BLOCK-001"
+        lang:
+          type: string
+          description: Language in case of returning an error message.
+          example: "es"
+        ip:
+          type: string
+          description: ip.
+          example: "192.168.31.7"
+
+    PostTokenAuthenticateRequest:
+      type: object
+      properties:
+        userIdentity:
+          description: Identifier customer user identity
+          type: string
+          example: "6dad56bc-0ad2-4046-88eb-6d178ed35093"
+        otp:
+          description: Token Code
+          type: string
+          example: "123456"
+        lang:
+          type: string
+          description: Language in case of returning an error message.
+          example: "es"
+        ip:
+          type: string
+          description: ip.
+          example: "192.168.31.7"
+
+    PostAccessVerifyResponse:
+      required:
+        - userIdentity
+      type: object
+      properties:
+        userIdentity:
+          title: userIdentity
+          type: string
+          example: "25850f86-24d7-4db6-8fd1-29e865112b02"
+          nullable: false
+        typeCode:
+          description: access type Code
+          type: string
+          example: "BLOCK-001"
+
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        errorCode:
+          type: string
+          pattern: ^[a-zA-Z]+$\d+$
+          maxLength: 6
+        developerMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        userMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        moreInfo:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        version:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: "1.0.0"
+        status:
+          maxLength: 15
+          type: integer
+          example: 409
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key

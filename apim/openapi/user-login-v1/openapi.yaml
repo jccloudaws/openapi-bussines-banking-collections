@@ -1,0 +1,394 @@
+openapi: 3.0.3
+info:
+  version: 1.0.3
+  title: Api Channel - Business Banking User Login V1
+  description: |
+    Api Channel for Business Banking User Login V1<br>
+    <br>
+    <b>• Business Area</b> `Sales and Service`
+    <br>
+    <b>• Business Domain</b> `Cross Channel`
+    <br>
+    <b>• Service Domain:</b> `Party Authentication`
+  contact:
+    name: Rossmel Mendoza
+    email: rmendoza-ext@pichincha.pe
+servers:
+  - description: Development environment
+    url: http://localhost:8080/channel/business-banking/v1/user-login
+
+tags:
+  - name: "Customer"
+    description: "Customer controller"
+  - name: "User"
+    description: "User controller"
+
+paths:
+  /customers/verify:
+    post:
+      tags:
+        - Customer
+      summary: Verify customer status.
+      description: >-
+        ## Details
+         Retrieve the customer status in the login process
+      operationId: PostCustomerVerify
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: x-api-key
+          in: header
+          description: Api Key for security in Apim
+          required: false
+          style: simple
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCustomerVerifyRequest'
+      responses:
+        200:
+          description: Customer status found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostCustomerStatusResponse"
+        400:
+          description: Problemas con la solicitud del cliente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: El cliente no tiene permisos suficientes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: El cliente no tiene acceso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Recurso no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Demasiadas solicitudes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Error en el servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        504:
+          description: Se superó el tiempo de espera de la solicitud. Si sucede repetidamente, considere reducir la complejidad de la solicitud.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users/validate:
+    post:
+      tags:
+        - User
+      summary: Validate user login.
+      description: >-
+        ## Detail
+         Validates the number of attempts a user makes to log in.
+          ### Actions
+          - Review number of attempts
+          - Save attempt
+          - Select template
+          - Search information for set template
+          - Send notification
+      operationId: PostUsersValidate
+      parameters:
+        - name: app-name
+          in: header
+          description: Application Name
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - name: x-api-key
+          in: header
+          description: Api Key for security in Apim
+          required: false
+          style: simple
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUserValidateRequest'
+      responses:
+        200:
+          description: OK
+        400:
+          description: Problemas con la solicitud del cliente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: El cliente no tiene permisos suficientes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: El cliente no tiene acceso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Recurso no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Demasiadas solicitudes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Error en el servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        504:
+          description: Se superó el tiempo de espera de la solicitud. Si sucede repetidamente, considere reducir la complejidad de la solicitud.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    PostCustomerVerifyRequest:
+      description: PostCustomerVerifyRequest
+      properties:
+        userIdentity:
+          description: User identity Uuid
+          type: string
+          example: "1234-5678-90AB"
+        lang:
+          description: Language
+          type: string
+          example: "es"
+    PostCustomerStatusResponse:
+      description: PostCustomerStatusResponse
+      properties:
+        statusCode:
+          description: Customer status
+          type: string
+          example: "ENABLED"
+    PostUserValidateRequest:
+      description: Body request for save attempt failed
+      required:
+        - objectId
+        - ip
+      properties:
+        ip:
+          description: ip request
+          type: string
+          example: "200.10.89.34"
+        lang:
+          description: languaje for response in error case
+          type: string
+          example: "es"
+        userName:
+          description: user name in b2c
+          type: string
+          example: "jhondoe123"
+        userIdentity:
+          description: Object id
+          type: string
+          example: "b0acae3c-8694-40bd-a0e2-f4e6fe4ac5c6"
+
+
+    Error:
+      additionalProperties: false
+      properties:
+        errorCode:
+          maxLength: 6
+          pattern: "^[a-zA-Z]+$\\d+$"
+          type: string
+          example: 006
+        developerMessage:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: "Coding Error"
+        userMessage:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: "Error al validar dispositvo"
+        moreInfo:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: ""
+        version:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: "1.0.0"
+        status:
+          maxLength: 15
+          type: number
+          example: 409
+        userBlocked:
+          maxLength: 15
+          type: string
+          example: blocked
+      type: object

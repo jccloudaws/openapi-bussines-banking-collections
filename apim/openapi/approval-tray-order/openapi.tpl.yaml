@@ -1,0 +1,1142 @@
+openapi: 3.0.0
+info:
+  title: Api Channel Business Banking Approval Tray Order V1
+  description: 'Api Channel Business Banking Approval Tray Order V1. <br>
+
+    > <b>Dominio de Servicio BIAN</b> `Payment Rail Operations`<br>
+
+    '
+  contact:
+    name: Decepticons - Stalin Tupiza
+    email: stupiza@pichincha.com
+  version: 1.2.3
+externalDocs:
+  description: API Documentation
+  url: https://pichincha.sharepoint.com/sites/BankFormers/SitePages/Gobierno-de-Apis.aspx
+servers:
+- url: http://localhost:8080/channel/business-banking/v1/approval-tray-orders
+  description: Server in devops in business banking layer
+  
+security:
+- oauth2: []
+
+tags:
+- name: Order
+  description: Order Controller
+paths:
+  /orders/retrieve:
+    post:
+      tags:
+      - Order
+      summary: Returns orders to approve
+      description: '### Details
+
+        Retrieves the orders that the user can approve
+
+        ### Valid use of parameters:
+
+        | Expected result | Query Parameter |
+
+        |-------------------- |-----------------|
+
+        |Retrieves the first 10 registered orders  | - |
+
+        |Retrieves the orders into a range   | limit, offset |
+
+
+        '
+      operationId: PostOrderRetrieve
+      parameters:
+      - name: authorization
+        in: header
+        description: JWT Authorization Token.
+        required: true
+        schema:
+          type: string
+          example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck
+      - name: app-name
+        in: header
+        description: Application Name - BackOffice | BusinessBanking | MobileToken
+        required: true
+        schema:
+          type: string
+          example: BackOffice
+      - name: caller-name
+        in: header
+        description: Api name who request
+        required: true
+        schema:
+          type: string
+          example: bbe-msa-bs-guided-experience
+      - name: process-code
+        in: header
+        description: Identifies the process or functionality
+        required: false
+        schema:
+          type: string
+          example: BJACAR01
+      - name: request-date
+        in: header
+        description: Request Date | RFC 3339 Format
+        required: true
+        schema:
+          $ref: '#/components/schemas/request-date'
+        example: 2019-04-29 07:20:50.520000+00:00
+      - name: request-id
+        in: header
+        description: Request Identifier
+        required: true
+        schema:
+          type: string
+          example: id of request
+      - name: x-device
+        in: header
+        description: Identifier of the device.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 9939aadd00ee32
+      - name: x-device-ip
+        in: header
+        description: IP address of origin of the request.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 200.10.89.34
+      - name: x-language
+        in: header
+        description: ISO – 639-1  – Language Code - 2 digit code.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          maxLength: 5
+          type: string
+      - name: offset
+        in: query
+        description: index to start returning the elements
+        required: false
+        style: form
+        explode: true
+        schema:
+          minimum: 0
+          type: integer
+        example: 10
+      - name: limit
+        in: query
+        description: Number of orders to return
+        required: false
+        style: form
+        explode: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DashboardFilters'
+      responses:
+        '200':
+          description: Orders successfully retrieved, last page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UxGetOrderResponse'
+        '206':
+          description: Orders successfully retrieved, partial content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UxGetOrderResponse'
+        '400':
+          description: The request information is not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /orders/update:
+    post:
+      tags:
+      - Order
+      summary: Update the status of an order list
+      description: "### Details: \nUpdate the status of an order list. Receives the\
+        \ Action for the approvals engine to modify the status of the order by orderId\n"
+      operationId: PostOrderUpdate
+      parameters:
+      - name: authorization
+        in: header
+        description: JWT Authorization Token.
+        required: true
+        schema:
+          type: string
+          example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck
+      - name: app-name
+        in: header
+        description: Application Name - BackOffice | BusinessBanking | MobileToken
+        required: true
+        schema:
+          type: string
+          example: BackOffice
+      - name: caller-name
+        in: header
+        description: Api name who request
+        required: true
+        schema:
+          type: string
+          example: bbe-msa-bs-guided-experience
+      - name: process-code
+        in: header
+        description: Identifies the process or functionality
+        required: false
+        schema:
+          type: string
+          example: BJACAR01
+      - name: request-date
+        in: header
+        description: Request Date | RFC 3339 Format
+        required: true
+        schema:
+          $ref: '#/components/schemas/request-date'
+        example: 2019-04-29 07:20:50.520000+00:00
+      - name: request-id
+        in: header
+        description: Request Identifier
+        required: true
+        schema:
+          type: string
+          example: id of request
+      - name: x-device
+        in: header
+        description: Identifier of the device.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 9939aadd00ee32
+      - name: x-device-ip
+        in: header
+        description: IP address of origin of the request.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 200.10.89.34
+      - name: x-language
+        in: header
+        description: ISO – 639-1  – Language Code - 2 digit code.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          maxLength: 5
+          type: string
+      requestBody:
+        description: Patch order request
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UxPostOrderUpdateRequest'
+      responses:
+        '200':
+          description: List of changed orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UxPostOrderUpdateResponse'
+        '400':
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /orders/approve:
+    post:
+      tags:
+      - Order
+      summary: Approve Orders
+      description: "### Details:\nApprove order in the tray \n\n"
+      operationId: PostOrderApprove
+      parameters:
+      - name: authorization
+        in: header
+        description: JWT Authorization Token.
+        required: true
+        schema:
+          type: string
+          example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck
+      - name: app-name
+        in: header
+        description: Application Name - BackOffice | BusinessBanking | MobileToken
+        required: true
+        schema:
+          type: string
+          example: BackOffice
+      - name: caller-name
+        in: header
+        description: Api name who request
+        required: true
+        schema:
+          type: string
+          example: bbe-msa-bs-guided-experience
+      - name: process-code
+        in: header
+        description: Identifies the process or functionality
+        required: false
+        schema:
+          type: string
+          example: BJACAR01
+      - name: request-date
+        in: header
+        description: Request Date | RFC 3339 Format
+        required: true
+        schema:
+          $ref: '#/components/schemas/request-date'
+        example: 2019-04-29 07:20:50.520000+00:00
+      - name: request-id
+        in: header
+        description: Request Identifier
+        required: true
+        schema:
+          type: string
+          example: id of request
+      - name: x-device
+        in: header
+        description: Identifier of the device.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 9939aadd00ee32
+      - name: x-device-ip
+        in: header
+        description: IP address of origin of the request.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 200.10.89.34
+      - name: x-language
+        in: header
+        description: ISO – 639-1  – Language Code - 2 digit code.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          maxLength: 5
+          type: string
+      requestBody:
+        description: User
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UxPostOrderApproveRequest'
+        required: true
+      responses:
+        '200':
+          description: Orders Approved List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UxPostOrderApproveResponse'
+        '400':
+          description: The request information it's not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+components:
+  schemas:
+    DashboardFilters:
+      type: object
+      properties:
+        beneficiaryFullName:
+          type: string
+          description: Beneficiary full name
+          example: Sac
+        productName:
+          type: array
+          description: Product name
+          items:
+            type: string
+          example:
+          - Service1
+          - Service2
+    UxGetOrderResponse:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    Pagination:
+      type: object
+      properties:
+        itemQuantity:
+          type: integer
+          description: total number of available orders
+          example: 40
+    UxPostOrderUpdateRequest:
+      type: object
+      properties:
+        orderId:
+          type: string
+          description: initial order id for update
+          example: 18191-a8a02
+        action:
+          $ref: '#/components/schemas/Action'
+        message:
+          type: string
+          description: description for type action
+          example: description for type action
+    Action:
+      type: object
+      properties:
+        code:
+          type: string
+          description: action to perform in order
+          example: TO_REJECT
+    Order:
+      type: object
+      properties:
+        orderNumber:
+          type: integer
+          description: order id
+          format: int64
+          example: 127229
+        orderId:
+          type: string
+          description: Order id stored in cache
+          example: asdf-213-dsdewwww-56666
+        customerProduct:
+          $ref: '#/components/schemas/CustomerProduct'
+        orderItem:
+          $ref: '#/components/schemas/OrderItem'
+        startOrderDate:
+          type: string
+          description: Initial Date for collect money
+          example: 28/01
+        endOrderDate:
+          type: string
+          description: End Date for collect money
+          example: 28/01
+        lastChangeDate:
+          type: string
+          description: Last Date when the order changes
+          example: 28/01
+        amount:
+          type: number
+          description: amount for collect
+          example: 10
+        currency:
+          $ref: '#/components/schemas/Currency'
+        status:
+          $ref: '#/components/schemas/Status'
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Currency code
+          example: USD
+    Status:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Status code
+          example: PENDING
+    PostUpdateStatus:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Status code
+          example: REJECTED
+    StatusApprove:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Status code
+          example: APPROVED
+    CustomerProduct:
+      type: object
+      properties:
+        customerProductId:
+          type: string
+          description: product Id
+          example: asdf-32323
+        name:
+          type: string
+          description: product name
+          example: Recaudación
+    UxPostOrderApproveRequest:
+      type: object
+      required:
+      - tokenAuthenticationId
+      properties:
+        tokenAuthenticationId:
+          type: string
+          description: Id authentication token
+          example: 2000-12215asdas-1d2asd0
+        orders:
+          type: array
+          required:
+          - orderId
+          items:
+            type: object
+            properties:
+              orderId:
+                type: string
+                description: order uuid in cache
+                example: asdf-213-dsdewwww-56666
+    UxPostOrderApproveResponse:
+      type: object
+      properties:
+        orderNumber:
+          type: string
+          description: order number
+          example: '12'
+        status:
+          $ref: '#/components/schemas/StatusApprove'
+        customerProduct:
+          $ref: '#/components/schemas/CustomerProduct'
+        message:
+          type: string
+          description: reason if order is not processed
+          example: there are not approver for order
+    UxPostOrderUpdateResponse:
+      type: object
+      properties:
+        orderNumber:
+          type: string
+          description: order number
+          example: '12'
+        status:
+          $ref: '#/components/schemas/PostUpdateStatus'
+        customerProduct:
+          $ref: '#/components/schemas/CustomerProduct'
+        displayMessage:
+          type: string
+          description: reason if order is not processed
+          example: there are not approver for order
+    OrderItem:
+      type: object
+      properties:
+        identificationValue:
+          type: string
+          description: value for get a counterpart
+          example: '17913233'
+          x-mapping: query_order.billId
+        beneficiary:
+          $ref: '#/components/schemas/Beneficiary'
+    Beneficiary:
+      type: object
+      properties:
+        fullName:
+          type: string
+          description: beneficiary name
+          example: Camilo Casas
+        documentType:
+          type: string
+          description: beneficiry document type
+          example: '0001'
+        documentNumber:
+          type: string
+          description: beneficiry document number
+          example: '9289282'
+    Error:
+      type: object
+      properties:
+        errorCode:
+          maxLength: 6
+          pattern: ^[a-zA-Z]+$\d+$
+          type: string
+        developerMessage:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+        userMessage:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+        moreInfo:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+        version:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+          example: 1.0.0
+        status:
+          maxLength: 15
+          type: integer
+          example: 409
+      additionalProperties: false
+    request-date:
+      type: string
+    GetProfileTemplateByFiltersResponse:
+      title: GetProfileTemplateByFiltersResponse
+      type: object
+      properties:
+        profileTemplateId:
+          type: string
+          example: 1234-5678-90AB-CDEF
+        name:
+          type: string
+          example: Operator
+        description:
+          type: string
+          example: You will have access to create and generate transactions
+        registerDate:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        configParameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileTemplateParam'
+    ProfileTemplateParam:
+      title: ProfileTemplateParam
+      type: object
+      properties:
+        name:
+          type: string
+          example: isEditable
+          description: Param code
+          x-mapping: profile_parameter.code_parameter
+        value:
+          type: string
+          example: '1'
+          description: Param value
+          x-mapping: profile_parameter.value
+    GetUserByFilterResponse:
+      title: GetUserByFilterResponse
+      type: object
+      required:
+      - customerAffiliationId
+      properties:
+        userId:
+          type: string
+          description: user id
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        documentNumber:
+          type: string
+          description: document of identification user
+          example: '171655333001'
+        documentType:
+          type: string
+          description: type of documento
+          example: '0001'
+        names:
+          type: string
+          description: Names of user
+          example: Name
+        surnames:
+          type: string
+          description: Surnames
+          example: Lastname
+        position:
+          type: string
+          description: Surnames
+          example: Lastname
+        email:
+          type: string
+          description: Email of user
+          example: gobc@email.com
+        registerDate:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        channel:
+          type: string
+          example: Cliente
+        cellphone:
+          $ref: '#/components/schemas/CellPhone'
+        userProfile:
+          $ref: '#/components/schemas/Profile'
+        status:
+          $ref: '#/components/schemas/Status'
+    PostUserRequest:
+      title: PostUserRequest
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 1234-5678-90AB-CDEF
+        profileTemplateId:
+          type: string
+          example: 1234-5678-90AB-CDEF
+        customerAffiliationId:
+          type: string
+          example: 1234-5678-90AB-CDEF
+        documentNumber:
+          type: string
+          example: '1721553616'
+          maxLength: 10
+        documentType:
+          type: string
+          example: '0001'
+          maxLength: 4
+        names:
+          type: string
+          example: Jhon Carlos
+        surnames:
+          type: string
+          example: Steward Colling
+        email:
+          type: string
+          example: jhondoe@mail.com
+        position:
+          type: string
+          example: Manager
+        cellphone:
+          $ref: '#/components/schemas/CellPhone'
+    CellPhone:
+      title: CellPhone
+      type: object
+      properties:
+        internationalPrefix:
+          type: string
+          example: '593'
+        number:
+          type: string
+          example: 0987654321
+    Profile:
+      title: Profile
+      type: object
+      required:
+      - userProfileId
+      properties:
+        userProfileId:
+          type: string
+          description: Code of profile
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        name:
+          type: string
+          description: name of profile
+          example: Administrator
+        description:
+          type: string
+          description: Description
+          example: Allows you to perform operations to add, delete or modify
+    PostUserResponse:
+      title: PostUserResponse
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 4085b199-5994-4016-ad0c-e28486c59008
+    GetAccountByFilterResponse:
+      title: GetAccountByFilterResponse
+      type: object
+      properties:
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetAccount'
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetPermission'
+    GetAccount:
+      title: GetAccount
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+        name:
+          type: string
+          example: Cuenta ahorros
+        alias:
+          type: string
+          example: PRIN Santo domingo
+        type:
+          $ref: '#/components/schemas/GetAccountType'
+        accountNumber:
+          type: string
+          example: '2255889965'
+    GetAccountType:
+      title: GetAccountType
+      type: object
+      properties:
+        code:
+          type: string
+          example: ''
+        description:
+          type: string
+          example: CTA.CTE PERSONAL
+    GetPermission:
+      title: GetPermission
+      type: object
+      properties:
+        permissionId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+        description:
+          type: string
+          example: persmission descripcion example
+        claim:
+          type: string
+          example: RE.ASD.ED
+        isSelected:
+          type: boolean
+          example: true
+    PostBankingProductOperationRequest:
+      title: PostBankingProductOperationRequest
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostAccount'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostAction'
+    PostAccount:
+      title: PostAccount
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+    PostAction:
+      title: PostAction
+      type: object
+      properties:
+        actionId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+    GetUserApprovalLevelByFilterResponse:
+      title: GetUserApprovalLevelByFilterResponse
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/GetProduct'
+    GetProduct:
+      title: GetProduct
+      type: object
+      properties:
+        productId:
+          type: string
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        name:
+          type: string
+          example: APR
+        description:
+          type: string
+          example: Aprobar transferencias
+        claim:
+          type: string
+          example: ABC.DEF.GHI
+        approvalLevels:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetApprovalLevel'
+    GetApprovalLevel:
+      title: GetApprovalLevel
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetCategory'
+        limitsAmount:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetLimitAmount'
+    GetCategory:
+      title: Category
+      type: object
+      properties:
+        categoryId:
+          type: string
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        name:
+          type: string
+          example: Name example
+        isSelected:
+          type: boolean
+          example: false
+    GetLimitAmount:
+      title: GetLimitAmount
+      type: object
+      properties:
+        minAmount:
+          type: string
+          example: '0'
+        maxAmount:
+          type: string
+          example: '10'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetCategoryId'
+    GetCategoryId:
+      title: GetCategoryId
+      type: object
+      properties:
+        categoryId:
+          type: string
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+    PostUserApprovalLevelRequest:
+      title: PostUserApprovalLevelRequest
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 4085b199-5994-4016-ad0c-e28486c59008
+        userProfileId:
+          type: string
+          example: 4085b199-5994-4016-ad0c-e28486c59008
+        userCustomerProduct:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostUserCustomerProduct'
+    PostUserCustomerProduct:
+      title: PostUserCustomerProduct
+      type: object
+      properties:
+        productId:
+          type: string
+          example: 1234-5678-90AB-CDEFGH
+        approvalLevel:
+          $ref: '#/components/schemas/PostApprovalLevel'
+    PostApprovalLevel:
+      title: PostApprovalLevel
+      type: object
+      properties:
+        categoryId:
+          type: string
+          example: 1234-5678-90AB-CDEFGH
+        isSelected:
+          type: boolean
+          example: true
+    PostUserActivateRequest:
+      title: PostUserActivateRequest
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 1234-5678-90AB-CDEFGH
+  parameters:
+    authorization:
+      name: authorization
+      in: header
+      description: JWT Authorization Token.
+      required: true
+      schema:
+        type: string
+        example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck
+    app-name:
+      name: app-name
+      in: header
+      description: Application Name - BackOffice | BusinessBanking | MobileToken
+      required: true
+      schema:
+        type: string
+        example: BackOffice
+    caller-name:
+      name: caller-name
+      in: header
+      description: Api name who request
+      required: true
+      schema:
+        type: string
+        example: bbe-msa-bs-guided-experience
+    process-code:
+      name: process-code
+      in: header
+      description: Identifies the process or functionality
+      required: false
+      schema:
+        type: string
+        example: BJACAR01
+    request-date:
+      name: request-date
+      in: header
+      description: Request Date | RFC 3339 Format
+      required: true
+      schema:
+        $ref: '#/components/schemas/request-date'
+      example: 2019-04-29 07:20:50.520000+00:00
+    request-id:
+      name: request-id
+      in: header
+      description: Request Identifier
+      required: true
+      schema:
+        type: string
+        example: id of request
+    x-device:
+      name: x-device
+      in: header
+      description: Identifier of the device.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: 9939aadd00ee32
+    x-device-ip:
+      name: x-device-ip
+      in: header
+      description: IP address of origin of the request.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: 200.10.89.34
+    x-language:
+      name: x-language
+      in: header
+      description: ISO – 639-1  – Language Code - 2 digit code.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        maxLength: 5
+        type: string
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+    oauth2:
+      type: oauth2
+      x-amazon-apigateway-authorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        jwtConfiguration:
+          issuer: ${jwt_issuer}
+          audience: ["${jwt_audiences_list}"]
+          
+x-amazon-apigateway-cors:
+  allowOrigins:
+  - '*'
+  allowHeaders:
+  - Authorization
+  - Content-Type
+  - x-api-key
+  - x-language
+  - app-name
+  - caller-name
+  - client-ip
+  allowMethods:
+  - GET
+  - POST
+  - OPTIONS

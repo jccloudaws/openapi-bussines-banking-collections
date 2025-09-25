@@ -1,0 +1,957 @@
+openapi: 3.0.0
+info:
+  title: API Channel - Back Office - Approval Servicing Order V1
+  description: 'Channel API For Customer Management. <br>
+
+    <br>
+
+    <b>• Business Area</b> `Sales and service`
+
+    <br>
+
+    <b>• Business Domain</b> `Customer Management`
+
+    <br>
+
+    <b>• Service Domain</b> `Customer Products and Services`
+
+    '
+  contact:
+    name: Carlos Quiroz
+    email: cquirozv-ext@pichincha.pe
+  version: 1.0.0
+servers:
+- url: https://{apiId}.execute-api.{region}.amazonaws.com/{stage}
+  variables:
+    apiId:
+      default: yourApiId
+    region:
+      default: us-east-1
+    stage:
+      default: dev
+tags:
+- name: Servicing Order
+  description: Servicing Order Controller
+security:
+- oauth2: []
+paths:
+  /channel/back-office/v1/servicing-order/list:
+    get:
+      tags:
+      - Servicing Order
+      summary: Retrieves list of records pending approval.
+      description: '### Details:
+
+        Retrieve list of activations pending approval by filter
+
+        ### Valid use of parameters:
+
+        | Expected result | Path Parameter | Query Parameter |
+
+        |--------------------|--------------- |-----------------|
+
+        |Retrieve activations by filter customerUuid  | - |  customerUuid  |
+
+        |Retrieve activations by filter status | - |  status   |
+
+        |Retrieve activations by filter fullName| - |  fullName  |
+
+        |Index to start returning the elements| - |  offset |
+
+        |Number of records to return| - |  limit|
+
+        |Returns the orders that were executed (approved or rejected) | - |  moreData=processedOrders
+        |
+
+        ### The combination described above are the only possible combinations of
+        parameters, other combinations will return error.
+
+        '
+      security:
+      - oauth2: []
+      parameters:
+      - in: header
+        name: authorization
+        description: token jwt
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: app-name
+        description: Application Name
+        required: true
+        schema:
+          type: string
+          example: businessBanking
+      - in: header
+        name: caller-name
+        description: Api name who request
+        required: true
+        schema:
+          type: string
+          example: bbe-msa-bs-guided-experience
+      - in: header
+        name: process-code
+        description: Identifies the process or functionality
+        required: true
+        schema:
+          type: string
+          example: BJACAR01
+      - in: header
+        name: request-date
+        description: Request Date | RFC 3339 Format
+        required: true
+        schema:
+          type: string
+        example: 2019-10-12 07:20:50.520000+00:00
+      - in: header
+        name: request-id
+        description: Request Identifier
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: x-device
+        description: Identifier of the device.
+        required: true
+        schema:
+          type: string
+          example: 9939aadd00ee32
+      - in: header
+        name: x-device-ip
+        description: IP address of origin of the request.
+        required: true
+        schema:
+          type: string
+          example: 200.10.89.34
+      - in: header
+        name: x-language
+        description: ISO – 639-1 – Language Code - 2 digit code.
+        required: true
+        schema:
+          type: string
+          maxLength: 5
+      - in: query
+        name: customerUuid
+        description: Pseudo identifier to retrieve information from cache.
+        required: false
+        schema:
+          type: string
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      - in: query
+        name: status
+        description: Activation status
+        required: true
+        schema:
+          type: string
+          example: PENDING
+      - in: query
+        name: fullName
+        description: Company name
+        required: false
+        schema:
+          type: string
+          example: TEST COMPANY SA
+      - in: query
+        name: offset
+        description: Index to start returning the elements
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+        example: 10
+      - in: query
+        name: limit
+        description: Number of records to return
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+        example: 5
+      - in: query
+        name: moreData
+        description: Returns the orders that were executed (approved or rejected).
+        required: false
+        schema:
+          type: string
+          example: processedOrders
+      responses:
+        '200':
+          description: Successful search.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/GetServicingOrderListByFilterResponse'
+              examples:
+                GetServicingOrderListByFilterResponseExample:
+                  $ref: '#/components/examples/GetServicingOrderListByFilterResponseExample'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeout'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /channel/back-office/v1/servicing-order:
+    get:
+      tags:
+      - Servicing Order
+      summary: Recover a servicing order by order.
+      description: '### Details:
+
+        Recover a servicing order by order.
+
+        ### Valid use of parameters:
+
+        | Expected result | Path Parameter | Query Parameter |
+
+        |--------------------|--------------- |-----------------|
+
+        |Retrieve servicing order by filter trayOrderId | - | trayOrderId |
+
+        '
+      parameters:
+      - in: header
+        name: authorization
+        required: true
+        description: token jwt
+        schema:
+          type: string
+      - in: header
+        name: app-name
+        required: true
+        description: Application Name - BackOffice | BusinessBanking | MobileToken
+        schema:
+          type: string
+          example: BackOffice
+      - in: header
+        name: caller-name
+        required: true
+        description: Api name who request
+        schema:
+          type: string
+          example: bbe-msa-bs-guided-experience
+      - in: header
+        name: process-code
+        required: false
+        description: Identifies the process or functionality
+        schema:
+          type: string
+          example: BJACAR01
+      - in: header
+        name: request-date
+        required: true
+        description: Request Date | RFC 3339 Format
+        schema:
+          $ref: '#/components/schemas/request-date'
+        example: 2019-04-29 07:20:50.520000+00:00
+      - in: header
+        name: request-id
+        required: true
+        description: Request Identifier
+        schema:
+          type: string
+          example: id of request
+      - in: header
+        name: x-session
+        required: false
+        description: Indicates the active session in which the user is transacting.
+        schema:
+          type: string
+          example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+      - in: header
+        name: x-device
+        required: true
+        description: Identifier of the device.
+        schema:
+          type: string
+          example: 9939aadd00ee32
+      - in: header
+        name: x-device-ip
+        required: true
+        description: IP address of origin of the request.
+        schema:
+          type: string
+          example: 200.10.89.34
+      - in: header
+        name: x-language
+        required: true
+        description: ISO – 639-1 – Language Code - 2 digit code.
+        schema:
+          type: string
+          maxLength: 5
+      - in: query
+        name: trayOrderUuid
+        required: true
+        description: Identifier to retrieve information from cache.
+        schema:
+          type: string
+          example: 123456
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/GetServicingOrderByFilterResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+      security:
+      - oauth2: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+    post:
+      tags:
+      - Servicing Order
+      summary: Update and delete service order.
+      description: '### Details:
+
+        Update and delete the registration of the activation service order by identification.
+
+        '
+      parameters:
+      - in: header
+        name: authorization
+        required: true
+        description: token jwt
+        schema:
+          type: string
+      - in: header
+        name: app-name
+        required: true
+        description: Application Name - BackOffice | BusinessBanking | MobileToken
+        schema:
+          type: string
+          example: BackOffice
+      - in: header
+        name: caller-name
+        required: true
+        description: Api name who request
+        schema:
+          type: string
+          example: bbe-msa-bs-guided-experience
+      - in: header
+        name: process-code
+        required: false
+        description: Identifies the process or functionality
+        schema:
+          type: string
+          example: BJACAR01
+      - in: header
+        name: request-date
+        required: true
+        description: Request Date | RFC 3339 Format
+        schema:
+          $ref: '#/components/schemas/request-date'
+        example: 2019-04-29 07:20:50.520000+00:00
+      - in: header
+        name: request-id
+        required: true
+        description: Request Identifier
+        schema:
+          type: string
+          example: id of request
+      - in: header
+        name: x-session
+        required: false
+        description: Indicates the active session in which the user is transacting.
+        schema:
+          type: string
+          example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+      - in: header
+        name: x-device
+        required: true
+        description: Identifier of the device.
+        schema:
+          type: string
+          example: 9939aadd00ee32
+      - in: header
+        name: x-device-ip
+        required: true
+        description: IP address of origin of the request.
+        schema:
+          type: string
+          example: 200.10.89.34
+      - in: header
+        name: x-language
+        required: true
+        description: ISO – 639-1 – Language Code - 2 digit code.
+        schema:
+          type: string
+          maxLength: 5
+      requestBody:
+        required: true
+        description: Request to update or delete servicing order
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostServicingOrderRequest'
+      responses:
+        '200':
+          description: Servicing order updated or deleted.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/PostServicingOrderResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+      security:
+      - oauth2: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+    oauth2:
+      type: oauth2
+      x-amazon-apigateway-authorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        jwtConfiguration:
+          issuer: ${jwt_issuer}
+          audience: ["${jwt_audiences_list}"]
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/ErrorBadRequest'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Not Found
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Conflict:
+      description: Conflict
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequests:
+      description: Too Many Requests
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalError:
+      description: Internal Server Error
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GatewayTimeout:
+      description: Gateway Timeout
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadGateway:
+      description: Bad Gateway
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    GetServicingOrderListByFilterResponse:
+      type: object
+      properties:
+        servicingOrders:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetServicingOrderList'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    GetServicingOrderList:
+      type: object
+      properties:
+        trayOrderId:
+          type: string
+          description: Number of the creation order.
+          example: '14621'
+          maxLength: 50
+        company:
+          $ref: '#/components/schemas/Company'
+        status:
+          $ref: '#/components/schemas/Status'
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetHistory'
+    GetServicingOrderByFilterResponse:
+      type: object
+      properties:
+        servicingOrder:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetServicingOrder'
+    GetServicingOrder:
+      type: object
+      properties:
+        trayOrderId:
+          type: string
+          description: number servicing Order
+          example: '14621'
+        customerAffiliationId:
+          type: string
+          description: customer affiliation id
+          example: 963b7033-a47b-41d7-84e5-0df6aae68f10
+        entityTag:
+          type: string
+          description: entity Tag
+          example: 14AUHYA-127201-QQ
+        company:
+          $ref: '#/components/schemas/Company'
+        status:
+          $ref: '#/components/schemas/Status'
+        accountId:
+          type: string
+          description: account identification Mask | acccount number
+          example: abcd1234-a47b-41d7-a1b2-0df6aae68f10
+        numberApprovers:
+          type: integer
+          description: number approvers
+          example: 1
+        packageProduct:
+          type: array
+          items:
+            $ref: '#/components/schemas/PackageProduct'
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetHistory'
+    PackageProduct:
+      type: object
+      properties:
+        packageId:
+          type: string
+          description: package Id
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        name:
+          type: string
+          description: name
+          example: Paquete avanzado
+        isEditable:
+          type: boolean
+          description: Whether the package is editable or not
+          example: true
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetProductSave'
+    GetProductSave:
+      type: object
+      properties:
+        productId:
+          type: string
+          description: Product Id.
+          example: A0AA046A-9884-46A4-9262-BD284F785DDB
+        customerProductId:
+          type: string
+          description: Id Customer Product.
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        name:
+          type: string
+          description: The name of the product
+          example: TRCTAPR
+        description:
+          type: string
+          description: Descriptions product
+          example: Transferencias a Cuentas Propias
+        isSelected:
+          type: boolean
+          description: Whether the product is selected or not
+          example: false
+        isSelectedUser:
+          type: boolean
+          description: Whether the product is selected or not for the customer
+          example: false
+        price:
+          type: number
+          format: double
+          description: price.
+          example: 500
+        currency:
+          $ref: '#/components/schemas/Currency'
+        parameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetParameters'
+        approvalLevels:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetApprovalLevels'
+        productsAccounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetProductSonSave'
+    GetProductSonSave:
+      type: object
+      properties:
+        productId:
+          type: string
+          description: Product Id child.
+          example: A0AA046A-9884-46A4-9262-BD284F785DDB
+        customerProductId:
+          type: string
+          description: Id Customer Product child.
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        description:
+          type: string
+          description: description
+          example: Cuentas
+        coreProductId:
+          type: string
+          description: core Product Id.
+          example: '123456'
+        approvalLevels:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetApprovalLevelsSonSave'
+    GetApprovalLevelsSonSave:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategorySave'
+        limitsAmount:
+          type: array
+          items:
+            $ref: '#/components/schemas/LimitAmount'
+    CategorySave:
+      type: object
+      properties:
+        categoryId:
+          type: string
+          description: category Id.
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        code:
+          type: string
+          description: category code.
+          example: '001'
+        name:
+          type: string
+          description: category name.
+          example: Categoria A
+    Status:
+      type: object
+      properties:
+        code:
+          type: string
+          description: status code
+          example: PENDING
+          maxLength: 50
+    PostServicingOrderResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: returns delete or update successful
+          example: success deleted
+    PostServicingOrderRequest:
+      type: object
+      properties:
+        trayOrders:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrayOrderIdArray'
+        customerUuid:
+          type: string
+          description: Pseudo identifier to retrieve information from cache.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        instructingUser:
+          type: string
+          description: approver user.
+          example: jramos
+        action:
+          type: boolean
+          description: true to update and false to delete
+          example: true
+    TrayOrderIdArray:
+      type: object
+      properties:
+        trayOrderId:
+          type: string
+          description: number servicing Order
+          example: '14621'
+    GetHistory:
+      type: object
+      properties:
+        date:
+          type: string
+          description: date history
+          example: '2022-11-23T14:18:47.478+00:00'
+          maxLength: 100
+        instructingUser:
+          type: string
+          description: instructing user history.
+          example: jramos
+          maxLength: 100
+        action:
+          type: string
+          description: action history.
+          example: TO_CREATING
+          maxLength: 50
+        nextStatus:
+          type: string
+          description: next Status history.
+          example: PENDING_APPROVAL
+          maxLength: 50
+        channel:
+          type: string
+          description: channel history.
+          example: Back Office
+          maxLength: 50
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: currency code | ISO-4217
+          example: USD
+        description:
+          type: string
+          description: currency description | ISO-4217
+          example: Dolares Americanos
+    GetApprovalLevels:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryChildren'
+        limitsAmount:
+          type: array
+          items:
+            $ref: '#/components/schemas/LimitAmount'
+    LimitAmount:
+      type: object
+      properties:
+        minAmount:
+          type: string
+          description: minimum amount
+          example: '0'
+        maxAmount:
+          type: string
+          description: maximum amount
+          example: '10'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryId'
+    CategoryId:
+      type: object
+      properties:
+        categoryId:
+          type: string
+          description: category id
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+    CategoryChildren:
+      type: object
+      properties:
+        categoryId:
+          type: string
+          description: category Id.
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        code:
+          type: string
+          description: category code.
+          example: '001'
+        name:
+          type: string
+          description: category name.
+          example: Categoria A
+    GetParameters:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the parameter
+          example: TSPOOL
+        description:
+          type: string
+          description: Description parameter
+          example: Tasa Pool
+        value:
+          type: string
+          description: value parameter
+          example: '7.5'
+        typeValue:
+          type: string
+          description: type Value parameter
+          example: Porcentaje
+        status:
+          $ref: '#/components/schemas/Status'
+    Company:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name company
+          example: Test Company SAC
+          maxLength: 50
+        documentNumber:
+          type: string
+          description: company identification number
+          example: '20569076893'
+          maxLength: 50
+        documentType:
+          type: string
+          description: document type number
+          example: '1'
+          maxLength: 50
+    Pagination:
+      type: object
+      properties:
+        itemQuantity:
+          type: integer
+          description: total number of available records
+          example: 40
+          maxLength: 100
+    ErrorBadRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Technical error message.
+          example: Missing mandatory fields.
+          maxLength: 50
+        detail:
+          type: string
+          description: Message to display to the client.
+          example: The input fields are not correct
+          maxLength: 50
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorList'
+        instance:
+          type: string
+          description: Error catalog code.
+          example: '022'
+          maxLength: 50
+        type:
+          type: string
+          description: Address where the error occurs.
+          example: /v1/name/pathSuffix
+          maxLength: 100
+    ErrorList:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Message.
+          example: Bad Request
+          maxLength: 50
+        businessMessage:
+          type: string
+          description: Business error message.
+          example: The xyz field is mandatory
+          maxLength: 50
+    Error:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          description: Error code.
+          maxLength: 6
+        developerMessage:
+          type: string
+          description: Developer message.
+          maxLength: 256
+        userMessage:
+          type: string
+          description: User message.
+          maxLength: 256
+        moreInfo:
+          type: string
+          description: More info.
+          maxLength: 256
+      additionalProperties: false
+    request-date:
+      type: string
+  examples:
+    GetServicingOrderListByFilterResponseExample:
+      value:
+        servicingOrders:
+        - trayOrderId: '14621'
+          company:
+            name: Test Company SAC
+            documentNumber: '20569076893'
+            documentType: '1'
+          status:
+            code: PENDING
+          history:
+          - date: '2022-11-23T14:18:47.478+00:00'
+            instructingUser: jramos
+            action: TO_CREATING
+            nextStatus: PENDING_APPROVAL
+            channel: Back Office
+        pagination:
+          itemQuantity: 40
+x-amazon-apigateway-cors:
+  allowOrigins:
+  - '*'
+  allowHeaders:
+  - Authorization
+  - Content-Type
+  - x-api-key
+  - x-language
+  - app-name
+  - caller-name
+  - client-ip
+  allowMethods:
+  - GET
+  - POST
+  - OPTIONS

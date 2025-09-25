@@ -1,0 +1,701 @@
+openapi: 3.0.2
+info:
+  title: API Channel - Business Banking - Session Socket V1
+  description: |
+    API Channel to manage user access by web socket<br>
+    <br>
+    <b>• Business Area</b> `Sales and Service`
+    <br>
+    <b>• Business Domain</b> `Customer Management`
+    <br>
+    <b>• Service Domain:</b> `Customer Access Entitlement`
+  version: 1.0.0
+  contact:
+    name: Jhojan Guillermo
+    email: jguillermob-ext@pichincha.pe
+servers:
+  - url: http://localhost:8080/channel/business-banking/v1/session-socket
+    description: Development
+tags:
+  - name: "Session Socket"
+    description: "User Access Management By Web Socket"
+paths:
+  /session:
+    get:
+      tags:
+        - Session Socket
+      summary: Manage user's sessions
+      description: >+
+        ### Description
+          Manage user's sessions.
+      operationId: GetSessionSocketService
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: false
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      responses:
+        200:
+          description: |-
+            <b>`Ok`</b><br>
+        400:
+          description: |-
+            <b>`Bad Request`</b><br>
+            The request information it`s not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: |-
+            <b>`Unauthorized`</b><br>
+            You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: |-
+            <b>`Forbidden`</b><br>
+            You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: |-
+            <b>`Not Found`</b><br>
+            The server cannot find the requested resource.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        405:
+          description: |-
+            <b>`Method Not Allowed`</b><br>
+            Method is not allowed
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: |-
+            <b>`Internal Server Error`</b><br>
+            An error has occured.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /session/info:
+    get:
+      tags:
+        - Session Socket
+      summary: Web socket information
+      description: >+
+        ### Description
+          Obtain basic information from the server to measure the round trip time between the client and the server.
+      operationId: GetSessionSocketInfo
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: false
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+      responses:
+        200:
+          description: |-
+            <b>`Ok`</b><br>
+        400:
+          description: |-
+            <b>`Bad Request`</b><br>
+            The request information it`s not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: |-
+            <b>`Unauthorized`</b><br>
+            You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: |-
+            <b>`Forbidden`</b><br>
+            You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: |-
+            <b>`Not Found`</b><br>
+            The server cannot find the requested resource.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        405:
+          description: |-
+            <b>`Method Not Allowed`</b><br>
+            Method is not allowed
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: |-
+            <b>`Internal Server Error`</b><br>
+            An error has occured.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /session/{server-id}/{session-id}/{transport}:
+    get:
+      tags:
+        - Session Socket
+      summary: Web socket structure
+      description: >+
+        ### Description
+          Web socket structure to identify the session, server and protocol chosen by the web socket client.
+
+          | Expected Result  | Path Parameter | Query Parameter                 |
+          | ---------------- | ------------   | -----------------------------------|
+          | Routing requests in a cluster | server-id | -   |
+          | Correlates HTTP requests belonging to a SockJS session | session-id | -   |
+          | Indicates the transport type (websocket, xhr-streaming and others) | transform | - |
+
+      operationId: GetSessionSocketStructure
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: false
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - in: path
+          name: server-id
+          schema:
+            type: string
+          required: true
+          description: Routing requests in a cluster
+        - in: path
+          name: session-id
+          schema:
+            type: string
+          required: true
+          description: Correlates HTTP requests belonging to a SockJS session
+        - in: path
+          name: transport
+          schema:
+            type: string
+          required: true
+          description: Indicates the transport type
+      responses:
+        200:
+          description: |-
+            <b>`Ok`</b><br>
+        400:
+          description: |-
+            <b>`Bad Request`</b><br>
+            The request information it`s not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: |-
+            <b>`Unauthorized`</b><br>
+            You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: |-
+            <b>`Forbidden`</b><br>
+            You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: |-
+            <b>`Not Found`</b><br>
+            The server cannot find the requested resource.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        405:
+          description: |-
+            <b>`Method Not Allowed`</b><br>
+            Method is not allowed
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: |-
+            <b>`Internal Server Error`</b><br>
+            An error has occured.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+        - Session Socket
+      summary: Web socket structure
+      description: >+
+        ### Description
+          Web socket structure to identify the session, server and protocol chosen by the web socket client.
+
+          | Expected Result  | Path Parameter | Query Parameter                 |
+          | ---------------- | ------------   | -----------------------------------|
+          | Routing requests in a cluster | server-id | -   |
+          | Correlates HTTP requests belonging to a SockJS session | session-id | -   |
+          | Indicates the transport type (websocket, xhr-streaming and others) | transform | - |
+      operationId: PostSessionSocketStructure
+      parameters:
+        - in: header
+          name: authorization
+          description: token jwt
+          required: false
+          schema:
+            type: string
+        - name: app-name
+          in: header
+          description: Application Name
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: businessBanking
+        - name: caller-name
+          in: header
+          description: Api name who request
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: bbe-msa-bs-guided-experience
+        - name: process-code
+          in: header
+          description: Identifies the process or functionality
+          required: false
+          schema:
+            type: string
+            example: BJACAR01
+        - name: request-date
+          in: header
+          description: Request Date | RFC 3339 Format
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 2019-10-12 07:20:50.52Z
+        - name: request-id
+          in: header
+          description: Request Identifier
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: x-session
+          in: header
+          description: Indicates the active session in which the user is transacting.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+        - name: x-device
+          in: header
+          description: Identifier of the device.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 9939aadd00ee32
+        - name: x-device-ip
+          in: header
+          description: IP address of origin of the request.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 200.10.89.34
+        - name: x-language
+          in: header
+          description: ISO – 639-1  – Language Code - 2 digit code.
+          required: false
+          style: simple
+          explode: false
+          schema:
+            maxLength: 5
+            type: string
+        - in: path
+          name: server-id
+          schema:
+            type: string
+          required: true
+          description: Routing requests in a cluster
+        - in: path
+          name: session-id
+          schema:
+            type: string
+          required: true
+          description: Correlates HTTP requests belonging to a SockJS session
+        - in: path
+          name: transport
+          schema:
+            type: string
+          required: true
+          description: Indicates the transport type
+      responses:
+        200:
+          description: |-
+            <b>`Ok`</b><br>
+        400:
+          description: |-
+            <b>`Bad Request`</b><br>
+            The request information it`s not correct.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: |-
+            <b>`Unauthorized`</b><br>
+            You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: |-
+            <b>`Forbidden`</b><br>
+            You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: |-
+            <b>`Not Found`</b><br>
+            The server cannot find the requested resource.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        405:
+          description: |-
+            <b>`Method Not Allowed`</b><br>
+            Method is not allowed
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: |-
+            <b>`Internal Server Error`</b><br>
+            An error has occured.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    PostSessionSocketRequest:
+      type: object
+      properties:
+        uuid:
+          maxLength: 300
+          description: User identity
+          type: string
+        action:
+          maxLength: 100
+          description: Action
+          type: string
+    Error:
+      type: object
+      properties:
+        errorCode:
+          maxLength: 6
+          pattern: "^[a-zA-Z]+$\\d+$"
+          type: string
+        developerMessage:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        userMessage:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        moreInfo:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+        version:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: 1.0.0
+        status:
+          maxLength: 15
+          type: integer
+          example: 409
+      additionalProperties: false
+  examples:
+    PostSessionSocketRequestExample:
+      value:
+        uuid: "abc123"
+        action: "CHANGE-STATE"
