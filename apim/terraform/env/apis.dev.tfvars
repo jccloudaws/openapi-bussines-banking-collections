@@ -107,6 +107,36 @@ apis = [
           "56ee37cb-e5ad-482f-9855-86e85d8c7889"
     ]
     }
+  },
+  {
+    name         = "business-banking-ux-b2c-captcha-authentication"
+    display_name = "API BB Channel B2C Captcha Authentication"
+    description  = ""
+    openapi_path = "../openapi/b2c-captcha-authentication/openapi.tpl.yaml"
+    lambda_name = "lambda_back-office-preprocessing_a"
+    # JWT Authorizer
+    jwt = {
+      issuer    = "https://login.microsoftonline.com/10da1d35-90f9-400b-9fd8-770597b82485/v2.0"
+      audiences = [
+          "api://56ee37cb-e5ad-482f-9855-86e85d8c7889",
+          "56ee37cb-e5ad-482f-9855-86e85d8c7889"
+    ]
+    }
+  },
+  {
+    name         = "business-banking-ux-b2c-token-authenticate"
+    display_name = "API BB Channel B2C Token Authenticate"
+    description  = ""
+    openapi_path = "../openapi/b2c-token-authenticate/openapi.tpl.yaml"
+    lambda_name = "lambda_back-office-preprocessing_a"
+    # JWT Authorizer
+    jwt = {
+      issuer    = "https://login.microsoftonline.com/10da1d35-90f9-400b-9fd8-770597b82485/v2.0"
+      audiences = [
+          "api://56ee37cb-e5ad-482f-9855-86e85d8c7889",
+          "56ee37cb-e5ad-482f-9855-86e85d8c7889"
+    ]
+    }
   }
 ]
 
