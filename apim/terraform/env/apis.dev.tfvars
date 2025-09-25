@@ -137,6 +137,36 @@ apis = [
           "56ee37cb-e5ad-482f-9855-86e85d8c7889"
     ]
     }
+  },
+  {
+    name         = "bbe-msa-ux-bo-customer-management-v1"
+    display_name = "API Back Office Customer Management"
+    description  = ""
+    openapi_path = "../openapi/bo-customer-management/openapi.tpl.yml"
+    lambda_name = "lambda_back-office-preprocessing_a"
+    # JWT Authorizer
+    jwt = {
+      issuer    = "https://login.microsoftonline.com/10da1d35-90f9-400b-9fd8-770597b82485/v2.0"
+      audiences = [
+          "api://56ee37cb-e5ad-482f-9855-86e85d8c7889",
+          "56ee37cb-e5ad-482f-9855-86e85d8c7889"
+    ]
+    }
+    },
+    {
+    name         = "bbp-msa-ux-bo-employee-access-v1"
+    display_name = "API Back Office Employee Access"
+    description  = ""
+    openapi_path = "../openapi/bo-employee-access/openapi.tpl.yaml"
+    lambda_name = "lambda_back-office-preprocessing_a"
+    # JWT Authorizer
+    jwt = {
+      issuer    = "https://login.microsoftonline.com/10da1d35-90f9-400b-9fd8-770597b82485/v2.0"
+      audiences = [
+          "api://56ee37cb-e5ad-482f-9855-86e85d8c7889",
+          "56ee37cb-e5ad-482f-9855-86e85d8c7889"
+    ]
+    }
   }
 ]
 
