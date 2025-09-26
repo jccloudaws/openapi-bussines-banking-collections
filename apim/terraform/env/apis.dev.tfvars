@@ -167,6 +167,7 @@ apis = [
           "56ee37cb-e5ad-482f-9855-86e85d8c7889"
     ]
     }
+<<<<<<< HEAD
   },
   {
     name         = "bbp-msa-ux-bo-user-access-management"
@@ -187,6 +188,16 @@ apis = [
     display_name = "ws-business-banking-ux-currency-exchange-java"
     description  = ""
     openapi_path = "../openapi/currency-exchange/openapi.tpl.yaml"
+=======
+  }
+
+  # ADD NEW RAUL
+    {
+    name         = "users"
+    display_name = "Users experience API"
+    description  = ""
+    openapi_path = "../openapi/users/openapi.tpl.yaml"
+>>>>>>> f2e7235 (fix: ajustes en pipeline de CI y Dockerfile para migración AWS)
     lambda_name = "lambda_back-office-preprocessing_a"
     # JWT Authorizer
     jwt = {
@@ -195,6 +206,7 @@ apis = [
           "api://56ee37cb-e5ad-482f-9855-86e85d8c7889",
           "56ee37cb-e5ad-482f-9855-86e85d8c7889"
     ]
+<<<<<<< HEAD
     }},
     {
     name         = "bbp-msa-ux-interbank-transfer-v1"
@@ -224,6 +236,10 @@ apis = [
           "56ee37cb-e5ad-482f-9855-86e85d8c7889"
     ]
     }}
+=======
+    }
+  }
+>>>>>>> f2e7235 (fix: ajustes en pipeline de CI y Dockerfile para migración AWS)
 ]
 
 # === Secreto con llaves RSA (creado con el bash) ===
