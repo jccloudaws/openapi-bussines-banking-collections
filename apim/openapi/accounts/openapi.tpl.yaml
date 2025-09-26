@@ -1,0 +1,1564 @@
+openapi: 3.0.0
+info:
+  description: Expone todas las operaciones relacionadas la consulta de cuentas y
+    transacciones de clientes.
+  version: 1.0.2
+  title: Business Accounts
+tags:
+- name: Accounts
+  description: La API realiza operaciones de consulta de las cuentas del cliente
+- name: Transactions
+  description: La API realiza operaciones de consulta de las de las transacciones
+    de una cuenta
+paths:
+  /channel/business-banking/v1/accounts/account-transactions:
+    post:
+      tags:
+      - Transactions
+      summary: Obtiene la lista de cuentas corrientes de un cliente por su documento
+        de identificación.
+      description: "# Implementation Notes\r\n\r\n### Acerca de la funcionalidad expuesta\r\
+        \n\r\nObtiene la lista de transacciones de una cuenta.\r\n\n\r\n\r\n### Path\
+        \ parameters\r\n\r\nNo aplica.\r\n\r\n\n\r\n\r\n### URI de acceso a la API\r\
+        \n\r\n| Método | URI |\r\n|--------|-------------|\r\n|GET | /channel/bsbk/v1.0/accounts/account-transactions?accountTypeDescription={accountTypeDescription}&limit={limit}&offset={offset}&fromOperationDate={fromOperationDate}&toOperationDate={toOperationDate}\
+        \ |\r\n\r\n\n\r\n\r\n### Precondiciones para el consumo de esta versión de\
+        \ la API\r\n\r\nNo aplica.\r\n\r\n\n\r\n\r\n### Headers\r\n\r\n| Header |\
+        \ Ejemplo | Obligatorio |\r\n|--------|---------|-------------|\r\n| Request-ID\
+        \       | 550e8400-e29b-41d4-a716-446655440000 | S           |\r\n| request-date\
+        \ | 2019-07-11T01:30:00.000-05:00 | S |\r\n| app-code | BSBK | S |\r\n| caller-name\
+        \ | BUSINESSB | S |\r\n\n\r\n\r\n### Query parameters válidos en esta versión\
+        \ de la API\r\n| Query Param    |Tipo de Dato | Descripción              \
+        \        | Valores Permitidos |\r\n|----------------|-------------|----------------------------------|--------------------|\r\
+        \n| accountTypeDescription | String       | Código del cuenta en IBS     \
+        \                 | 000296811270      |             \r\n| limit | String \
+        \      | Limite de movimientos a retornar                      | 10      |\
+        \ \r\n| offset | String       | Indicador de consulta                    \
+        \ | 20      |\r\n| fromOperationDate | String       | Fecha inicio       \
+        \             | 2022-01-01      |\r\n| toOperationDate | String       | Fecha\
+        \ fin                     | 2022-01-31      |\r\n\r\n\n\r\n\r\n### Usos válidos\
+        \ de query parameters\r\n\r\n| Resultado esperado                   | Path\
+        \ param | Query parameters requerido              | Query parameters opcionales\
+        \    |Query param extrafields   |\r\n|--------------------------------------|------------|-----------------------------------------|--------------------------------|--------------------------|\r\
+        \n| Se obtienen la lista de movimientos. |     -      |     accountTypeDescription,limit,offset,fromOperationDate,toOperationDate\
+        \    |                   -            |-                         |\r\n\r\n\
+        \n\r\n\r\n### Variantes válidas del payload (cuerpo del mensaje)\r\n\r\nNo\
+        \ aplica.\r\n\r\n\n\r\n\r\n### Lista de valores usados en esta versión de\
+        \ la API\r\n\r\nNo aplica.\r\n\n\r\n\r\n### Código de errores del Servicio\
+        \ en esta versión de la API\r\n\r\n| Código | Descripción |\r\n|--------|-------------|\r\
+        \n| JA0001 | Request inválido.               |\r\n| JA0003 | Ocurrió un error\
+        \ en el Backend. |\r\n\n"
+      operationId: getAccountTransactionsByNumberUsingGET
+      parameters:
+      - name: authorization
+        in: header
+        required: true
+        schema:
+          type: string
+        description: JWT Authorization Token
+        example: Dasd123123asdad1231jbw
+      - name: app-name
+        in: header
+        description: Application Name
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: businessBanking
+      - name: caller-name
+        in: header
+        description: Api name who request
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: bbe-msa-bs-guided-experience
+      - name: process-code
+        in: header
+        description: Identifies the process or functionality
+        required: false
+        schema:
+          type: string
+          example: BJACAR01
+      - name: request-date
+        in: header
+        description: Request Date | RFC 3339 Format
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 2019-10-12 07:20:50.520000+00:00
+      - name: request-id
+        in: header
+        description: Request Identifier
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: x-session
+        in: header
+        description: Indicates the active session in which the user is transacting.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+      - name: x-device
+        in: header
+        description: Identifier of the device.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 9939aadd00ee32
+      - name: x-device-ip
+        in: header
+        description: IP address of origin of the request.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 200.10.89.34
+      - name: x-language
+        in: header
+        description: ISO – 639-1  – Language Code - 2 digit code.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 5
+          type: string
+      - name: fromOperationDate
+        in: query
+        description: Fecha de inicio
+        required: false
+        allowEmptyValue: false
+        example: yyyy-mm-dd
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: Indicador de consulta
+        required: false
+        allowEmptyValue: false
+        example: '0'
+        schema:
+          type: string
+      - name: toOperationDate
+        in: query
+        description: Fecha fin
+        required: false
+        allowEmptyValue: false
+        example: yyyy-mm-dd
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountTransactionRequest'
+        description: Esquema JSON que representa los filtros para la consulta del
+          endpoint
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountTransactionResponse'
+        '400':
+          description: Se enviaron datos incorrectos.
+          content:
+            application/json:
+              examples:
+                response:
+                  value: "{\n    \"code\": \"JA0001\",\n    \"description\": \"Request\
+                    \ inválido\",\n    \"errorType\": \"TECHNICAL\",\n    \"exceptionDetails\"\
+                    : [\n       {\n            \"component\": \"jarvis-channel-bsbk-accounts-v1.0\"\
+                    ,\n            \"description\": \"Código inválido para el canal.\"\
+                    ,\n            \"endpoint\": \"[GET] /channel/bsbk/v1.0/accounts/account_transaction\"\
+                    \n        }\n    ]\n}"
+        '403':
+          description: El usuario no tiene autorización para realizar esta operación.
+        '500':
+          description: Error al realizar la consulta de datos.
+          content:
+            application/json:
+              examples:
+                response:
+                  value: "{\n    \"code\": \"JA0003\",\n    \"description\": \"Ocurrió\
+                    \ un error en el Backend.'\",\n    \"errorType\": \"FUNCTIONAL\"\
+                    ,\n    \"exceptionDetails\": [\n        {\n            \"component\"\
+                    : \"jarvis-channel-bsbk-accounts-v1.0\",\n            \"description\"\
+                    : \"Ocurrió un error inesperado en el Backend.\",\n          \
+                    \  \"endpoint\": \"[GET] /channel/bsbk/v1.0/accounts/account_transaction\"\
+                    \n        }\n    ]\n}"
+      deprecated: false
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /channel/business-banking/v1/accounts/account-transactions/download:
+    post:
+      tags:
+      - Transactions
+      summary: Recuerso que se utilizará para descarga la lista de movimientos por
+        rango de fechas.
+      description: "# Implementation Notes\r\n\r\n### Acerca de la funcionalidad expuesta\r\
+        \n\r\nDescarga los movimientos por rango de fechas, en formato pdf o xls \r\
+        \n\n\r\n\r\n### Path parameters\r\n\r\nNo aplica.\r\n\r\n\n\r\n\r\n### URI\
+        \ de acceso a la API\r\n\r\n| Método | URI |\r\n|--------|-------------|\r\
+        \n|POST | /channel/bsbk/v1.0/accounts/account-transactions/download |\r\n\r\
+        \n\n\r\n\r\n### Precondiciones para el consumo de esta versión de la API\r\
+        \n\r\nNo aplica.\r\n\r\n\n\r\n\r\n### Headers\r\n\r\n| Header | Ejemplo |\
+        \ Obligatorio |\r\n|--------|---------|-------------|\r\n| Request-ID    \
+        \   | 550e8400-e29b-41d4-a716-446655440000 | S           |\r\n| request-date\
+        \ | 2019-07-11T01:30:00.000-05:00 | S |\r\n| app-code | BSBK | S |\r\n| caller-name\
+        \ | BUSINESSB | S |\r\n| Authorization   | eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0N|S|\r\
+        \n| token-id    | eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0N|S|\r\
+        \n\n\r\n\r\n### Query parameters válidos en esta versión de la API\r\n| Query\
+        \ Param    |Tipo de Dato | Descripción                      | Valores Permitidos\
+        \ |\r\n|----------------|-------------|----------------------------------|--------------------|\r\
+        \n\r\n\r\n\n\r\n\r\n### Usos válidos de query parameters\r\n\r\n| Resultado\
+        \ esperado                   | Path param | Query parameters requerido   \
+        \           | Query parameters opcionales    |Query param extrafields   |\r\
+        \n|--------------------------------------|------------|-----------------------------------------|--------------------------------|--------------------------|\r\
+        \n| Se descarga reporte de movimientos. |     -      |         |         \
+        \          -            |-                         |\r\n\r\n\n\r\n\r\n###\
+        \ Variantes válidas del payload (cuerpo del mensaje)\r\n\r\nNo aplica.\r\n\
+        \r\n\n\r\n\r\n### Lista de valores usados en esta versión de la API\r\n\r\n\
+        No aplica.\r\n\n\r\n\r\n### Código de errores del Servicio en esta versión\
+        \ de la API\r\n\r\n| Código | Descripción |\r\n|--------|-------------|\r\n\
+        | JA0001 | Request inválido.               |\r\n| JA0003 | Ocurrió un error\
+        \ en el Backend. |\r\n\n"
+      operationId: downloadAccountTransactionsByNumberUsingPOST
+      parameters:
+      - name: authorization
+        in: header
+        required: true
+        schema:
+          type: string
+        description: JWT Authorization Token
+        example: Dasd123123asdad1231jbw
+      - name: app-name
+        in: header
+        description: Application Name
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: businessBanking
+      - name: caller-name
+        in: header
+        description: Api name who request
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: bbe-msa-bs-guided-experience
+      - name: process-code
+        in: header
+        description: Identifies the process or functionality
+        required: false
+        schema:
+          type: string
+          example: BJACAR01
+      - name: request-date
+        in: header
+        description: Request Date | RFC 3339 Format
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 2019-10-12 07:20:50.520000+00:00
+      - name: request-id
+        in: header
+        description: Request Identifier
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: x-session
+        in: header
+        description: Indicates the active session in which the user is transacting.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+      - name: x-device
+        in: header
+        description: Identifier of the device.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 9939aadd00ee32
+      - name: x-device-ip
+        in: header
+        description: IP address of origin of the request.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 200.10.89.34
+      - name: x-language
+        in: header
+        description: ISO – 639-1  – Language Code - 2 digit code.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 5
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DownloadRequest'
+        description: Esquema JSON que representa los filtros para la consulta del
+          endpoint
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadResponse'
+        '400':
+          description: Se enviaron datos incorrectos.
+          content:
+            application/json:
+              examples:
+                response:
+                  value: "{\n    \"code\": \"JA0001\",\n    \"description\": \"Request\
+                    \ inválido\",\n    \"errorType\": \"TECHNICAL\",\n    \"exceptionDetails\"\
+                    : [\n       {\n            \"component\": \"jarvis-channel-bsbk-accounts-v1.0\"\
+                    ,\n            \"description\": \"Código inválido para el canal.\"\
+                    ,\n            \"endpoint\": \"[GET] /channel/bsbk/v1.0/accounts/account_transaction/download\"\
+                    \n        }\n    ]\n}"
+        '403':
+          description: El usuario no tiene autorización para realizar esta operación.
+        '500':
+          description: Error al realizar la consulta de datos.
+          content:
+            application/json:
+              examples:
+                response:
+                  value: "{\n    \"code\": \"JA0003\",\n    \"description\": \"Ocurrió\
+                    \ un error en el Backend.'\",\n    \"errorType\": \"FUNCTIONAL\"\
+                    ,\n    \"exceptionDetails\": [\n        {\n            \"component\"\
+                    : \"jarvis-channel-bsbk-accounts-v1.0\",\n            \"description\"\
+                    : \"Ocurrió un error inesperado en el Backend.\",\n          \
+                    \  \"endpoint\": \"[GET] /channel/bsbk/v1.0/accounts/account_transaction/download\"\
+                    \n        }\n    ]\n}"
+      deprecated: false
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /channel/business-banking/v1/accounts/current-accounts:
+    get:
+      tags:
+      - Accounts
+      summary: Obtiene la lista de cuentas de un cliente por su documento de identificación.
+      description: "# Implementation Notes\r\n\r\n### Acerca de la funcionalidad expuesta\r\
+        \n\r\nObtiene la lista de cuentas corrientes de un cliente por su documento\
+        \ de identificación.\r\n\n\r\n\r\n### Path parameters\r\n\r\nNo aplica.\r\n\
+        \r\n\n\r\n\r\n### URI de acceso a la API\r\n\r\n| Método | URI |\r\n|--------|-------------|\r\
+        \n|GET |    /channel/bsbk/v1.0/accounts/current-accounts?documentNumber={documentNumber}&documentType={documentType}\
+        \ |\r\n\n\r\n\r\n### Precondiciones para el consumo de esta versión de la\
+        \ API\r\n\r\nNo aplica.\r\n\r\n\n\r\n\r\n### Headers\r\n\r\n| Header | Ejemplo\
+        \ | Obligatorio |\r\n|--------|---------|-------------|\r\n| Request-ID  \
+        \     | 550e8400-e29b-41d4-a716-446655440000 | S           |\r\n| request-date\
+        \ | 2019-07-11T01:30:00.000-05:00 | S |\r\n| app-code | BSBK | S |\r\n| caller-name\
+        \ | BUSINESSB | S |\r\n\n\r\n\r\n### Query parameters válidos en esta versión\
+        \ de la API\r\n| Query Param    |Tipo de Dato | Descripción              \
+        \        | Valores Permitidos |\r\n|----------------|-------------|----------------------------------|--------------------|\r\
+        \n| documentNumber | String       | numero de documento                  \
+        \    | 20100118760      |             \r\n| documentType | String       |\
+        \ tipo de documento                      | 1      | \r\n\n\r\n\r\n### Usos\
+        \ válidos de query parameters\r\n\r\n| Resultado esperado                \
+        \   | Path param | Query parameters requerido              | Query parameters\
+        \ opcionales    |Query param extrafields   |\r\n|--------------------------------------|------------|-----------------------------------------|--------------------------------|--------------------------|\r\
+        \n| Se obtienen las cuentas corrientes del cliente |     -      |     documentNumber,\
+        \ documentType     |                   -            |-                   \
+        \      |\r\n\r\n\n\r\n\r\n### Variantes válidas del payload (cuerpo del mensaje)\r\
+        \n\r\nNo aplica.\r\n\r\n\n\r\n\r\n### Lista de valores usados en esta versión\
+        \ de la API\r\n\r\nNo aplica.\r\n\n\r\n\r\n### Código de errores del Servicio\
+        \ en esta versión de la API\r\n\r\n| Código | Descripción |\r\n|--------|-------------|\r\
+        \n| JA0001 | Request inválido.               |\r\n| JA0003 | Ocurrió un error\
+        \ en el Backend. |\r\n\n"
+      operationId: getCurrentAccountsUsingGET
+      parameters:
+      - name: authorization
+        in: header
+        required: true
+        schema:
+          type: string
+        description: JWT Authorization Token
+        example: Dasd123123asdad1231jbw
+      - name: app-name
+        in: header
+        description: Application Name
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: businessBanking
+      - name: caller-name
+        in: header
+        description: Api name who request
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: bbe-msa-bs-guided-experience
+      - name: process-code
+        in: header
+        description: Identifies the process or functionality
+        required: false
+        schema:
+          type: string
+          example: BJACAR01
+      - name: request-date
+        in: header
+        description: Request Date | RFC 3339 Format
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 2019-10-12 07:20:50.520000+00:00
+      - name: request-id
+        in: header
+        description: Request Identifier
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: x-session
+        in: header
+        description: Indicates the active session in which the user is transacting.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+      - name: x-device
+        in: header
+        description: Identifier of the device.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 9939aadd00ee32
+      - name: x-device-ip
+        in: header
+        description: IP address of origin of the request.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 200.10.89.34
+      - name: x-language
+        in: header
+        description: ISO – 639-1  – Language Code - 2 digit code.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 5
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          description: Se enviaron datos incorrectos.
+          content:
+            application/json:
+              examples:
+                response:
+                  value: "{\n    \"code\": \"JA0001\",\n    \"description\": \"Request\
+                    \ inválido\",\n    \"errorType\": \"TECHNICAL\",\n    \"exceptionDetails\"\
+                    : [\n       {\n            \"component\": \"jarvis-channel-bsbk-accounts-v1.0\"\
+                    ,\n            \"description\": \"Código inválido para el canal.\"\
+                    ,\n            \"endpoint\": \"[GET] /channel/bsbk/v1.0/accounts/current_accounts\"\
+                    \n        }\n    ]\n}"
+        '403':
+          description: El usuario no tiene autorización para realizar esta operación.
+        '500':
+          description: Error al realizar la consulta de datos.
+          content:
+            application/json:
+              examples:
+                response:
+                  value: "{\n    \"code\": \"JA0003\",\n    \"description\": \"Ocurrió\
+                    \ un error en el Backend.'\",\n    \"errorType\": \"FUNCTIONAL\"\
+                    ,\n    \"exceptionDetails\": [\n        {\n            \"component\"\
+                    : \"jarvis-channel-bsbk-accounts-v1.0\",\n            \"description\"\
+                    : \"Ocurrió un error inesperado en el Backend.\",\n          \
+                    \  \"endpoint\": \"[GET] /channel/bsbk/v1.0/accounts/current_accounts\"\
+                    \n        }\n    ]\n}"
+      deprecated: false
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /channel/business-banking/v1/accounts/saving-accounts:
+    get:
+      tags:
+      - Accounts
+      summary: Obtiene la lista de cuentas de un cliente por su documento de identificación.
+      description: "# Implementation Notes\r\n\r\n### Acerca de la funcionalidad expuesta\r\
+        \n\r\nObtiene la lista de cuentas de ahorros de un cliente por su documento\
+        \ de identificación.\r\n\n\r\n\r\n### Path parameters\r\n\r\nNo aplica.\r\n\
+        \r\n\n\r\n\r\n### URI de acceso a la API\r\n\r\n| Método | URI |\r\n|--------|-------------|\r\
+        \n|GET |    /channel/bsbk/v1.0/accounts/saving-accounts?documentNumber={documentNumber}&documentType={documentType}\
+        \ |\r\n\r\n\n\r\n\r\n### Precondiciones para el consumo de esta versión de\
+        \ la API\r\n\r\nNo aplica.\r\n\r\n\n\r\n\r\n### Headers\r\n\r\n| Header |\
+        \ Ejemplo | Obligatorio |\r\n|--------|---------|-------------|\r\n| Request-ID\
+        \       | 550e8400-e29b-41d4-a716-446655440000 | S           |\r\n| request-date\
+        \ | 2019-07-11T01:30:00.000-05:00 | S |\r\n| app-code | BSBK | S |\r\n| caller-name\
+        \ | BUSINESSB | S |\r\n\n\r\n\r\n### Query parameters válidos en esta versión\
+        \ de la API\r\n| Query Param    |Tipo de Dato | Descripción              \
+        \        | Valores Permitidos |\r\n|----------------|-------------|----------------------------------|--------------------|\r\
+        \n| documentNumber | String       | numero de documento                  \
+        \    | 20100118760      |             \r\n| documentType | String       |\
+        \ tipo de documento                      | 1      | \r\n\r\n\n\r\n\r\n###\
+        \ Usos válidos de query parameters\r\n\r\n| Resultado esperado           \
+        \        | Path param | Query parameters requerido              | Query parameters\
+        \ opcionales    |Query param extrafields   |\r\n|--------------------------------------|------------|-----------------------------------------|--------------------------------|--------------------------|\r\
+        \n| Se obtienen las cuentas de ahorros del cliente. |     -      |     documentNumber,\
+        \ documentType     |                   -            |-                   \
+        \      |\r\n\r\n\n\r\n\r\n### Variantes válidas del payload (cuerpo del mensaje)\r\
+        \n\r\nNo aplica.\r\n\r\n\n\r\n\r\n### Lista de valores usados en esta versión\
+        \ de la API\r\n\r\nNo aplica.\r\n\n\r\n\r\n### Código de errores del Servicio\
+        \ en esta versión de la API\r\n\r\n| Código | Descripción |\r\n|--------|-------------|\r\
+        \n| JA0001 | Request inválido.               |\r\n| JA0003 | Ocurrió un error\
+        \ en el Backend. |\r\n\n"
+      operationId: getSavingAccountsUsingGET
+      parameters:
+      - name: authorization
+        in: header
+        required: true
+        schema:
+          type: string
+        description: JWT Authorization Token
+        example: Dasd123123asdad1231jbw
+      - name: app-name
+        in: header
+        description: Application Name
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: businessBanking
+      - name: caller-name
+        in: header
+        description: Api name who request
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: bbe-msa-bs-guided-experience
+      - name: process-code
+        in: header
+        description: Identifies the process or functionality
+        required: false
+        schema:
+          type: string
+          example: BJACAR01
+      - name: request-date
+        in: header
+        description: Request Date | RFC 3339 Format
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 2019-10-12 07:20:50.520000+00:00
+      - name: request-id
+        in: header
+        description: Request Identifier
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: x-session
+        in: header
+        description: Indicates the active session in which the user is transacting.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+      - name: x-device
+        in: header
+        description: Identifier of the device.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 9939aadd00ee32
+      - name: x-device-ip
+        in: header
+        description: IP address of origin of the request.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 200.10.89.34
+      - name: x-language
+        in: header
+        description: ISO – 639-1  – Language Code - 2 digit code.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 5
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          description: Se enviaron datos incorrectos.
+          content:
+            application/json:
+              examples:
+                response:
+                  value: "{\n    \"code\": \"JA0001\",\n    \"description\": \"Request\
+                    \ inválido\",\n    \"errorType\": \"TECHNICAL\",\n    \"exceptionDetails\"\
+                    : [\n       {\n            \"component\": \"jarvis-channel-bsbk-accounts-v1.0\"\
+                    ,\n            \"description\": \"Código inválido para el canal.\"\
+                    ,\n            \"endpoint\": \"[GET] /channel/bsbk/v1.0/accounts/saving_accounts\"\
+                    \n        }\n    ]\n}"
+        '403':
+          description: El usuario no tiene autorización para realizar esta operación.
+        '500':
+          description: Error al realizar la consulta de datos.
+          content:
+            application/json:
+              examples:
+                response:
+                  value: "{\n    \"code\": \"JA0003\",\n    \"description\": \"Ocurrió\
+                    \ un error en el Backend.'\",\n    \"errorType\": \"FUNCTIONAL\"\
+                    ,\n    \"exceptionDetails\": [\n        {\n            \"component\"\
+                    : \"jarvis-channel-bsbk-accounts-v1.0\",\n            \"description\"\
+                    : \"Ocurrió un error inesperado en el Backend.\",\n          \
+                    \  \"endpoint\": \"[GET] /channel/bsbk/v1.0/accounts/saving_accounts\"\
+                    \n        }\n    ]\n}"
+      deprecated: false
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /channel/business-banking/v1/accounts/sumaries:
+    get:
+      tags:
+      - Accounts
+      summary: Obtiene un consolidado de todas las cuentas de un cliente.
+      description: "\r\n# Implementation Notes\r\n\r\n### Acerca de la funcionalidad\
+        \ expuesta\r\n\r\nObtiene un consolidado de todas las cuentas de un cliente\
+        \ por tipo de moneda.\r\n\n\r\n\r\n### Path parameters\r\n\r\nNo aplica.\r\
+        \n\r\n\n\r\n\r\n### URI de acceso a la API\r\n\r\n| Método | URI |\r\n|--------|-------------|\r\
+        \n|GET | /channel/bsbk/v1.0/accounts/sumaries?documentType={documentType}&documentNumber={documentNumber}\
+        \ |\r\n\r\n\n\r\n\r\n### Precondiciones para el consumo de esta versión de\
+        \ la API\r\n\r\nNo aplica.\r\n\r\n\n\r\n\r\n### Headers\r\n\r\n| Header |\
+        \ Ejemplo | Obligatorio |\r\n|--------|---------|-------------|\r\n| Request-ID\
+        \       | 550e8400-e29b-41d4-a716-446655440000 | S           |\r\n| request-date\
+        \ | 2019-07-11T01:30:00.000-05:00 | S |\r\n| app-code | BSBK | S |\r\n| caller-name\
+        \ | BUSINESSB | S |\r\n\n\r\n\r\n### Query parameters válidos en esta versión\
+        \ de la API\r\n| Query Param    |Tipo de Dato | Descripción              \
+        \        | Valores Permitidos |\r\n|----------------|-------------|----------------------------------|--------------------|\r\
+        \n| documentNumber | String       | numero de documento                  \
+        \    | 20100118760      |             \r\n| documentType | String       |\
+        \ tipo de documento                      | 1      | \r\n\r\n\n\r\n\r\n###\
+        \ Usos válidos de query parameters\r\n\r\n| Resultado esperado           \
+        \        | Path param | Query parameters requerido              | Query parameters\
+        \ opcionales    |Query param extrafields   |\r\n|--------------------------------------|------------|-----------------------------------------|--------------------------------|--------------------------|\r\
+        \n| Se obtie el balance consolidado de todas las cuentas del cliente por tipo\
+        \ de moneda . |     -      |     documentNumber, documentType     |      \
+        \             -            |-                         |\r\n\r\n\n\r\n\r\n\
+        ### Variantes válidas del payload (cuerpo del mensaje)\r\n\r\nNo aplica.\r\
+        \n\r\n\n\r\n\r\n### Lista de valores usados en esta versión de la API\r\n\r\
+        \nNo aplica.\r\n\n\r\n\r\n### Código de errores del Servicio en esta versión\
+        \ de la API\r\n\r\n| Código | Descripción |\r\n|--------|-------------|\r\n\
+        | JA0001 | Request inválido.               |\r\n| JA0003 | Ocurrió un error\
+        \ en el Backend. |\r\n\n"
+      operationId: getCurrentAccountsTotalUsingGET
+      parameters:
+      - name: authorization
+        in: header
+        required: true
+        schema:
+          type: string
+        description: JWT Authorization Token
+        example: Dasd123123asdad1231jbw
+      - name: app-name
+        in: header
+        description: Application Name
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: businessBanking
+      - name: caller-name
+        in: header
+        description: Api name who request
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: bbe-msa-bs-guided-experience
+      - name: process-code
+        in: header
+        description: Identifies the process or functionality
+        required: false
+        schema:
+          type: string
+          example: BJACAR01
+      - name: request-date
+        in: header
+        description: Request Date | RFC 3339 Format
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 2019-10-12 07:20:50.520000+00:00
+      - name: request-id
+        in: header
+        description: Request Identifier
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: x-session
+        in: header
+        description: Indicates the active session in which the user is transacting.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+      - name: x-device
+        in: header
+        description: Identifier of the device.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 9939aadd00ee32
+      - name: x-device-ip
+        in: header
+        description: IP address of origin of the request.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 200.10.89.34
+      - name: x-language
+        in: header
+        description: ISO – 639-1  – Language Code - 2 digit code.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 5
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TotalAccountResponse'
+        '400':
+          description: Se enviaron datos incorrectos.
+          content:
+            application/json:
+              examples:
+                response:
+                  value: "{\n    \"code\": \"JA0001\",\n    \"description\": \"Request\
+                    \ inválido\",\n    \"errorType\": \"TECHNICAL\",\n    \"exceptionDetails\"\
+                    : [\n       {\n            \"component\": \"jarvis-channel-bsbk-accounts-v1.0\"\
+                    ,\n            \"description\": \"Código inválido para el canal.\"\
+                    ,\n            \"endpoint\": \"[GET] /channel/bsbk/v1.0/accounts/sumaries\"\
+                    \n        }\n    ]\n}"
+        '403':
+          description: El usuario no tiene autorización para realizar esta operación.
+        '500':
+          description: Error al realizar la consulta de datos.
+          content:
+            application/json:
+              examples:
+                response:
+                  value: "{\n    \"code\": \"JA0003\",\n    \"description\": \"Ocurrió\
+                    \ un error en el Backend.'\",\n    \"errorType\": \"FUNCTIONAL\"\
+                    ,\n    \"exceptionDetails\": [\n        {\n            \"component\"\
+                    : \"jarvis-channel-bsbk-accounts-v1.0\",\n            \"description\"\
+                    : \"Ocurrió un error inesperado en el Backend.\",\n          \
+                    \  \"endpoint\": \"[GET] /channel/bsbk/v1.0/accounts/sumaries\"\
+                    \n        }\n    ]\n}"
+      deprecated: false
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+servers:
+- url: http://localhost:8091/channel/business-banking/v1/accounts
+components:
+  schemas:
+    AccountData:
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: Identificador de la cuenta.
+        alias:
+          type: string
+          description: Alias de la cuenta.
+        type:
+          $ref: '#/components/schemas/AccountType'
+        customer:
+          $ref: '#/components/schemas/CustomerAccount'
+        status:
+          $ref: '#/components/schemas/StatusAccount'
+        openingDate:
+          type: string
+          description: Fecha de apertura
+        currency:
+          $ref: '#/components/schemas/CurrencyAccount'
+        ownerRole:
+          type: string
+          description: Propietario
+        balanceInformation:
+          $ref: '#/components/schemas/BalanceInformation'
+        product:
+          $ref: '#/components/schemas/Product'
+        subProduct:
+          $ref: '#/components/schemas/SubProductAccount'
+      title: AccountData
+    AccountFile:
+      type: object
+      properties:
+        transaction:
+          $ref: '#/components/schemas/TransactionDate'
+        uuid:
+          type: string
+      title: AccountFile
+    AccountResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          description: Lista de cuentas
+          items:
+            $ref: '#/components/schemas/AccountData'
+      title: AccountResponse
+    AccountTransactionResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/arrAccountTransactionResponse'
+    arrAccountTransactionResponse:
+      type: object
+      properties:
+        transactionDateTime:
+          type: string
+          example: 2019-04-03 15:54:57-05:00
+          description: Fecha y hora en la cuál se realizó el movimiento
+        agencyBank:
+          $ref: '#/components/schemas/AgencyTypeResponse'
+        currency:
+          $ref: '#/components/schemas/CurrencyTypeResponse'
+        descriptiontransaction:
+          type: string
+          example: DESCUENTO DE LETRA001024792552
+          description: Descripción de la transacción
+        amountTransaction:
+          type: number
+          example: 4695.15
+          description: Monto de la transacción
+        typeTransaction:
+          type: string
+          example: 5
+          description: 'Tipo de transacción (crédito: 5 o débito: 0)'
+        exchangeRate:
+          type: number
+          example: 1.0e-06
+          description: Tipo de cambio del movimiento
+      title: arrAccountTransactionResponse
+    AccountType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Código
+        description:
+          type: string
+          description: Descripción
+      title: AccountType
+    AgencyTypeResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 53
+          description: Código de la agencia
+        description:
+          type: string
+          description: Descripción de la agencia
+      title: AgencyTypeResponse
+    BalanceInformation:
+      type: object
+      properties:
+        availableAmount:
+          type: string
+          example: 1
+          description: Saldo disponible
+        countableAmount:
+          type: string
+          example: 1
+          description: Saldo contable
+      title: BalanceInformation
+    CurrencyAccount:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 1
+          description: Código
+        description:
+          type: string
+          example: cuenta
+          description: Descripción
+      title: CurrencyAccount
+    CurrencyTypeResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: PEN
+          description: Código de la moneda
+        description:
+          type: string
+          example: Nuevos Soles
+          description: Descripción de la moneda
+      title: CurrencyTypeResponse
+    CustomerAccount:
+      type: object
+      properties:
+        documentNumber:
+          type: string
+          description: Número de documento
+        documentType:
+          type: string
+          description: tipo de documento
+        fullname:
+          type: string
+          description: Nombre completo
+      title: CustomerAccount
+    AccountTransactionRequest:
+      type: object
+      properties:
+        account:
+          $ref: '#/components/schemas/Accounts'
+        limit:
+          type: integer
+          example: 10
+    Accounts:
+      type: object
+      properties:
+        number:
+          type: string
+          example: 0025466458
+          description: Nombre del reporte
+      title: FileResponse
+    DownloadRequest:
+      type: object
+      properties:
+        account:
+          $ref: '#/components/schemas/AccountFile'
+        accountId:
+          type: string
+        file:
+          $ref: '#/components/schemas/FileDate'
+        flagConsult:
+          type: string
+        limit:
+          type: string
+      title: DownloadRequest
+    DownloadResponse:
+      type: object
+      properties:
+        file:
+          $ref: '#/components/schemas/FileResponse'
+      title: DownloadResponse
+    FileDate:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/FileType'
+      title: FileDate
+    FileResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          example: url
+          description: Url del reporte pdf o xls
+        name:
+          type: string
+          example: file.pdf
+          description: Nombre del reporte
+      title: FileResponse
+    FileType:
+      type: object
+      properties:
+        code:
+          type: string
+      title: FileType
+    Product:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 1
+          description: Código de producto
+        description:
+          type: string
+          example: des
+          description: Descripción de producto
+      title: Product
+    StatusAccount:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 1
+          description: Código
+        description:
+          type: string
+          example: cuenta
+          description: Descripción
+      title: StatusAccount
+    SubProductAccount:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 1
+          description: Código de subproducto
+        description:
+          type: string
+          example: des
+          description: Descripción de subproducto
+      title: SubProductAccount
+    TotalAccountResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/arrTotalAccountResponse'
+    arrTotalAccountResponse:
+      type: object
+      properties:
+        currencySymbol:
+          type: string
+          example: /s
+          description: tipo de moneda
+        comulativeTotal:
+          type: number
+          example: 1000000
+          description: Total acomulado
+      title: arrTotalAccountResponse
+    TransactionDate:
+      type: object
+      properties:
+        fromOperationDate:
+          type: string
+        toOperationDate:
+          type: string
+      title: TransactionDate
+    Error:
+      required:
+      - developerMessage
+      - errorCode
+      - userMessage
+      type: object
+      properties:
+        errorCode:
+          maxLength: 6
+          pattern: ^[a-zA-Z]+$\d+$
+          type: string
+          example: '6'
+        developerMessage:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+          example: Coding Error
+        userMessage:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+          example: Error al validar dispositvo
+        moreInfo:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+          example: ''
+        version:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+          example: 1.0.0
+        status:
+          maxLength: 15
+          type: number
+          example: 409
+    GetProfileTemplateByFiltersResponse:
+      title: GetProfileTemplateByFiltersResponse
+      type: object
+      properties:
+        profileTemplateId:
+          type: string
+          example: 1234-5678-90AB-CDEF
+        name:
+          type: string
+          example: Operator
+        description:
+          type: string
+          example: You will have access to create and generate transactions
+        registerDate:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        configParameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileTemplateParam'
+    ProfileTemplateParam:
+      title: ProfileTemplateParam
+      type: object
+      properties:
+        name:
+          type: string
+          example: isEditable
+          description: Param code
+          x-mapping: profile_parameter.code_parameter
+        value:
+          type: string
+          example: '1'
+          description: Param value
+          x-mapping: profile_parameter.value
+    GetUserByFilterResponse:
+      title: GetUserByFilterResponse
+      type: object
+      required:
+      - customerAffiliationId
+      properties:
+        userId:
+          type: string
+          description: user id
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        documentNumber:
+          type: string
+          description: document of identification user
+          example: '171655333001'
+        documentType:
+          type: string
+          description: type of documento
+          example: '0001'
+        names:
+          type: string
+          description: Names of user
+          example: Name
+        surnames:
+          type: string
+          description: Surnames
+          example: Lastname
+        position:
+          type: string
+          description: Surnames
+          example: Lastname
+        email:
+          type: string
+          description: Email of user
+          example: gobc@email.com
+        registerDate:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        channel:
+          type: string
+          example: Cliente
+        cellphone:
+          $ref: '#/components/schemas/CellPhone'
+        userProfile:
+          $ref: '#/components/schemas/Profile'
+        status:
+          $ref: '#/components/schemas/Status'
+    PostUserRequest:
+      title: PostUserRequest
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 1234-5678-90AB-CDEF
+        profileTemplateId:
+          type: string
+          example: 1234-5678-90AB-CDEF
+        customerAffiliationId:
+          type: string
+          example: 1234-5678-90AB-CDEF
+        documentNumber:
+          type: string
+          example: '1721553616'
+          maxLength: 10
+        documentType:
+          type: string
+          example: '0001'
+          maxLength: 4
+        names:
+          type: string
+          example: Jhon Carlos
+        surnames:
+          type: string
+          example: Steward Colling
+        email:
+          type: string
+          example: jhondoe@mail.com
+        position:
+          type: string
+          example: Manager
+        cellphone:
+          $ref: '#/components/schemas/CellPhone'
+    CellPhone:
+      title: CellPhone
+      type: object
+      properties:
+        internationalPrefix:
+          type: string
+          example: '593'
+        number:
+          type: string
+          example: 0987654321
+    Profile:
+      title: Profile
+      type: object
+      required:
+      - userProfileId
+      properties:
+        userProfileId:
+          type: string
+          description: Code of profile
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        name:
+          type: string
+          description: name of profile
+          example: Administrator
+        description:
+          type: string
+          description: Description
+          example: Allows you to perform operations to add, delete or modify
+    Status:
+      title: Status
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          description: Code of status
+          example: STEP-1
+        description:
+          type: string
+          description: description of status
+          example: User in step 1
+    PostUserResponse:
+      title: PostUserResponse
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 4085b199-5994-4016-ad0c-e28486c59008
+    GetAccountByFilterResponse:
+      title: GetAccountByFilterResponse
+      type: object
+      properties:
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetAccount'
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetPermission'
+    GetAccount:
+      title: GetAccount
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+        name:
+          type: string
+          example: Cuenta ahorros
+        alias:
+          type: string
+          example: PRIN Santo domingo
+        type:
+          $ref: '#/components/schemas/GetAccountType'
+        accountNumber:
+          type: string
+          example: '2255889965'
+    GetAccountType:
+      title: GetAccountType
+      type: object
+      properties:
+        code:
+          type: string
+          example: ''
+        description:
+          type: string
+          example: CTA.CTE PERSONAL
+    GetPermission:
+      title: GetPermission
+      type: object
+      properties:
+        permissionId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+        description:
+          type: string
+          example: persmission descripcion example
+        claim:
+          type: string
+          example: RE.ASD.ED
+        isSelected:
+          type: boolean
+          example: true
+    PostBankingProductOperationRequest:
+      title: PostBankingProductOperationRequest
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostAccount'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostAction'
+    PostAccount:
+      title: PostAccount
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+    PostAction:
+      title: PostAction
+      type: object
+      properties:
+        actionId:
+          type: string
+          example: 2ad8b8fb-f414-4bd7-8733-82b8d8160452
+    GetUserApprovalLevelByFilterResponse:
+      title: GetUserApprovalLevelByFilterResponse
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/GetProduct'
+    GetProduct:
+      title: GetProduct
+      type: object
+      properties:
+        productId:
+          type: string
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        name:
+          type: string
+          example: APR
+        description:
+          type: string
+          example: Aprobar transferencias
+        claim:
+          type: string
+          example: ABC.DEF.GHI
+        approvalLevels:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetApprovalLevel'
+    GetApprovalLevel:
+      title: GetApprovalLevel
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetCategory'
+        limitsAmount:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetLimitAmount'
+    GetCategory:
+      title: Category
+      type: object
+      properties:
+        categoryId:
+          type: string
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+        name:
+          type: string
+          example: Name example
+        isSelected:
+          type: boolean
+          example: false
+    GetLimitAmount:
+      title: GetLimitAmount
+      type: object
+      properties:
+        minAmount:
+          type: string
+          example: '0'
+        maxAmount:
+          type: string
+          example: '10'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetCategoryId'
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code for currency
+          example: USD
+    GetCategoryId:
+      title: GetCategoryId
+      type: object
+      properties:
+        categoryId:
+          type: string
+          example: 01906096-eb18-432b-a9ac-0aa5e80ebe9a
+    PostUserApprovalLevelRequest:
+      title: PostUserApprovalLevelRequest
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 4085b199-5994-4016-ad0c-e28486c59008
+        userProfileId:
+          type: string
+          example: 4085b199-5994-4016-ad0c-e28486c59008
+        userCustomerProduct:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostUserCustomerProduct'
+    PostUserCustomerProduct:
+      title: PostUserCustomerProduct
+      type: object
+      properties:
+        productId:
+          type: string
+          example: 1234-5678-90AB-CDEFGH
+        approvalLevel:
+          $ref: '#/components/schemas/PostApprovalLevel'
+    PostApprovalLevel:
+      title: PostApprovalLevel
+      type: object
+      properties:
+        categoryId:
+          type: string
+          example: 1234-5678-90AB-CDEFGH
+        isSelected:
+          type: boolean
+          example: true
+    PostUserActivateRequest:
+      title: PostUserActivateRequest
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 1234-5678-90AB-CDEFGH
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+    oauth2:
+      type: oauth2
+      x-amazon-apigateway-authorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        jwtConfiguration:
+          issuer: ${jwt_issuer}
+          audience: ["${jwt_audiences_list}"]
+          
+x-amazon-apigateway-cors:
+  allowOrigins:
+  - '*'
+  allowHeaders:
+  - Authorization
+  - Content-Type
+  - x-api-key
+  - x-language
+  - app-name
+  - caller-name
+  - client-ip
+  allowMethods:
+  - GET
+  - POST
+  - OPTIONS
+security:
+- oauth2: []

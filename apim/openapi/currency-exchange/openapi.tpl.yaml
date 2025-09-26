@@ -1,0 +1,283 @@
+openapi: 3.0.0
+info:
+  description: Expone todas las operaciones relacionadas al tipo de cambio.
+  version: 1.0.1
+  title: currency-exchange
+tags:
+- name: CurrencyExchange
+  description: Controller
+- name: B2C Token Authentication
+  description: B2C Token Authentication Controller
+paths:
+  /channel/business-banking/v1/currency-exchange/exchange-rates:
+    get:
+      tags:
+      - CurrencyExchange
+      summary: Brinda información sobre el tipo de cambio por un determinado código
+        de tipo de cambio, tipo de moneda, monto a cambiar y flag para rangos de montos.
+      description: "# Implementation Notes\r\n\r\n### Acerca de la funcionalidad expuesta\r\
+        \n\r\nBrinda información sobre el tipo de cambio por un determinado código\
+        \ de tipo de cambio, tipo de moneda, monto a cambiar y flag para rangos de\
+        \ montos.\r\n\n\r\n\r\n### Path parameters\r\n|   Parámetro   |          \
+        \         Ejemplo                 |\r\n|---------------|-------------------------------------------|\r\
+        \n|applicationCode| 16                              |\r\n\r\n\n\r\n\r\n###\
+        \ URI de acceso a la API\r\n\r\n| Método | URI |\r\n|--------|-------------|\r\
+        \n|GET |    /channel/bsbk/v1.0/currency-exchange/exchange-rates?codeExchangeRate={codeExchangeRate}¤cyExchange={USD}&amount={amount}&rangesFlag={rangesFlag}\r\
+        \n\r\n\n\r\n\r\n### Precondiciones para el consumo de esta versión de la API\r\
+        \n\r\nNo aplica.\r\n\r\n\n\r\n\r\n### Headers\r\n\r\n| Header | Ejemplo |\
+        \ Obligatorio |\r\n|--------|---------|-------------|\r\n| Request-ID    \
+        \   | 550e8400-e29b-41d4-a716-446655440000 | S           |\r\n| request-date\
+        \ | 2019-07-11T01:30:00.000-05:00 | S |\r\n| app-code | BSBK | S |\r\n| caller-name\
+        \ | BUSINESSBSBK | S |\r\n\n\r\n\r\n### Query parameters válidos en esta versión\
+        \ de la API\r\nNo aplica.\r\n\r\n\n\r\n\r\n### Usos válidos de query parameters\r\
+        \n\r\n| Resultado esperado                   | Path param | Query parameters\
+        \ requerido              | Query parameters opcionales    |Query param extrafields\
+        \   |\r\n |--------------------------------------|------------|-----------------------------------------|--------------------------------|--------------------------|\r\
+        \n| Se obtienen el tipo de cambio. |     -      |     codeExchangeRate,currencyExchange,amount,rangesFlag\
+        \     |                   -            |-                         |\r\n\r\n\
+        \n\r\n\r\n### Variantes válidas del payload (cuerpo del mensaje)\r\n\r\nNo\
+        \ aplica.\r\n\r\n\n\r\n\r\n### Lista de valores usados en esta versión de\
+        \ la API\r\n\r\nNo aplica.\r\n\n\r\n\r\n### Código de errores del Servicio\
+        \ en esta versión de la API\r\n\r\n| Código | Descripción |\r\n|--------|-------------|\r\
+        \n| JA0001 | Request inválido.               |\r\n| JA0003 | Ocurrió un error\
+        \ en el Backend. |\r\n| EBPM0087 | El usuario no tiene autorización para realizar\
+        \ esta operación.|\r\n\n"
+      operationId: getCurrencyExchange
+      parameters:
+      - name: amount
+        in: query
+        description: Monto a cambiar.
+        required: false
+        allowEmptyValue: false
+        schema:
+          type: string
+      - name: codeExchangeRate
+        in: query
+        description: Solo serán permitidos los códigos de tipo de cambio como se describen
+          en la sección "Lista de valores usadas en esta versión de la API"
+        required: false
+        allowEmptyValue: false
+        schema:
+          type: string
+      - name: currencyExchange
+        in: query
+        description: 'Tipo de moneda, por ejemplo: USD/PEN.'
+        required: false
+        allowEmptyValue: false
+        schema:
+          type: string
+      - name: rangesFlag
+        in: query
+        description: Flag para rangos de montos.
+        required: false
+        allowEmptyValue: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExchangeRateResponse'
+        '400':
+          description: Se enviaron datos incorrectos.
+          content:
+            application/json:
+              examples:
+                response:
+                  value: "{\n    \"code\": \"JA0001\",\n    \"description\": \"Request\
+                    \ inválido\",\n    \"errorType\": \"TECHNICAL\",\n    \"exceptionDetails\"\
+                    : [\n       {\n            \"component\": \"jarvis-channel-ebpm-personal-loans-v1.0\"\
+                    ,\n            \"description\": \"El parámetro personId no está\
+                    \ presente.\",\n            \"endpoint\": \"[GET] \t/channel/ebpm/v1.0/personal-loans/registration-applications/persons/{personId}/current-accounts\"\
+                    \n        }\n    ]\n}"
+        '403':
+          description: El usuario no tiene autorización para realizar esta operación.
+        '500':
+          description: Error al realizar la consulta de datos.
+          content:
+            application/json:
+              examples:
+                response:
+                  value: "{\n    \"code\": \"EBPM0008\",\n    \"description\": \"\
+                    El sistema no está disponible en estos momentos.'\",\n    \"errorType\"\
+                    : \"FUNCTIONAL\",\n    \"exceptionDetails\": [\n        {\n  \
+                    \          \"component\": \"jarvis-channel-ebpm-personal-loans-v1.0\"\
+                    ,\n            \"endpoint\": \"[GET] /channel/ebpm/v1.0/personal-loans/registration-applications/persons/{applicationCode}/current-accounts\"\
+                    \n        }\n    ]\n}"
+      deprecated: false
+  /channel/business-banking/v1/currency-exchange/channel/business-banking/v1/b2c-token-authentication:
+    post:
+      tags:
+      - B2C Token Authentication
+      summary: Authenticates SoftToken otp.
+      description: "### Details:\n  Authenticates the client's Opt with the core bank,\
+        \ if it is ok, a tokenAuthenticationId will be generated\n"
+      operationId: PostB2CTokenAuthentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostB2CTokenAuthenticationRequest'
+      responses:
+        200:
+          description: Validate User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostB2CTokenAuthenticationResponse'
+        400:
+          description: Error in user validation
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+servers:
+- url: http://localhost:8072/channel/business-banking/v1/currency-exchange/
+- description: Server in devops in busines banking layer
+  url: http://localhost:8080/channel/business-banking/v1/b2c-token-authentication
+components:
+  schemas:
+    ExchangeRateCurrencyResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 1
+          description: Código de Moneda del cambio.
+      title: ExchangeRateCurrencyResponse
+    ExchangeRateResponse:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/ExchangeRateTypeResponse'
+        currency:
+          $ref: '#/components/schemas/ExchangeRateCurrencyResponse'
+        purchaseRate:
+          type: number
+          example: 1
+          description: Tipo de cambio compra.
+        saleRate:
+          type: number
+          example: 1
+          description: Tipo de cambio venta.
+        operationDate:
+          type: string
+          example: 12/12/2022
+          description: Fecha de actualización de tipo de cambio.
+      title: ExchangeRateResponse
+    ExchangeRateTypeResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 1
+          description: Código del tipo de cambio.
+        description:
+          type: string
+          example: soles
+          description: Descripción del código del tipo de cambio.
+      title: ExchangeRateTypeResponse
+    PostB2CTokenAuthenticationResponse:
+      description: PostB2CTokenAuthenticationResponse
+      type: object
+      properties:
+        tokenAuthenticationId:
+          title: tokenAuthenticationId
+          type: string
+          example: 25850f86-24d7-4db6-8fd1-29e865112b02
+          nullable: false
+    PostB2CTokenAuthenticationRequest:
+      type: object
+      description: PostB2CTokenAuthenticationRequest
+      properties:
+        userIdentity:
+          type: string
+          description: User identity Uuid
+          example: 34r43-34eer-33456
+        otpCode:
+          type: string
+          description: OTP a validar.
+          example: '977688'
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        errorCode:
+          type: string
+          pattern: ^[a-zA-Z]+$\d+$
+          maxLength: 6
+        developerMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        userMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        moreInfo:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+    oauth2:
+      type: oauth2
+      x-amazon-apigateway-authorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        jwtConfiguration:
+          issuer: ${jwt_issuer}
+          audience: ["${jwt_audiences_list}"]
+security:
+- oauth2: []
+
+x-amazon-apigateway-cors:
+  allowOrigins:
+    - "*"
+  allowMethods:
+    - GET
+    - POST
+    - OPTIONS
+  allowHeaders:
+    - Content-Type
+    - X-Amz-Date
+    - Authorization
+    - X-Api-Key
+  maxAge: 3600
+  allowCredentials: false
+

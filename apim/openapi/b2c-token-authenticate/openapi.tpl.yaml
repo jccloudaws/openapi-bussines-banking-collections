@@ -1,0 +1,145 @@
+openapi: 3.0.0
+info:
+  title: Api Channel Business Banking B2C Token Authentication V1
+  version: 1.0.0
+servers:
+  - description: Server in devops in busines banking layer
+    url: http://localhost:8080/channel/business-banking/v1/b2c-token-authentication
+tags:
+  - name: "B2C Token Authentication"
+    description: "B2C Token Authentication Controller"
+
+
+paths:
+  /channel/business-banking/v1/b2c-token-authentication:
+    post:
+      tags:
+        - B2C Token Authentication
+      summary: Authenticates SoftToken otp.
+      description: >+
+        ### Details:
+          Authenticates the client's Opt with the core bank, if it is ok, a tokenAuthenticationId will be generated
+      operationId: PostB2CTokenAuthentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostB2CTokenAuthenticationRequest'
+      responses:
+        200:
+          description: Validate User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostB2CTokenAuthenticationResponse"
+        400:
+          description: Error in user validation
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: You're not authorized to perform this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: You don't have the right permissions to execute this operation.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: An error has occurred.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+        502:
+          description: The service is not available.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/Error"
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+        
+components:
+  schemas:
+    PostB2CTokenAuthenticationResponse:
+      description: PostB2CTokenAuthenticationResponse
+      type: object
+      properties:
+        tokenAuthenticationId:
+          title: tokenAuthenticationId
+          type: string
+          example: "25850f86-24d7-4db6-8fd1-29e865112b02"
+          nullable: false
+    PostB2CTokenAuthenticationRequest:
+      type: object
+      description: PostB2CTokenAuthenticationRequest
+      properties:
+        userIdentity:
+          type: string
+          description: User identity Uuid
+          example: "34r43-34eer-33456"
+        otpCode:
+          type: string
+          description: OTP a validar.
+          example: "977688"
+
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        errorCode:
+          type: string
+          pattern: ^[a-zA-Z]+$\d+$
+          maxLength: 6
+        developerMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        userMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        moreInfo:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+    oauth2:
+      type: oauth2
+      x-amazon-apigateway-authorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        jwtConfiguration:
+          issuer: ${jwt_issuer}
+          audience: ["${jwt_audiences_list}"]
+security:
+- oauth2: []
+x-amazon-apigateway-cors:
+  allowOrigins:
+  - '*'
+  allowHeaders:
+  - Authorization
+  - Content-Type
+  - x-api-key
+  - x-language
+  - app-name
+  - caller-name
+  - client-ip
+  allowMethods:
+  - GET
+  - POST
+  - OPTIONS

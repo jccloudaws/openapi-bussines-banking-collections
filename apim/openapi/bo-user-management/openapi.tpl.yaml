@@ -970,18 +970,21 @@ components:
         jwtConfiguration:
           issuer: ${jwt_issuer}
           audience: ["${jwt_audiences_list}"]
+
 x-amazon-apigateway-cors:
   allowOrigins:
-  - '*'
-  allowHeaders:
-  - Authorization
-  - Content-Type
-  - x-api-key
-  - x-language
-  - app-name
-  - caller-name
-  - client-ip
+    - "*"
   allowMethods:
-  - GET
-  - POST
-  - OPTIONS
+    - GET
+    - POST
+    - OPTIONS
+  allowHeaders:
+    - Content-Type
+    - X-Amz-Date
+    - Authorization
+    - X-Api-Key
+  maxAge: 3600
+  allowCredentials: false
+
+
+

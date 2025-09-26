@@ -1,0 +1,163 @@
+openapi: 3.0.1
+info:
+  title: Api Channel Business Banking B2C Captcha Authentication
+  description: Api for B2C Captcha Authentication from Business Banking
+  version: 1.0.0
+servers:
+  - description: Dev
+    url: http://localhost:8080/channel/business-banking/v1/b2c-captcha-authentication
+tags:
+  - name: B2C Captcha Authentication
+    description: B2C Captcha Authentication Controller
+
+paths:
+  /channel/business-banking/v1/b2c-captcha-authentication:
+    post:
+      tags:
+        - B2C Captcha Authentication
+      summary: Authenticate captcha code
+      description: >+
+        ### Details:
+          Authenticate captcha code from B2C environment
+      operationId: postB2CCaptchaAuthentication
+      parameters:
+        - name: x-api-key
+          in: header
+          description: Api Key for security in Apim
+          required: false
+          style: simple
+          schema:
+            type: string
+            example: ZDk5b0FscGdHdVBLR0Y1eG5pRDlqQzgwbzlMWHIyUTpzNUJMTDAwTW1Cck1wRmNj
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostB2CCaptchaAuthenticationRequest'
+      responses:
+        200:
+          description: The recaptcha is valid.
+        400:
+          description: Problemas con la solicitud del cliente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: El cliente no tiene permisos suficientes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: El cliente no tiene acceso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Recurso no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Demasiadas solicitudes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Error en el servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        504:
+          description: Se superó el tiempo de espera de la solicitud. Si sucede repetidamente, considere reducir la complejidad de la solicitud.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+
+components:
+  schemas:
+    PostB2CCaptchaAuthenticationRequest:
+      description: Body request for validate token
+      required:
+        - token
+        - lang
+      properties:
+        captchaCode:
+          description: token whit recaptcha
+          type: string
+          example: "asdfasd988899023"
+        lang:
+          description: languaje for response in error case
+          type: string
+          example: "es"
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        errorCode:
+          type: string
+          pattern: ^[a-zA-Z]+$\d+$
+          maxLength: 6
+        developerMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        userMessage:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        moreInfo:
+          type: string
+          pattern: ^[a-zA-Z\s]*$
+          maxLength: 256
+        version:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: "1.0.0"
+        status:
+          maxLength: 15
+          type: integer
+          example: 409
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+    oauth2:
+      type: oauth2
+      x-amazon-apigateway-authorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        jwtConfiguration:
+          issuer: ${jwt_issuer}
+          audience: ["${jwt_audiences_list}"]
+security:
+- oauth2: []
+x-amazon-apigateway-cors:
+  allowOrigins:
+  - '*'
+  allowHeaders:
+  - Authorization
+  - Content-Type
+  - x-api-key
+  - x-language
+  - app-name
+  - caller-name
+  - client-ip
+  allowMethods:
+  - GET
+  - POST
+  - OPTIONS
