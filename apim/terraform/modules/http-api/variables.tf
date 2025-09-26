@@ -16,18 +16,60 @@ variable "tags" {
   default = {}
 }
 
-# 👉 El módulo recibe el OpenAPI YA RENDERIZADO desde el root
 variable "openapi_body" {
-  type = string
+  type        = string
+  default     = null
+  description = "OpenAPI como string (YAML o JSON). Alternativa a openapi_path."
 }
 
-# (compatibilidad opcional; ya no se usan dentro del módulo)
 variable "openapi_path" {
-  type    = string
-  default = null
+  type        = string
+  default     = null
+  description = "Ruta a archivo OpenAPI (YAML o JSON). Alternativa a openapi_body."
 }
 
-variable "openapi_vars" {
-  type    = map(any)
-  default = {}
+variable "cors_enabled" {
+  type        = bool
+  default     = true
+}
+
+variable "cors_overwrite" {
+  type        = bool
+  default     = true
+}
+
+variable "cors_allow_origins" {
+  type    = list(string)
+  default = ["*"]
+}
+
+variable "cors_allow_methods" {
+  type    = list(string)
+  default = ["GET","POST","PUT","PATCH","DELETE","OPTIONS"]
+}
+
+variable "cors_allow_headers" {
+  type = list(string)
+  default = [
+    "Content-Type",
+    "X-Amz-Date",
+    "Authorization",
+    "X-Api-Key",
+    "X-Amz-Security-Token"
+  ]
+}
+
+variable "cors_expose_headers" {
+  type    = list(string)
+  default = []
+}
+
+variable "cors_max_age" {
+  type    = number
+  default = 3600
+}
+
+variable "cors_allow_credentials" {
+  type    = bool
+  default = false
 }

@@ -167,7 +167,53 @@ apis = [
           "56ee37cb-e5ad-482f-9855-86e85d8c7889"
     ]
     }
-  }
+  },
+  {
+    name         = "bbp-msa-ux-bo-user-access-management"
+    display_name = "API Back Office User Access Management"
+    description  = ""
+    openapi_path = "../openapi/bo-user-access-management/openapi.tpl.yaml"
+    lambda_name = "lambda_back-office-preprocessing_a"
+    # JWT Authorizer
+    jwt = {
+      issuer    = "https://login.microsoftonline.com/10da1d35-90f9-400b-9fd8-770597b82485/v2.0"
+      audiences = [
+          "api://56ee37cb-e5ad-482f-9855-86e85d8c7889",
+          "56ee37cb-e5ad-482f-9855-86e85d8c7889"
+    ]
+    }},
+    {
+    name         = "ws-business-banking-ux-currency-exchange-java"
+    display_name = "ws-business-banking-ux-currency-exchange-java"
+    description  = ""
+    openapi_path = "../openapi/currency-exchange/openapi.tpl.yaml"
+    lambda_name = "lambda_back-office-preprocessing_a"
+    # JWT Authorizer
+    jwt = {
+      issuer    = "https://login.microsoftonline.com/10da1d35-90f9-400b-9fd8-770597b82485/v2.0"
+      audiences = [
+          "api://56ee37cb-e5ad-482f-9855-86e85d8c7889",
+          "56ee37cb-e5ad-482f-9855-86e85d8c7889"
+    ]
+    }},
+    {
+    name         = "bbp-msa-ux-interbank-transfer-v1"
+    display_name = "API BB Channel Interbank Transfer Order"
+    description  = ""
+    openapi_path = "../openapi/interbank-transfer/openapi.tpl.yaml"
+    lambda_name = "lambda_back-office-preprocessing_a"
+    # JWT Authorizer
+    jwt = {
+      issuer    = "https://login.microsoftonline.com/10da1d35-90f9-400b-9fd8-770597b82485/v2.0"
+      audiences = [
+          "api://56ee37cb-e5ad-482f-9855-86e85d8c7889",
+          "56ee37cb-e5ad-482f-9855-86e85d8c7889"
+    ]
+    }}
+
+
+
+
 ]
 
 # === Secreto con llaves RSA (creado con el bash) ===
