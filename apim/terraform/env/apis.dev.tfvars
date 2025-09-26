@@ -226,9 +226,9 @@ apis = [
     }},
   # ADD NEW RAUL
   {
-  name         = "users"
-  display_name = "Users experience API"
-  description  = ""
+  name         = "business-banking-ux-users"
+  display_name = "API BB Channel Users"
+  description  = "API BB Channel Users"
   openapi_path = "../openapi/users/openapi.tpl.yaml"
   lambda_name = "lambda_back-office-preprocessing_a"
   # JWT Authorizer
