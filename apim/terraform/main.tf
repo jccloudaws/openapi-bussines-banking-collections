@@ -107,10 +107,11 @@ locals {
   cors_allow_credentials = false
 }
 
-resource "null_resource" "set_httpapi_cors" {
+# Ejecuta update-api por cada API del módulo cada vez que cambie el api_id o la config de CORS
+resource "terraform_data" "set_httpapi_cors" {
   for_each = module.http_api
 
-  triggers = {
+  triggers_replace = {
     api_id            = each.value.api_id
     allow_origins     = join(",", local.cors_allow_origins)
     allow_methods     = join(",", local.cors_allow_methods)
@@ -119,8 +120,6 @@ resource "null_resource" "set_httpapi_cors" {
     max_age           = tostring(local.cors_max_age)
     allow_credentials = tostring(local.cors_allow_credentials)
   }
-
-  depends_on = [module.http_api]
 
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
@@ -136,11 +135,12 @@ resource "null_resource" "set_httpapi_cors" {
           "ExposeHeaders": ${jsonencode(local.cors_expose_headers)},
           "MaxAge": ${local.cors_max_age},
           "AllowCredentials": ${local.cors_allow_credentials}
-        }' >/dev/null
+        }'
       echo "CORS actualizado para API ${each.value.api_id}"
     EOT
   }
 }
+
 
 # ====== Permisos Lambda por-API (dinámico) ======
 data "aws_caller_identity" "current" {}
