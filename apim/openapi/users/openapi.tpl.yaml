@@ -513,3 +513,4 @@ x-amazon-apigateway-cors:
   - OPTIONS
   allowOrigins:
   - '*'
+
