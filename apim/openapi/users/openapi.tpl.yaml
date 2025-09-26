@@ -1,300 +1,82 @@
-components:
-  schemas:
-    Company:
-      properties:
-        cif:
-          example: c123-123
-          type: string
-        description:
-          example: Company test
-          type: string
-        documentNumber:
-          example: 123123
-          type: string
-        documentType:
-          example: RUC
-          type: string
-        name:
-          example: Company test
-          type: string
-    CompanyResponse:
-      properties:
-        documentNumber:
-          example: 123123
-          type: string
-        documentType:
-          example: RUC
-          type: string
-        name:
-          example: Company test
-          type: string
-    ContactOfficerResponse:
-      properties:
-        email:
-          example: jhondoe@mail.com
-          type: string
-        fullname:
-          example: Jhon Charles Doe Manson
-          type: string
-        phoneNumber:
-          example: 0987536984
-          type: string
-    Error:
-      additionalProperties: false
-      properties:
-        code:
-          pattern: ^[a-zA-Z]+$\d+$
-          type: string
-        developerMessage:
-          maxLength: 256
-          pattern: ^[a-zA-Z\s]*$
-          type: string
-        errorCode:
-          maxLength: 6
-          pattern: ^[a-zA-Z]+$\d+$
-          type: string
-        moreInfo:
-          maxLength: 256
-          pattern: ^[a-zA-Z\s]*$
-          type: string
-        status:
-          default: 409
-          type: integer
-        userMessage:
-          maxLength: 256
-          pattern: ^[a-zA-Z\s]*$
-          type: string
-        version:
-          pattern: ^[0-9\.]*$
-          type: string
-      type: object
-    ProfileResponse:
-      properties:
-        company:
-          $ref: '#/components/schemas/CompanyResponse'
-        contactOfficer:
-          $ref: '#/components/schemas/ContactOfficerResponse'
-        fatherLastName:
-          description: "User\xB4s father lastname"
-          example: Doe
-          nullable: false
-          type: string
-        firstName:
-          description: "User\xB4s first name"
-          example: Jhon
-          nullable: false
-          type: string
-        lastLogin:
-          example: '2021-12-02T00:18:51.7495714-05:00'
-          type: string
-        motherLastName:
-          description: "User\xB4s mother lastname"
-          example: Manson
-          nullable: false
-          type: string
-        secondName:
-          description: "User\xB4s second name"
-          example: Charles
-          nullable: false
-          type: string
-      required:
-      - firstName
-      - secondName
-      - fatherLastName
-      - motherLastName
-      - company
-      title: ProfileResponse
-      type: object
-    UserResponse:
-      properties:
-        company:
-          $ref: '#/components/schemas/Company'
-        configStatus:
-          description: "User\xB4s configuration status"
-          example: COMPLETE
-          nullable: false
-          type: string
-        contractCompanyId:
-          description: Contract comapny id from user
-          example: 123123-123
-          type: string
-        customerAffiliationId:
-          description: This code represents the company in a company group.
-          example: b2f01259-a60b-45e8-b5e3-215924834e5
-          type: string
-        customerUserId:
-          description: User Company Contract Uuid
-          example: a990abf4-3617-4454-8d0a-3763ec851b2a
-          type: string
-        documentNumber:
-          description: Document number
-          example: '1234567890'
-          nullable: false
-          type: string
-        documentType:
-          description: Document type
-          example: RUC
-          nullable: false
-          type: string
-        email:
-          description: "User\xB4s email"
-          example: jhondoe@mail.com
-          nullable: false
-          type: string
-        fatherLastName:
-          description: "User\xB4s father lastname"
-          example: Doe
-          nullable: false
-          type: string
-        firstName:
-          description: "User\xB4s first name"
-          example: Jhon
-          nullable: false
-          type: string
-        lastLogin:
-          example: '2021-12-02T00:18:51.7495714-05:00'
-          type: string
-        motherLastName:
-          description: "User\xB4s mother lastname"
-          example: Manson
-          nullable: false
-          type: string
-        phoneNumber:
-          description: "User\xB4s phone number"
-          example: 0987536984
-          nullable: false
-          type: string
-        position:
-          description: "User\xB4s profile ds"
-          example: Sales manager
-          nullable: false
-          type: string
-        profileDescription:
-          description: "User\xB4s profile description"
-          example: ADMINISTRATOR
-          nullable: false
-          type: string
-        profileId:
-          description: "User\xB4s profile id"
-          example: 1230-123
-          nullable: false
-          type: string
-        profileTemplateId:
-          example: 4085b199-5994-4016-ad0c-e28486c59008
-          title: Profile template Uuid
-          type: string
-        secondName:
-          description: "User\xB4s second name"
-          example: Charles
-          nullable: false
-          type: string
-        userClaims:
-          example: TRPR.CTA.REG,TRPR.CTA.APR
-          title: Comma delimited user claims
-          type: string
-        userId:
-          description: "User\xB4s id"
-          example: abascsac-dsadasqweqw-a09423
-          nullable: false
-          type: string
-        userIdentity:
-          description: Object Id from B2C
-          example: 123123-123123
-          type: string
-        userProfileId:
-          description: Profile template id of the user for the consumption of the
-            banking-product-operations service.
-          example: b2f01259-a60b-45e8-b5e3-215924834e5
-          type: string
-        userStatus:
-          description: "User\xB4s status"
-          example: ENABLED
-          nullable: false
-          type: string
-        username:
-          description: "User\xB4s username"
-          example: jhondoe09
-          nullable: false
-          type: string
-        uuid:
-          description: ID of user in cache
-          example: 1asdasd-123123
-          type: string
-      required:
-      - userId
-      - username
-      - userStatus
-      - configStatus
-      - firstName
-      - secondName
-      - fatherLastName
-      - motherLastName
-      - profileId
-      - profileDescription
-      - email
-      - phoneNumber
-      - position
-      - documentNumber
-      - documentType
-      - userIdentity
-      title: UserResponse
-      type: object
-    VerifyUserRequest:
-      properties:
-        lang:
-          description: Language from B2C operation
-          example: EN
-          type: string
-        userIdReference:
-          description: Object id of B2C
-          example: 12312-123123
-          type: string
-      required:
-      - userIdReference
-      - lang
-      type: object
-    VerifyUserResponse:
-      properties:
-        userClaims:
-          example: TRPR.CTA.REG,TRPR.CTA.APR
-          title: Comma delimited user claims
-          type: string
-        uuid:
-          example: 12312-123123
-          type: string
-      type: object
-  securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: x-api-key
-    oauth2:
-      type: oauth2
-      x-amazon-apigateway-authorizer:
-        type: jwt
-        identitySource: $request.header.Authorization
-        jwtConfiguration:
-          issuer: ${jwt_issuer}
-          audience: ["${jwt_audiences_list}"]
-externalDocs:
-  description: API Documentation
-  url: https://pichincha.sharepoint.com/sites/BankFormers/SitePages/Gobierno-de-Apis.aspx
-info:
-  contact:
-    email: rmendoza-ext@pichincha.pe
-    name: Rossmel Mendoza
-  description: "Channel API for Users experience  <br>\n                      <br>\n\
-    \                      <b>\u2022 Business Area</b>  `Sales and Service`<br>\n\
-    \                      <b>\u2022 Business Domain</b>  `Cross Channel`<br>\n  \
-    \                    <b>\u2022 Service Domain:</b>  `Party Authentication`"
-  title: Users experience API
-  version: 1.1.1
 openapi: 3.0.0
+info:
+  title: Users experience API
+  description: 'Channel API for Users experience  <br>
+
+    <br>
+
+    <b>• Business Area</b>  `Sales and Service`
+
+    <br>
+
+    <b>• Business Domain</b>  `Cross Channel`
+
+    <br>
+
+    <b>• Service Domain:</b>  `Party Authentication`
+
+    '
+  contact:
+    name: Rossmel Mendoza
+    email: rmendoza-ext@pichincha.pe
+  version: 1.1.1
+servers:
+- url: http://localhost:8080/v1/business-banking/cxp/users
+  description: Development
+security:
+- ApiKeyAuth: []
 paths:
-  /:
+  /v1/business-banking/cxp/users/logout:
+    post:
+      tags:
+      - End session of user
+      operationId: LogoutUserSession
+      responses:
+        '200':
+          description: User logout successful.
+        '204':
+          description: The key does not exist in cache.
+        '400':
+          description: Bad request (005, 006, 007)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: API key is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden (003, 004)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Resource not found (001, 002)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal com.pichincha.business.banking.services.error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /v1/business-banking/cxp/users/:
     get:
-      description: Endpoint for search and user by objectID from B2C
+      tags:
+      - Get user
       operationId: GetUser
+      description: Endpoint for search and user by objectID from B2C
       responses:
         '200':
           content:
@@ -314,62 +96,114 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Internal error (CXP002, CXP003)
-      tags:
-      - Get user
-    x-amazon-apigateway-integration:
-      httpMethod: POST
-      payloadFormatVersion: '2.0'
-      type: aws_proxy
-      uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
-  /logout:
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /v1/business-banking/cxp/users/verify:
     post:
-      operationId: LogoutUserSession
+      tags:
+      - b2c
+      operationId: VerifyInformation
+      description: Endpoint for put in cache information, when an user make login
+        in B2C
+      parameters:
+      - in: header
+        name: x-api-key
+        required: true
+        schema:
+          type: string
+        description: API Key of APIM
+        example: ywtjasda123123asdas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyUserRequest'
+        required: true
       responses:
         '200':
-          description: User logout successful.
-        '204':
-          description: The key does not exist in cache.
-        '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad request (005, 006, 007)
-        '401':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: API key is missing or invalid
-        '403':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Forbidden (003, 004)
+                $ref: '#/components/schemas/VerifyUserResponse'
+          description: User claims to B2C
         '404':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-          description: Resource not found (001, 002)
+          description: Not Found
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request
         '500':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-          description: Internal com.pichincha.business.banking.services.error
-      tags:
-      - End session of user
-    x-amazon-apigateway-integration:
-      httpMethod: POST
-      payloadFormatVersion: '2.0'
-      type: aws_proxy
-      uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
-  /profile:
+          description: Internal error
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /v1/business-banking/cxp/users/verify/user:
     get:
-      description: Endpoint return user profile after make login
+      tags:
+      - Verify user
+      summary: Call to business users API to verify email
+      description: Verify user.
+      operationId: VerifyUser
+      parameters:
+      - in: query
+        name: documentNumber
+        schema:
+          type: string
+        description: User document number
+        example: 1717589012
+        required: true
+      - in: query
+        name: documentType
+        schema:
+          type: string
+        description: User document number type
+        example: 1
+        required: true
+      - in: query
+        name: email
+        schema:
+          type: string
+        description: User email
+        example: 1
+        required: true
+      responses:
+        '200':
+          description: Email does not exist
+        '400':
+          description: Bad request (CXP001)
+        '409':
+          description: Email already exist
+        '500':
+          description: Internal error (CXP002, CXP003)
+      x-accepts: application/json
+      x-tags:
+      - tag: default
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+  /v1/business-banking/cxp/users/profile:
+    get:
+      tags:
+      - Get Profile
       operationId: Getprofile
+      description: Endpoint return user profile after make login
       responses:
         '200':
           content:
@@ -389,129 +223,302 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Internal error (CXP002, CXP003)
-      tags:
-      - Get Profile
-    x-amazon-apigateway-integration:
-      httpMethod: POST
-      payloadFormatVersion: '2.0'
-      type: aws_proxy
-      uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
-  /verify:
-    post:
-      description: Endpoint for put in cache information, when an user make login
-        in B2C
-      operationId: VerifyInformation
-      parameters:
-      - description: API Key of APIM
-        example: ywtjasda123123asdas
-        in: header
-        name: x-api-key
-        required: true
-        schema:
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: '2.0'
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
+components:
+  schemas:
+    UserResponse:
+      title: UserResponse
+      type: object
+      required:
+      - userId
+      - username
+      - userStatus
+      - configStatus
+      - firstName
+      - secondName
+      - fatherLastName
+      - motherLastName
+      - profileId
+      - profileDescription
+      - email
+      - phoneNumber
+      - position
+      - documentNumber
+      - documentType
+      - userIdentity
+      properties:
+        uuid:
           type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/VerifyUserRequest'
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/VerifyUserResponse'
-          description: User claims to B2C
-        '400':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad request
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Not Found
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Internal error
-      tags:
-      - b2c
-    x-amazon-apigateway-integration:
-      httpMethod: POST
-      payloadFormatVersion: '2.0'
-      type: aws_proxy
-      uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
-  /verify/user:
-    get:
-      description: Verify user.
-      operationId: VerifyUser
-      parameters:
-      - description: User document number
-        example: 1717589012
-        in: query
-        name: documentNumber
-        required: true
-        schema:
+          example: 1asdasd-123123
+          description: ID of user in cache
+        userId:
           type: string
-      - description: User document number type
-        example: 1
-        in: query
-        name: documentType
-        required: true
-        schema:
+          example: abascsac-dsadasqweqw-a09423
+          description: User´s id
+          nullable: false
+        username:
           type: string
-      - description: User email
-        example: 1
-        in: query
-        name: email
-        required: true
-        schema:
+          example: jhondoe09
+          description: User´s username
+          nullable: false
+        userStatus:
           type: string
-      responses:
-        '200':
-          description: Email does not exist
-        '400':
-          description: Bad request (CXP001)
-        '409':
-          description: Email already exist
-        '500':
-          description: Internal error (CXP002, CXP003)
-      summary: Call to business users API to verify email
-      tags:
-      - Verify user
-      x-accepts: application/json
-      x-tags:
-      - tag: default
-    x-amazon-apigateway-integration:
-      httpMethod: POST
-      payloadFormatVersion: '2.0'
-      type: aws_proxy
-      uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambda_arn_normalize}/invocations
-security:
-- oauth2: []
-servers:
-- description: Development
-  url: https://apim-desarrollo-business-banking.azure-api.net/v1/business-banking/cxp/users
+          example: ENABLED
+          description: User´s status
+          nullable: false
+        configStatus:
+          type: string
+          example: COMPLETE
+          description: User´s configuration status
+          nullable: false
+        firstName:
+          type: string
+          example: Jhon
+          description: User´s first name
+          nullable: false
+        secondName:
+          type: string
+          example: Charles
+          description: User´s second name
+          nullable: false
+        fatherLastName:
+          type: string
+          example: Doe
+          description: User´s father lastname
+          nullable: false
+        motherLastName:
+          type: string
+          example: Manson
+          description: User´s mother lastname
+          nullable: false
+        profileId:
+          type: string
+          example: 1230-123
+          description: User´s profile id
+          nullable: false
+        profileDescription:
+          type: string
+          example: ADMINISTRATOR
+          description: User´s profile description
+          nullable: false
+        email:
+          type: string
+          example: jhondoe@mail.com
+          description: User´s email
+          nullable: false
+        phoneNumber:
+          type: string
+          example: 0987536984
+          description: User´s phone number
+          nullable: false
+        position:
+          type: string
+          example: Sales manager
+          description: User´s profile ds
+          nullable: false
+        documentType:
+          type: string
+          example: RUC
+          description: Document type
+          nullable: false
+        documentNumber:
+          type: string
+          example: '1234567890'
+          description: Document number
+          nullable: false
+        userIdentity:
+          type: string
+          example: 123123-123123
+          description: Object Id from B2C
+        contractCompanyId:
+          type: string
+          example: 123123-123
+          description: Contract comapny id from user
+        lastLogin:
+          type: string
+          example: '2021-12-02T00:18:51.7495714-05:00'
+        company:
+          $ref: '#/components/schemas/Company'
+        customerUserId:
+          type: string
+          example: a990abf4-3617-4454-8d0a-3763ec851b2a
+          description: User Company Contract Uuid
+        customerAffiliationId:
+          type: string
+          example: b2f01259-a60b-45e8-b5e3-215924834e5
+          description: This code represents the company in a company group.
+        userProfileId:
+          type: string
+          example: b2f01259-a60b-45e8-b5e3-215924834e5
+          description: Profile template id of the user for the consumption of the
+            banking-product-operations service.
+        profileTemplateId:
+          title: Profile template Uuid
+          type: string
+          example: 4085b199-5994-4016-ad0c-e28486c59008
+        userClaims:
+          title: Comma delimited user claims
+          type: string
+          example: TRPR.CTA.REG,TRPR.CTA.APR
+    Company:
+      properties:
+        documentNumber:
+          type: string
+          example: 123123
+        documentType:
+          type: string
+          example: RUC
+        cif:
+          type: string
+          example: c123-123
+        name:
+          type: string
+          example: Company test
+        description:
+          type: string
+          example: Company test
+    Error:
+      additionalProperties: false
+      properties:
+        errorCode:
+          maxLength: 6
+          pattern: ^[a-zA-Z]+$\d+$
+          type: string
+        developerMessage:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+        userMessage:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+        moreInfo:
+          maxLength: 256
+          pattern: ^[a-zA-Z\s]*$
+          type: string
+        version:
+          type: string
+          pattern: ^[0-9\.]*$
+        status:
+          type: integer
+          default: 409
+        code:
+          type: string
+          pattern: ^[a-zA-Z]+$\d+$
+      type: object
+    VerifyUserResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          example: 12312-123123
+        userClaims:
+          title: Comma delimited user claims
+          type: string
+          example: TRPR.CTA.REG,TRPR.CTA.APR
+    VerifyUserRequest:
+      type: object
+      required:
+      - userIdReference
+      - lang
+      properties:
+        userIdReference:
+          type: string
+          description: Object id of B2C
+          example: 12312-123123
+        lang:
+          type: string
+          description: Language from B2C operation
+          example: EN
+    ProfileResponse:
+      title: ProfileResponse
+      type: object
+      required:
+      - firstName
+      - secondName
+      - fatherLastName
+      - motherLastName
+      - company
+      properties:
+        firstName:
+          type: string
+          example: Jhon
+          description: User´s first name
+          nullable: false
+        secondName:
+          type: string
+          example: Charles
+          description: User´s second name
+          nullable: false
+        fatherLastName:
+          type: string
+          example: Doe
+          description: User´s father lastname
+          nullable: false
+        motherLastName:
+          type: string
+          example: Manson
+          description: User´s mother lastname
+          nullable: false
+        lastLogin:
+          type: string
+          example: '2021-12-02T00:18:51.7495714-05:00'
+        company:
+          $ref: '#/components/schemas/CompanyResponse'
+        contactOfficer:
+          $ref: '#/components/schemas/ContactOfficerResponse'
+    CompanyResponse:
+      properties:
+        documentNumber:
+          type: string
+          example: 123123
+        documentType:
+          type: string
+          example: RUC
+        name:
+          type: string
+          example: Company test
+    ContactOfficerResponse:
+      properties:
+        fullname:
+          type: string
+          example: Jhon Charles Doe Manson
+        email:
+          type: string
+          example: jhondoe@mail.com
+        phoneNumber:
+          type: string
+          example: 0987536984
+  securitySchemes:
+    ApiKeyAuth:
+      in: header
+      name: x-api-key
+      type: apiKey
+    oauth2:
+      type: oauth2
+      x-amazon-apigateway-authorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        jwtConfiguration:
+          issuer: ${jwt_issuer}
+          audience:
+          - ${jwt_audiences_list}
 x-amazon-apigateway-cors:
-  allowHeaders:
-  - Authorization
-  - Content-Type
-  - x-api-key
-  - x-language
-  - app-name
-  - caller-name
-  - client-ip
-  allowMethods:
+  AllowOrigins:
+  - '*'
+  AllowMethods:
   - GET
   - POST
   - OPTIONS
-  allowOrigins:
-  - '*'
-
-
+  AllowHeaders:
+  - Content-Type
+  - X-Amz-Date
+  - Authorization
+  - X-Api-Key
+  ExposeHeaders: []
+  MaxAge: 3600
+  AllowCredentials: false

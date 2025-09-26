@@ -47,7 +47,7 @@ apis = [
   {
     name         = "api_back-office-ux-bo-approval-servicing-order"
     display_name = "API back office ux bo approval servicing order"
-    description  = ""
+    description  = "api_back-office-ux-bo-approval-servicing-order"
     # Usa template para inyectar variables (Opción B)
     openapi_path = "../openapi/bo-approval-servicing-order/openapi.tpl.yaml"
 
@@ -66,7 +66,7 @@ apis = [
   {
     name         = "bbe-msa-ux-bo-user-management-v1"
     display_name = "API Back Office User Management"
-    description  = ""
+    description  = "bbe-msa-ux-bo-user-management-v1"
     openapi_path = "../openapi/bo-user-management/openapi.tpl.yaml"
     lambda_name = "lambda_back-office-preprocessing_a"
     # JWT Authorizer
@@ -81,7 +81,7 @@ apis = [
   {
     name         = "bbe-msa-ux-tray-order-v1"
     display_name = "API BB Channel Tray Order"
-    description  = ""
+    description  = "bbe-msa-ux-tray-order-v1"
     openapi_path = "../openapi/approval-tray-order/openapi.tpl.yaml"
     lambda_name = "lambda_back-office-preprocessing_a"
     # JWT Authorizer
@@ -96,7 +96,7 @@ apis = [
   {
     name         = "experience-account-overview"
     display_name = "Experience Account Overview"
-    description  = ""
+    description  = "experience-account-overview"
     openapi_path = "../openapi/accounts/openapi.tpl.yaml"
     lambda_name = "lambda_back-office-preprocessing_a"
     # JWT Authorizer
@@ -111,7 +111,7 @@ apis = [
   {
     name         = "business-banking-ux-b2c-captcha-authentication"
     display_name = "API BB Channel B2C Captcha Authentication"
-    description  = ""
+    description  = "business-banking-ux-b2c-captcha-authentication"
     openapi_path = "../openapi/b2c-captcha-authentication/openapi.tpl.yaml"
     lambda_name = "lambda_back-office-preprocessing_a"
     # JWT Authorizer
@@ -126,7 +126,7 @@ apis = [
   {
     name         = "business-banking-ux-b2c-token-authenticate"
     display_name = "API BB Channel B2C Token Authenticate"
-    description  = ""
+    description  = "business-banking-ux-b2c-token-authenticate"
     openapi_path = "../openapi/b2c-token-authenticate/openapi.tpl.yaml"
     lambda_name = "lambda_back-office-preprocessing_a"
     # JWT Authorizer
@@ -141,7 +141,7 @@ apis = [
   {
     name         = "bbe-msa-ux-bo-customer-management-v1"
     display_name = "API Back Office Customer Management"
-    description  = ""
+    description  = "bbe-msa-ux-bo-customer-management-v1"
     openapi_path = "../openapi/bo-customer-management/openapi.tpl.yml"
     lambda_name = "lambda_back-office-preprocessing_a"
     # JWT Authorizer
@@ -156,7 +156,7 @@ apis = [
     {
     name         = "bbp-msa-ux-bo-employee-access-v1"
     display_name = "API Back Office Employee Access"
-    description  = ""
+    description  = "bbp-msa-ux-bo-employee-access-v1"
     openapi_path = "../openapi/bo-employee-access/openapi.tpl.yaml"
     lambda_name = "lambda_back-office-preprocessing_a"
     # JWT Authorizer
@@ -171,7 +171,7 @@ apis = [
   {
     name         = "bbp-msa-ux-bo-user-access-management"
     display_name = "API Back Office User Access Management"
-    description  = ""
+    description  = "bbp-msa-ux-bo-user-access-management"
     openapi_path = "../openapi/bo-user-access-management/openapi.tpl.yaml"
     lambda_name = "lambda_back-office-preprocessing_a"
     # JWT Authorizer
@@ -185,7 +185,7 @@ apis = [
     {
     name         = "ws-business-banking-ux-currency-exchange-java"
     display_name = "ws-business-banking-ux-currency-exchange-java"
-    description  = ""
+    description  = "ws-business-banking-ux-currency-exchange-java"
     openapi_path = "../openapi/currency-exchange/openapi.tpl.yaml"
     lambda_name = "lambda_back-office-preprocessing_a"
     # JWT Authorizer
@@ -199,7 +199,7 @@ apis = [
     {
     name         = "bbp-msa-ux-interbank-transfer-v1"
     display_name = "API BB Channel Interbank Transfer Order"
-    description  = ""
+    description  = "bbp-msa-ux-interbank-transfer-v1"
     openapi_path = "../openapi/interbank-transfer/openapi.tpl.yaml"
     lambda_name = "lambda_back-office-preprocessing_a"
     # JWT Authorizer
@@ -213,7 +213,7 @@ apis = [
     {
     name         = "bbe-msa-ux-load-account-transfer-order-v1"
     display_name = "API BB Channel Load Account Transfer Order"
-    description  = ""
+    description  = "bbe-msa-ux-load-account-transfer-order-v1"
     openapi_path = "../openapi/load-account-transfer-order-v1/openapi.tpl.yaml"
     lambda_name = "lambda_back-office-preprocessing_a"
     # JWT Authorizer
@@ -224,22 +224,34 @@ apis = [
           "56ee37cb-e5ad-482f-9855-86e85d8c7889"
     ]
     }},
-  # ADD NEW RAUL
-  {
-  name         = "business-banking-ux-users"
-  display_name = "API BB Channel Users"
-  description  = "API BB Channel Users"
-  openapi_path = "../openapi/users/openapi.tpl.yaml"
-  lambda_name = "lambda_back-office-preprocessing_a"
-  # JWT Authorizer
-  jwt = {
-    issuer    = "https://login.microsoftonline.com/10da1d35-90f9-400b-9fd8-770597b82485/v2.0"
-    audiences = [
-        "api://56ee37cb-e5ad-482f-9855-86e85d8c7889",
-        "56ee37cb-e5ad-482f-9855-86e85d8c7889"
-  ]
-  }
-  }
+    {
+    name         = "business-banking-ux-loan-overview"
+    display_name = "API BB Channel Loan Overview"
+    description  = "business-banking-ux-loan-overview"
+    openapi_path = "../openapi/loan-overview/openapi.tpl.yaml"
+    lambda_name = "lambda_back-office-preprocessing_a"
+    # JWT Authorizer
+    jwt = {
+      issuer    = "https://login.microsoftonline.com/10da1d35-90f9-400b-9fd8-770597b82485/v2.0"
+      audiences = [
+          "api://56ee37cb-e5ad-482f-9855-86e85d8c7889",
+          "56ee37cb-e5ad-482f-9855-86e85d8c7889"
+    ]
+    }},
+    {
+    name         = "business-banking-ux-users"
+    display_name ="API BB Channel Users"
+    description  = "API BB Channel Users"
+    openapi_path = "../openapi/users/openapi.tpl.yaml"
+    lambda_name = "lambda_back-office-preprocessing_a"
+    # JWT Authorizer
+    jwt = {
+      issuer    = "https://login.microsoftonline.com/10da1d35-90f9-400b-9fd8-770597b82485/v2.0"
+      audiences = [
+          "api://56ee37cb-e5ad-482f-9855-86e85d8c7889",
+          "56ee37cb-e5ad-482f-9855-86e85d8c7889"
+    ]
+    }}
 ]
 
 # === Secreto con llaves RSA (creado con el bash) ===
